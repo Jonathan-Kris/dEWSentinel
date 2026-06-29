@@ -1,60 +1,113 @@
-# dEWSentinel — Deliverability Early-Warning Sentinel
-### One-page insight memo
+# dEWSentinel — Deliverability Early-Warning Console (POC)
 
-**Thesis:** *We see the dip before your reply rates do.* Cold-email reputation decays silently for weeks before any dashboard turns red. dEWSentinel detects that decay early, per inbox provider, and triggers a backup plan — turning a customer-churning surprise into a preemptive save.
+*We see the dip before your reply rates do.*
 
----
+A single-page, client-side proof-of-concept that **computes** (not fakes) per-ESP deliverability risk
+signals from synthetic data and renders them into the dEWSentinel console UI.
 
-### The problem
+**▶ Live demo:** https://6a42018e7340f4326a1d8150--dewsentinel-poc-demo.netlify.app
+**📄 One-page insight memo:** [INSIGHT_MEMO.md](./INSIGHT_MEMO.md) — the thesis, the problem, and why it's defensible.
 
-A customer's sending domain looks healthy for 2–3 months, then deliverability collapses "overnight." It wasn't overnight — reputation eroded the whole time, invisibly. Three facts make this a structural trap:
-
-- **The cliff is tiny.** Google expects bulk senders to stay under **0.10%** spam complaints and never reach **0.30%**. At cold-email volume, ~3 complaints per 1,000 crosses it.
-- **The metric that matters is lagging *and self-concealing.*** Postmaster's complaint rate updates 24–48h late, and its denominator is *inbox-delivered* mail — so once filtering starts, the very recipients who'd complain never see the message, and the reported rate can *fall* while reputation craters.
-- **Decay is fast; recovery is slow.** Damage lands in days; restoring a domain takes 4–8 weeks (Gmail wants 7 consecutive clean days). The cost function is brutally asymmetric.
-
-Meanwhile the sequencer dashboard stays green, because it reports a warmup/inbox-placement score — a lagging signal that looks fine right up until it doesn't.
+> **Simulated data.** The *engine and visuals are real*; the data is synthetic. In production, leading
+> signals come from sending.ac's own MTA accounting-webhook telemetry (bounces, deferrals, 4xx/5xx
+> provider codes), confirmed by Google Postmaster + Microsoft SNDS. This is shown as a persistent label
+> in the UI footer.
 
 ---
 
-### The insight
+## What it shows
 
-Stop watching the complaint rate. Watch the signals that move *before* it, and treat the decision as risk management, not reporting.
+A Gmail sending domain decays silently over 30 days while the "old dashboard" (a lagging warmup/placement
+proxy) stays green — until the cliff. dEWSentinel surfaces the decay **early** from leading signals,
+**per inbox provider** (Gmail vs Outlook), projects the trend to the 0.30% complaint cliff, and drives an
+automatic `Healthy → Watch → Throttle → Failover → Cooldown` failover playbook with a hot-standby pool.
 
-1. **Per-ESP, not aggregate.** Gmail and Outlook reputations decay independently; a domain can be dying at Gmail while green at Outlook. Score each separately.
-2. **Smooth the noise.** At low volume a single complaint swings the raw rate wildly. A Beta-Binomial estimate (a baseline prior + a confidence band) yields a stable rate you can act on, and you alert on the band's upper edge — early, not after the spike.
-3. **Project the trend.** Fit a slope to the *smoothed* rate and extrapolate: *"Gmail at 0.18%, climbing — reaches the 0.30% cliff in ~5 days."* That sentence is the product.
-4. **Lead with first-party telemetry.** The earliest signal isn't Postmaster — it's the SMTP conversation itself: rising 4xx deferrals and provider throttle/spam codes captured at send time, before any complaint posts.
-5. **Act asymmetrically.** Because a miss costs weeks and a false alarm costs a day of throttling, the right policy is a conservative circuit breaker that trips on weak early signals.
+- **Lead-time view** — flat-green lagging dashboard vs the declining dEWSentinel health line, with a shaded
+  *"≈ N days of warning gained"* band (computed from when the score crosses Watch vs when the dashboard finally dips).
+- **Per-ESP cards** — ring gauge, smoothed complaint rate + 90% CI, position on the 0.10%→0.30% band, and a
+  projection (*"crosses 0.30% cliff in ~N days"*).
+- **Domain detail** — raw (jagged, spiking past the cliff) vs Beta-Binomial smoothed rate + confidence band,
+  the alert marker where smoothing crosses 0.10%, and the weighted signal breakdown.
 
----
-
-### The approach
-
-A leading **per-ESP risk score** (smoothed complaint rate + slope-to-cliff + deferral/throttle codes + engagement + placement) feeding a **circuit-breaker + hot-standby failover**:
-
-`Healthy → Watch → Throttle → Failover → Cooldown`
-
-On degradation, dEWSentinel throttles the burning domain and **re-routes the at-risk provider's traffic to a pre-warmed standby domain** (kept hot, warmed for that ESP), then parks and re-warms the original until it's clean for 7 straight days. It's the email equivalent of a payments circuit breaker plus a hot/cold-wallet failover.
-
----
-
-### Where the data comes from — and why this is defensible
-
-| Layer | Signal | Source |
-|---|---|---|
-| **Leading** | deferrals, 4xx/5xx throttle & spam codes, bounce reasons | **First-party MTA accounting-webhook telemetry** (captured at send) |
-| **Leading** | inbox vs spam placement | seed-list panel |
-| **Confirming (lagging)** | spam rate, domain/IP reputation | Google Postmaster + Microsoft SNDS/JMRP |
-
-The leading layer only exists **because sending.ac owns the sending infrastructure** — it already emits this telemetry (it's the same first-party stream the warm.ac index is built from). A competitor layered on someone else's sending platform is blind to it. dEWSentinel is not a new pipeline; it's a predictive, customer-facing consumer of a stream sending.ac already produces.
+A **Critical ⇄ Healthy** toggle and a **seed** input (with Replay) let you reshuffle the synthetic noise on
+camera and prove the render is deterministic. A **🧭 Guide** toggle (top bar) outlines every clickable /
+selectable control with numbered step badges and a walkthrough panel, so a reviewer can see exactly how to
+drive the demo.
 
 ---
 
-### What's in this repo
+## Run it
 
-A runnable POC of the console: synthetic 30-day scenario, the live risk engine (Beta-Binomial smoothing + slope projection + per-ESP scoring), and the failover state machine — rendered in the dEWSentinel UI with a Healthy⇄Critical toggle. **Data is simulated;** the engine and visuals are real. Production wiring is documented, not mocked.
+It's a static site with **no build step, no dependencies, no network calls**.
 
-**Roadmap:** **v0 (this)** engine + console on synthetic data → **v1** ingest live MTA webhook + Postmaster/SNDS for one ESP; real alerts → **v2** automated failover execution + standby-pool orchestration.
+```bash
+# just open the file
+open index.html              # macOS
+# or serve the folder
+python3 -m http.server 8000  # then visit http://localhost:8000
+```
 
-*Prepared as a proof-of-concept for discussion. Thresholds reflect public Google/Microsoft sender guidance; figures in the demo are illustrative.*
+Deployable folder = `index.html` + `engine.js` + `render.js` + `fonts.css` (IBM Plex self-hosted as base64,
+so there are zero font/CDN requests at runtime).
+
+---
+
+## Architecture (clean boundary)
+
+The Hi-Fi design export (`product_design/`) was used **only** as a visual reference — this is a fresh
+rebuild, not an injection into the Claude Design `<x-dc>`/`support.js` runtime.
+
+| File | Responsibility |
+|---|---|
+| **`engine.js`** | **Pure logic, zero DOM.** Seeded RNG → synthetic generator → Beta-Binomial smoothing → least-squares slope/projection → per-ESP weighted scoring → lagging "dashboard" proxy → failover state machine → alerts. Exposes one function: `runEngine({scenario, seed, days, today}) → ViewModel`. |
+| **`render.js`** | **DOM only, zero logic.** Reads the `ViewModel` and writes into the `#id` hooks; includes the JS-generated SVG line-chart + sparkline helpers. |
+| **`index.html`** | Static visual clone with all id hooks + a tiny bootstrap that wires the controls (read state → `runEngine` → `render`). |
+
+The two modules meet **only** at the `ViewModel` contract — every displayed number (Gmail score, days-to-cliff,
+warning-gained, chart points) is derived by the engine; nothing is hardcoded. The scenario *shape* is fixed,
+but the numbers fall out of tuned **generator parameters** (smoothing prior `b0`, window `W`, leading-signal
+ramps), not literals.
+
+---
+
+## Acceptance criteria (§10) — verified
+
+All 16 self-check assertions pass for the default load (`scenario: "critical"`, `seed: 42`), confirmed both
+at the engine level (Node) and in headless Chrome against the live deployment:
+
+| Criterion | Result |
+|---|---|
+| Opens as static file, **no console errors, zero network requests** | ✅ (verified headless on `file://` and live HTTPS) |
+| Deterministic by seed (same seed ⇒ identical render) | ✅ |
+| Lead-time: flat green dashboard, declining indigo line, warning band **N ≥ 7** | ✅ N = **8 days** |
+| Gmail: red, score < 40, rate ~0.17–0.25%, "~3–6 days to cliff" | ✅ score **19**, **0.23%**, **~4 days** |
+| Outlook: green, score ≥ 80, stable | ✅ score **96**, stable |
+| Detail: jagged raw spiking past 0.30%, smooth + CI band, 0.10% crossing marker, guide lines | ✅ |
+| Toggle → Healthy: both gauges green, no red alerts, failover Healthy, no cliff projection | ✅ |
+| Numbers in IBM Plex Mono; dark theme, accent `#818cf8` | ✅ |
+| Persistent "simulated data" label | ✅ |
+
+---
+
+## Roadmap
+
+- **v0 (this):** engine + console on synthetic, deterministic data.
+- **v1:** ingest live MTA accounting-webhook telemetry + Google Postmaster/Microsoft SNDS for one ESP; real alerting.
+- **v2:** automated failover execution + standby-pool orchestration.
+
+---
+
+## Deployment note
+
+The site is deployed on Netlify. The current account has production publishing (`--prod` to the apex domain)
+gated, so the link above is a **permanent Netlify deploy permalink** (fully functional). To promote it to the
+clean apex URL `https://dewsentinel-poc-demo.netlify.app` once the account is verified:
+
+```bash
+netlify deploy --prod --dir=dist
+```
+
+To re-deploy from scratch via **Netlify Drop** (no CLI, ~2 min):
+1. Go to https://app.netlify.com/drop
+2. Drag the project folder (or the `dist/` folder containing `index.html`, `engine.js`, `render.js`, `fonts.css`).
+3. Netlify returns a live URL instantly.

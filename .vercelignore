@@ -1,0 +1,8 @@
+# Ship only the runtime static site; exclude source/spec/staging.
+spec
+product_design
+dist
+.netlify
+.git
+INSIGHT_MEMO.md
+README.md
