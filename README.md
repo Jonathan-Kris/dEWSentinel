@@ -39,17 +39,17 @@ drive the demo.
 
 ## Run it
 
-It's a static site with **no build step, no dependencies, no network calls**.
+It's a static site with **no build step, no dependencies, no network calls**. The runtime files live in [`demo/`](./demo).
 
 ```bash
 # just open the file
-open index.html              # macOS
+open demo/index.html          # macOS
 # or serve the folder
-python3 -m http.server 8000  # then visit http://localhost:8000
+cd demo && python3 -m http.server 8000   # then visit http://localhost:8000
 ```
 
-Deployable folder = `index.html` + `engine.js` + `render.js` + `fonts.css` (IBM Plex self-hosted as base64,
-so there are zero font/CDN requests at runtime).
+Deployable folder = [`demo/`](./demo) = `index.html` + `engine.js` + `render.js` + `fonts.css` (IBM Plex
+self-hosted as base64, so there are zero font/CDN requests at runtime).
 
 ---
 
@@ -58,11 +58,11 @@ so there are zero font/CDN requests at runtime).
 The Hi-Fi design export (`product_design/`) was used **only** as a visual reference — this is a fresh
 rebuild, not an injection into the Claude Design `<x-dc>`/`support.js` runtime.
 
-| File | Responsibility |
+| File (in `demo/`) | Responsibility |
 |---|---|
-| **`engine.js`** | **Pure logic, zero DOM.** Seeded RNG → synthetic generator → Beta-Binomial smoothing → least-squares slope/projection → per-ESP weighted scoring → lagging "dashboard" proxy → failover state machine → alerts. Exposes one function: `runEngine({scenario, seed, days, today}) → ViewModel`. |
-| **`render.js`** | **DOM only, zero logic.** Reads the `ViewModel` and writes into the `#id` hooks; includes the JS-generated SVG line-chart + sparkline helpers. |
-| **`index.html`** | Static visual clone with all id hooks + a tiny bootstrap that wires the controls (read state → `runEngine` → `render`). |
+| **`demo/engine.js`** | **Pure logic, zero DOM.** Seeded RNG → synthetic generator → Beta-Binomial smoothing → least-squares slope/projection → per-ESP weighted scoring → lagging "dashboard" proxy → failover state machine → alerts. Exposes one function: `runEngine({scenario, seed, days, today}) → ViewModel`. |
+| **`demo/render.js`** | **DOM only, zero logic.** Reads the `ViewModel` and writes into the `#id` hooks; includes the JS-generated SVG line-chart + sparkline helpers. |
+| **`demo/index.html`** | Static visual clone with all id hooks + a tiny bootstrap that wires the controls (read state → `runEngine` → `render`). |
 
 The two modules meet **only** at the `ViewModel` contract — every displayed number (Gmail score, days-to-cliff,
 warning-gained, chart points) is derived by the engine; nothing is hardcoded. The scenario *shape* is fixed,
@@ -100,33 +100,39 @@ at the engine level (Node) and in headless Chrome against the live deployment:
 
 ## Deployment
 
+The runtime files live in [`demo/`](./demo); both hosts below are configured to serve that subfolder at the site root.
+
 ### Primary — Vercel (Hobby, free)
 
-The clean production URL is **https://dewsentinel.vercel.app** (`.vercelignore` ships only the runtime files).
+Clean production URL: **https://dewsentinel.vercel.app**. `vercel.json` sets `outputDirectory: demo`, so a plain
+deploy from the repo root serves `demo/index.html` at `/`:
 
 ```bash
 vercel --prod --yes --project dewsentinel    # from the repo root
 ```
 
-> **Note:** new free Vercel projects can ship with **Attack Challenge Mode** on, which shows every visitor a
-> *"Vercel Security Checkpoint — verifying your browser"* page. If the URL does that, disable it once:
+> **Note:** this Vercel project has **Attack Challenge Mode** on, so first-time visitors briefly see a
+> *"Vercel Security Checkpoint — verifying your browser"* page before the app loads. To remove that interstitial:
 > `vercel link --yes --project dewsentinel && vercel firewall attack-mode disable`
-> (or Project → Settings → Firewall → turn **Attack Challenge Mode** off). Until then, use the backup below.
+> (or Project → Settings → Firewall → turn **Attack Challenge Mode** off). The backup mirror has no such gate.
 
 ### Backup mirror — GitHub Pages (free)
 
-Always-on fallback, no firewall/challenge in the way:
+Always-on fallback, no challenge: https://jonathan-kris.github.io/dEWSentinel/
 
-- URL: https://jonathan-kris.github.io/dEWSentinel/
-- Source: `main` branch, path `/` — `.nojekyll` serves the files verbatim.
-- Re-deploy = just push to `main`; Pages rebuilds automatically.
+Pages serves the **`gh-pages`** branch (whose root is the contents of `demo/`). To re-publish after changing the
+demo, push the `demo/` subtree:
 
 ```bash
-git add -A && git commit -m "update" && git push origin main
+git push origin main                                   # commit the source as usual
+git subtree push --prefix=demo origin gh-pages         # publish demo/ -> gh-pages (Pages root)
 ```
+
+<sub>Want push-to-main auto-deploy instead? Grant the git credential workflow scope once
+(`gh auth refresh -h github.com -s workflow`), then a GitHub Actions Pages workflow publishing `demo/` can be added.</sub>
 
 ### Other free static hosts (pure static site, so any will do)
 
-- **Cloudflare Pages (free):** `wrangler pages deploy dist`.
-- **Netlify:** `netlify deploy --prod --dir=dist` — note Netlify's free tier meters production deploys
+- **Cloudflare Pages (free):** `wrangler pages deploy demo`.
+- **Netlify:** `netlify deploy --prod --dir=demo` — note Netlify's free tier meters production deploys
   against monthly **credits**; if the team is out of credits, production publishing is disabled until reset.
