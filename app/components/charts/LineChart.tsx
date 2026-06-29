@@ -1,4 +1,4 @@
-/* Data-driven SVG line chart. A faithful React port of the demo's renderLineChart
+/* Data-driven SVG line chart. A faithful React port of the mockup's renderLineChart
  * helper (ENGINE_SPEC §9) — it rebuilds all geometry from data arrays, never from
  * hardcoded mockup coordinates. Used by the hero health chart (Zone A) and the
  * raw-vs-smoothed detail chart (Screen 2). Pure & deterministic. */

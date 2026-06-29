@@ -6,7 +6,7 @@ import { criticalVM } from '@/test/fixtures'
 
 /* Zone E — Domains table + drill-down navigation (Slice 8).
  *
- * Oracle: demo/render.js `renderDomains` + `scoreColor` + `STATE_COLOR`.
+ * Oracle: mockup/render.js `renderDomains` + `scoreColor` + `STATE_COLOR`.
  * The critical ViewModel is the frozen behaviour oracle; we never hardcode the
  * engine's numbers here — we read them off `criticalVM.domains` so the test can
  * never drift from the engine. The focal row (the failing failover domain) is

@@ -57,4 +57,4 @@ A runnable POC of the console: synthetic 30-day scenario, the live risk engine (
 
 **Roadmap:** **v0 (this)** engine + console on synthetic data → **v1** ingest live MTA webhook + Postmaster/SNDS for one ESP; real alerts → **v2** automated failover execution + standby-pool orchestration.
 
-*Prepared as a proof-of-concept for discussion. Thresholds reflect public Google/Microsoft sender guidance; figures in the demo are illustrative.*
+*Prepared as a proof-of-concept for discussion. Thresholds reflect public Google/Microsoft sender guidance; figures in the mockup are illustrative.*

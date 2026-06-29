@@ -2,7 +2,7 @@
 
 *We see the dip before your reply rates do.*
 
-A client-side, **deterministic** port of the vanilla POC (`../demo`) to **Next.js 16 + TypeScript**. It **computes** (not fakes) per-ESP deliverability **health** from synthetic, seeded data and renders it into the Console (Screen 1) and Domain detail (Screen 2).
+A client-side, **deterministic** port of the vanilla POC (`../mockup`) to **Next.js 16 + TypeScript**. It **computes** (not fakes) per-ESP deliverability **health** from synthetic, seeded data and renders it into the Console (Screen 1) and Domain detail (Screen 2).
 
 > **Simulated data.** The engine and visuals are real; the data is synthetic. Shown as a persistent label in the UI footer.
 
@@ -24,7 +24,7 @@ app/
   test/           setup · fixtures (criticalVM / healthyVM)
 ```
 
-- The **engine** is a faithful TS port of `demo/engine.js`, hidden behind `runEngine`. It is tested **only** through the ViewModel — never internals.
+- The **engine** is a faithful TS port of `mockup/engine.js`, hidden behind `runEngine`. It is tested **only** through the ViewModel — never internals.
 - The **UI** has zero business logic: each zone reads its ViewModel slice and renders.
 - **Determinism is a hard requirement:** same `seed` ⇒ identical ViewModel ⇒ identical render. No `Date.now()`/`Math.random()` outside the seeded RNG; no network; no storage.
 

@@ -2,18 +2,18 @@
  *
  * CONTRACT: DomainsTable({ domains, focalDomain, onSelectDomain }).
  * Clicking the focal (interactive) row calls onSelectDomain(domain) → opens
- * Screen 2. See HANDOFF "Zone E". Faithful port of demo/render.js `renderDomains`
+ * Screen 2. See HANDOFF "Zone E". Faithful port of mockup/render.js `renderDomains`
  * (+ `scoreColor` / `STATE_COLOR`): same DOM shape, same colours, all data read
  * from the ViewModel. */
 import type { KeyboardEvent } from 'react'
 import type { DomainRow, Stage } from '@/lib/engine'
 
-/** Health score → colour (demo/render.js `scoreColor`): down = danger. */
+/** Health score → colour (mockup/render.js `scoreColor`): down = danger. */
 function scoreColor(s: number): string {
   return s >= 80 ? '#4ade80' : s >= 60 ? '#fbbf24' : '#f87171'
 }
 
-/** Failover-stage → state-tag colours (demo/render.js `STATE_COLOR`). */
+/** Failover-stage → state-tag colours (mockup/render.js `STATE_COLOR`). */
 const STATE_COLOR: Record<Stage, { fill: string; text: string }> = {
   Healthy: { fill: 'rgba(34,197,94,.13)', text: '#4ade80' },
   Watch: { fill: 'rgba(245,158,11,.13)', text: '#fbbf24' },

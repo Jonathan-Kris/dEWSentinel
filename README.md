@@ -150,4 +150,4 @@ End-to-end acceptance is verified through the real Console in `app/app/acceptanc
 ---
 
 <sub>The original vanilla-JS proof-of-concept (no build step, single static folder) lives in
-[`demo/`](./demo) and remains the conceptual reference for the engine ported to TypeScript in `app/`.</sub>
+[`mockup/`](./mockup) and remains the conceptual reference for the engine ported to TypeScript in `app/`.</sub>

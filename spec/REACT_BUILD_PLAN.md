@@ -1,13 +1,13 @@
 # React / Next.js build plan — dEWSentinel
 
 **Audience:** an AI coding agent picking this up cold, later, with no other context.
-**Goal:** port the working vanilla POC in [`/demo`](../demo) to a React + Next.js app,
+**Goal:** port the working vanilla POC in [`/mockup`](../mockup) to a React + Next.js app,
 **test-first**, preserving the engine's behaviour exactly and the UI's look faithfully.
 
 > Read these first, in order: [`CONTEXT.md`](../CONTEXT.md) (the domain language —
 > **non-negotiable for naming**), [`spec/ENGINE_SPEC.md`](./ENGINE_SPEC.md) (engine +
 > ViewModel + acceptance §10), [`spec/HANDOFF_SPEC.md`](./HANDOFF_SPEC.md) (UI, zones,
-> design tokens). The existing [`/demo`](../demo) is your **behaviour oracle** — when a
+> design tokens). The existing [`/mockup`](../mockup) is your **behaviour oracle** — when a
 > number is ambiguous, the POC's output for `seed 42` is ground truth.
 
 ---
@@ -92,7 +92,7 @@ flowchart TD
     class controls ctrl;
 ```
 
-- **The engine ports almost verbatim.** [`demo/engine.js`](../demo/engine.js) is already
+- **The engine ports almost verbatim.** [`mockup/engine.js`](../mockup/engine.js) is already
   pure and DOM-free. Translate it to TypeScript under `lib/engine/`, give the ViewModel
   real types, and pin its behaviour with tests (Slice 1). This is the highest-leverage,
   most-testable work — do it first.
@@ -146,7 +146,7 @@ owns, the red→green cycles (each bullet = one failing test then minimal code),
 - **Interface:** `runEngine({scenario?, seed?, days?, today?}) → ViewModel` (ENGINE_SPEC
   §5.8, §8). Keep internals (rng, smoothing, slope, scoring, state machine, generator)
   unexported.
-- **Oracle:** port the logic from `demo/engine.js`; lift its §10 self-check assertions as
+- **Oracle:** port the logic from `mockup/engine.js`; lift its §10 self-check assertions as
   your first tests. Reference impls for RNG/smoothing/slope are in ENGINE_SPEC §5.1–5.3 —
   copy them exactly (incl. the normal-approx Beta; do **not** write an exact beta inverse).
 - **Red→green cycles (assert on the ViewModel only):**
@@ -283,6 +283,6 @@ in the README.
 - Domain language & invariants: [`CONTEXT.md`](../CONTEXT.md)
 - Engine maths, ViewModel §8, acceptance §10, non-goals §12: [`spec/ENGINE_SPEC.md`](./ENGINE_SPEC.md)
 - Zones, layout, design tokens, chart notes: [`spec/HANDOFF_SPEC.md`](./HANDOFF_SPEC.md)
-- Behaviour oracle (working code): [`demo/engine.js`](../demo/engine.js), [`demo/render.js`](../demo/render.js)
+- Behaviour oracle (working code): [`mockup/engine.js`](../mockup/engine.js), [`mockup/render.js`](../mockup/render.js)
 - When the spec is ambiguous or you want to deviate: **stop and ask** (HANDOFF "Notes" —
   present 3 options with trade-offs).

@@ -2,12 +2,12 @@
  * the ONE 0–100 health story: tier-colored gauge ring, the smoothed complaint
  * rate plotted against the 0.10% watch / 0.30% cliff scale, and a projection
  * chip + 14-day sparkline. Pure presentation — every value comes from the VM
- * (the engine is the oracle, demo/render.js#renderEspCard the layout source). */
+ * (the engine is the oracle, mockup/render.js#renderEspCard the layout source). */
 import type { EspCard as EspCardVM, Esp, Tier } from '@/lib/engine'
 import { GaugeRing } from '@/components/charts/GaugeRing'
 import { Sparkline } from '@/components/charts/Sparkline'
 
-/** tier → state pill (demo/render.js TIER_TAG). */
+/** tier → state pill (mockup/render.js TIER_TAG). */
 const TIER_TAG: Record<Tier, { label: string; cls: 'red' | 'amber' | 'green' }> = {
   healthy: { label: 'Healthy', cls: 'green' },
   watch: { label: 'Watch', cls: 'amber' },
