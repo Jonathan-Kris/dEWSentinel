@@ -74,7 +74,7 @@ Two earlier iterations were rejected: **(a)** overlaying two lines on one Y axis
 
 - Panel: `border 1px solid #20242f`, `radius 12px`, vertical gradient `#10131b → #0d1016`, `padding 18px 20px`.
 - Header: title "Lead-time view" 15px/600 `#f2f3f7` + ` · Gmail · acme-outreach-03.com` in `#6a7080`. Subtitle "We see the dip before your reply rates do." 12.5px `#8a90a0`. Right: "last 30 days" 12.5px `#6a7080`.
-- **Today's-dashboard strip:** full-width row, `padding 10px 14px`, `border 1px solid #1d2a22`, `radius 9px`, `background rgba(34,197,94,.05)`. Left: uppercase label "TODAY'S DASHBOARD" 10px/600 `#6a7080`; a flat green sparkline (`#34d399`); "Sequencer health score — flat all month, sees nothing wrong" 12px `#8a90a0`; right: mono "98/100" (98 in `#4ade80` 17px/600, /100 in `#6a7080`) and a "✓ all green" pill (`background rgba(34,197,94,.13)`, `#4ade80`, `radius 999px`).
+- **Today's-dashboard strip:** full-width row, `padding 10px 14px`, `border 1px solid #1d2a22`, `radius 9px`, `background rgba(34,197,94,.05)`. Left: uppercase label "TODAY'S DASHBOARD" 10px/600 `#6a7080`; a flat green sparkline (`#34d399`); "Sequencer health score — flat all month, sees nothing wrong" 12px `#8a90a0`; right: mono "96/100" (96 in `#4ade80` 17px/600, /100 in `#6a7080`) and a "✓ all green" pill (`background rgba(34,197,94,.13)`, `#4ade80`, `radius 999px`).
 - **The chart** (rebuild with charting lib):
   - Y axis: Health score, ticks `0 / 50 / 100` (bottom→top), mono 9px `#5a6070`. Rotated axis title "Health score" `#6a7080`.
   - **Zone bands** (full plot width), top→bottom: HEALTHY `rgba(34,197,94,.08)` labeled `#4ade80`; WATCH `rgba(245,158,11,.09)` labeled `#fbbf24`; DANGER `rgba(239,68,68,.11)` labeled `#f87171`. Zone labels 10.5px/600, top-left inside each band.
@@ -83,7 +83,7 @@ Two earlier iterations were rejected: **(a)** overlaying two lines on one Y axis
   - **Warning-gap band**: vertical shaded band in `var(--accent-soft)` from the point Sentinel's health crosses **below** the watch line to "today". Left edge = dashed accent vertical; right edge = dashed `#6a7080` vertical ("today").
   - **Markers**: hollow accent circle where the line crosses **below** the watch line, labeled "▲ Sentinel warned · ~10d ago" (`#a5b4fc`); grey filled circle at "today", labeled "▲ reply rates now dropping" (`#8a90a0`).
   - X axis labels mono 9px `#5a6070`: "30d ago", "today", "+5d".
-- Footer row: legend swatch (accent) + "Sentinel real risk score · 0–100 smoothed · up = danger"; right: a pill "◀ 12 days of warning gained ▶" (`background var(--accent-soft)`, `border 1px solid rgba(129,140,248,.4)`, `#a5b4fc` 12px/600).
+- Footer row: legend swatch (accent) + "Sentinel health score · 0–100 smoothed · down = danger"; right: a pill "◀ ≈ N days of warning gained ▶" (`background var(--accent-soft)`, `border 1px solid rgba(129,140,248,.4)`, `#a5b4fc` 12px/600).
 
 #### Zone B — Per-ESP health cards
 
@@ -144,7 +144,7 @@ Sample data:
 - **Left** — `flex 1.5`, `padding 20px`, right border `1px solid #1b1f29`. Stacks the raw-vs-smoothed chart and the recommended-action card (`gap 18px`).
 - **Right** — `width 380px`, `padding 20px`, `background #0a0c11`. The signal breakdown.
 
-**Header bar:** "← Console" 12.5px `#6a7080`; domain mono 18px/600 `#f2f3f7`; state pill "● Failover" (red, `border 1px solid rgba(239,68,68,.35)`). Spacer. Right: uppercase "Overall risk score" 9.5px `#6a7080` + mono **38/100** (38 in `#f87171` 24px/600).
+**Header bar:** "← Console" 12.5px `#6a7080`; domain mono 18px/600 `#f2f3f7`; state pill "● Failover" (red, `border 1px solid rgba(239,68,68,.35)`). Spacer. Right: uppercase "Overall health score" 9.5px `#6a7080` + mono **38/100** (38 in `#f87171` 24px/600 — a low red gauge = bad).
 
 **Raw vs smoothed chart** (the statistical engine — rebuild with charting lib):
 
@@ -201,7 +201,7 @@ Sample data:
 ## State Management
 
 - `selectedAccount` — current customer (drives all data).
-- `domains[]` — per-domain: name, ESP split, Gmail score, Outlook score, state (`Healthy|Watch|Throttle|Failover|Cooldown`), last event, per-provider smoothed rate + projection, risk time-series, signal breakdown.
+- `domains[]` — per-domain: name, ESP split, Gmail score, Outlook score, state (`Healthy|Watch|Throttle|Failover|Cooldown`), last event, per-provider smoothed rate + projection, health time-series, signal breakdown.
 - `alerts[]` — severity, timestamp, headline, optional action(s), linked domain.
 - `selectedDomain` — drives Screen 2; `null` = Console.
 - `showAlertRail` — boolean (layout toggle).
@@ -249,7 +249,7 @@ Sample data:
 
 Rebuild all four chart types with a real charting library, data-driven (do **not** port SVG):
 
-1. **Hero risk-score chart** — single smooth 0–100 line over time with a projected tail; three colored Y zones (SAFE/WATCH/DANGER); a shaded vertical "warning gap" band between two event markers; glow under the line.
+1. **Hero health-score chart** — single smooth 0–100 line over time that **declines** (down = danger) with a dashed projected tail; three colored Y zones (HEALTHY/WATCH/DANGER, green top → red bottom); a shaded vertical "warning gap" band between two event markers; glow under the line.
 2. **ESP gauge rings** — radial progress arcs (0–100), rounded caps, colored by status.
 3. **Sparklines** — tiny 14-day trend lines in card corners.
 4. **Raw-vs-smoothed chart** — two series (jagged raw + smoothed) on a complaint-% axis, a confidence band around the smoothed series, two dashed threshold lines (0.10% / 0.30%), and a crossing marker.
@@ -272,7 +272,7 @@ If anything in this spec is ambiguous or you're tempted to deviate, STOP and ask
 ## Files
 
 - `Sentinel Console — Hi-fi.dc.html` — **the hi-fi source of truth.** Contains Console (Layout A) + Domain detail, dark theme. Open in a browser to view.
-- `Sentinel Wireframes.dc.html` — lo-fi context: layout explorations A/B/C, calm "all-healthy" variant, and the chart-direction brainstorm (why the final risk-up / stacked-metric model was chosen).
+- `Sentinel Wireframes.dc.html` — lo-fi context: layout explorations A/B/C, calm "all-healthy" variant, and the chart-direction brainstorm (why the final health-line / stacked-metric model was chosen).
 - `product-spec-brief.md` — the original product spec brief.
 - `support.js` — runtime for the HTML prototype format **only**; ignore for implementation.
 

@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dEWSentinel — Deliverability Early-Warning Sentinel</title>
+
+<!-- ===========================================================
+     FONTS — IBM Plex Sans (voice) + IBM Plex Mono (all metrics)
+     Matches the product's self-hosted type system.
+     =========================================================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================================
+   THEME TOKENS — "Sentinel Console" (dark observability)
+   Change these to re-skin the entire deck.
+   =========================================================== */
+:root{
+  --stage-bg:#07080c;                 /* letterbox / outside-stage */
+  --bg:#1a1c22;                       /* app background */
+  --panel:#0c0e14;                    /* cards / panels */
+  --inset:#10131b;                    /* card insets */
+  --rail:#0a0c11;                     /* darkest surface */
+  --line:#20242f;                     /* hairline borders */
+  --line-soft:#161a22;                /* faint grid lines */
+
+  --text:#e7e9f0;                     /* primary text */
+  --text2:#d8dbe3;                    /* secondary text */
+  --muted:#8a90a0;                    /* labels */
+  --muted2:#5a6070;                   /* hints */
+
+  --indigo:#818cf8;                   /* Sentinel intelligence accent */
+  --indigo-lt:#a5b4fc;
+  --green:#22c55e; --green-lt:#4ade80;
+  --amber:#f59e0b; --amber-lt:#fbbf24;
+  --red:#ef4444;   --red-lt:#fca5a5;
+  --gmail:#ea4335; --outlook:#0078d4;
+
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* ===========================================================
+   MANDATORY FIXED-STAGE BASE (viewport-base.css, verbatim)
+   Slides authored at 1920×1080, scaled as one stage.
+   =========================================================== */
+html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--stage-bg,#000)}
+.deck-viewport{position:fixed;inset:0;overflow:hidden;background:var(--stage-bg,#000)}
+.deck-stage{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;transform-origin:0 0;background:var(--slide-bg,#fff)}
+.slide{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;display:block;visibility:hidden;opacity:0;pointer-events:none;background:var(--slide-bg,#fff)}
+.slide.active,.slide.visible{visibility:visible;opacity:1;pointer-events:auto;z-index:1}
+img,video,canvas,svg{max-width:100%;max-height:100%}
+@media print{
+  html,body{width:1920px;height:auto;overflow:visible;background:#fff}
+  .deck-viewport{position:static;overflow:visible;background:#fff}
+  .deck-stage{position:static;width:auto;height:auto;transform:none!important;background:none}
+  .slide{position:relative;display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;width:1920px;height:1080px;break-after:page;page-break-after:always}
+  .slide:last-child{break-after:auto;page-break-after:auto}
+  .deck-controls{display:none!important}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.2s!important}}
+
+/* ===========================================================
+   GLOBAL SLIDE LOOK — dark atmosphere + faint grid texture
+   =========================================================== */
+.slide{
+  --slide-bg:var(--bg);
+  font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--text);
+  background:
+    radial-gradient(1300px 760px at 80% -12%, rgba(129,140,248,.10), transparent 60%),
+    radial-gradient(1000px 640px at -6% 112%, rgba(34,197,94,.045), transparent 55%),
+    var(--bg);
+}
+.mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace}
+.grid-tex{position:absolute;inset:0;opacity:.5;pointer-events:none;
+  background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+  background-size:64px 64px;mask-image:radial-gradient(130% 100% at 50% 30%,#000 35%,transparent 88%);}
+
+/* status colour helpers */
+.c-indigo{color:var(--indigo-lt)} .c-green{color:var(--green-lt)} .c-amber{color:var(--amber-lt)} .c-red{color:var(--red-lt)}
+
+/* ===========================================================
+   SLIDE CHROME — kicker (top-left) + footer (brand + page)
+   Footer is injected by JS on .has-chrome slides.
+   =========================================================== */
+.pad{position:absolute;inset:0;padding:96px 110px 110px}
+/* flow variant: header + body stack and center; overlap-proof for any header wrap */
+.pad.flow{display:flex;flex-direction:column;justify-content:center;gap:48px;padding:90px 110px 124px}
+.head-block{display:flex;flex-direction:column}
+.kicker{display:inline-flex;align-items:center;gap:11px;font-size:15px;letter-spacing:2.6px;
+  text-transform:uppercase;color:var(--indigo-lt);font-weight:600}
+.kicker .num{color:var(--muted2);letter-spacing:1px}
+.kicker .dot{width:8px;height:8px;border-radius:50%;background:var(--indigo);box-shadow:0 0 10px var(--indigo)}
+
+.chrome{position:absolute;left:110px;right:110px;bottom:46px;display:flex;align-items:center;
+  justify-content:space-between;font-size:14px;color:var(--muted2);
+  border-top:1px solid var(--line);padding-top:18px;pointer-events:none}
+.chrome .b{display:flex;align-items:center;gap:11px;color:var(--muted)}
+.chrome .logo{width:22px;height:22px;border-radius:6px;background:var(--indigo);display:grid;place-items:center;box-shadow:0 0 14px rgba(129,140,248,.3)}
+.chrome .logo i{width:7px;height:7px;border-radius:50%;background:var(--panel)}
+.chrome .b b{color:var(--text2);font-weight:600;letter-spacing:.2px}
+
+/* generic primitives */
+.eyebrow{font-size:16px;letter-spacing:2.4px;text-transform:uppercase;color:var(--muted);font-weight:600}
+h2.head{font-size:64px;line-height:1.05;font-weight:700;letter-spacing:-1.3px;margin-top:22px;max-width:22ch}
+.lead{font-size:25px;line-height:1.5;color:var(--text2);max-width:46ch}
+.pill{display:inline-flex;align-items:center;gap:9px;padding:8px 15px;border-radius:999px;font-size:14px;font-weight:600;border:1px solid;letter-spacing:.2px}
+.pill.green{color:var(--green-lt);border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.10)}
+.pill.amber{color:var(--amber-lt);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.10)}
+.pill.red{color:var(--red-lt);border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.10)}
+.pill.indigo{color:var(--indigo-lt);border-color:rgba(129,140,248,.4);background:rgba(129,140,248,.10)}
+.pill .bd{width:9px;height:9px;border-radius:50%}
+.bd.r{background:var(--red);box-shadow:0 0 9px rgba(239,68,68,.7);animation:blink 1.6s ease-in-out infinite}
+.bd.g{background:var(--green);box-shadow:0 0 9px rgba(34,197,94,.7)}
+
+/* card */
+.card{background:linear-gradient(180deg,var(--panel),#0a0c12);border:1px solid var(--line);border-radius:16px}
+
+/* ===========================================================
+   TITLE SLIDE (1)
+   =========================================================== */
+.title-top{position:absolute;top:0;left:0;right:0;height:84px;display:flex;align-items:center;gap:18px;
+  padding:0 96px;border-bottom:1px solid var(--line);background:rgba(10,12,17,.5)}
+.brand{display:flex;align-items:center;gap:14px}
+.brand .logo{width:32px;height:32px;border-radius:8px;background:var(--indigo);display:grid;place-items:center;box-shadow:0 0 22px rgba(129,140,248,.35)}
+.brand .logo i{width:11px;height:11px;border-radius:50%;background:var(--panel)}
+.brand .wm{font-size:26px;font-weight:700;letter-spacing:.2px;color:#f2f3f7}
+.title-top .sp{flex:1}
+.title-grid{position:absolute;top:84px;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr 800px}
+.title-left{padding:84px 50px 70px 96px;display:flex;flex-direction:column}
+.title-left h1{font-size:80px;line-height:1.02;font-weight:700;letter-spacing:-2px;margin:28px 0 0;max-width:14ch}
+.title-left h1 .em{color:var(--indigo-lt)}
+.title-left .sub{font-size:23px;line-height:1.5;color:var(--text2);margin-top:30px;max-width:36ch}
+.title-meta{margin-top:auto;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.title-meta .url{font-size:16px;color:var(--muted)} .title-meta .url b{color:var(--indigo-lt);font-weight:600}
+.title-right{padding:70px 96px 70px 24px;display:flex;align-items:center}
+
+/* lead-time chart card (shared by slide 1 + 5) */
+.lt-card{width:100%;padding:26px 28px 22px}
+.lt-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+.lt-t{font-size:16px;font-weight:600;color:var(--text2)} .lt-t span{color:var(--muted)}
+.lt-score{font-size:32px;font-weight:600} .lt-score small{font-size:16px;color:var(--muted)}
+.lt-s{font-size:14px;color:var(--muted);margin-bottom:14px}
+.warnband{margin-top:14px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:600;
+  color:var(--indigo-lt);border:1px dashed rgba(129,140,248,.4);border-radius:9px;padding:10px}
+.lt-legend{display:flex;gap:22px;margin-top:14px;font-size:13px;color:var(--muted)}
+.lt-legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:7px}
+/* new single-line lead-time card (dashboard banner + rising risk line) */
+.lt-days{color:var(--muted)}
+.dash-banner{display:flex;align-items:center;gap:14px;margin:12px 0 14px;padding:11px 16px;
+  border:1px solid rgba(34,197,94,.28);background:rgba(34,197,94,.06);border-radius:11px}
+.db-label{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.db-spark{flex:none;opacity:.95}
+.db-text{flex:1;font-size:14px;color:var(--text2);line-height:1.3}
+.db-score{font-size:22px;font-weight:600;color:var(--green-lt);white-space:nowrap} .db-score small{font-size:13px;color:var(--muted);font-weight:500}
+.db-pill{font-size:12px;padding:5px 11px;white-space:nowrap}
+.lt-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:12px}
+.lt-legend2{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.ll-line{display:inline-block;width:26px;height:4px;border-radius:2px;background:var(--indigo-lt);flex:none}
+.warn-pill{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--indigo-lt);
+  border:1px solid rgba(129,140,248,.45);background:rgba(129,140,248,.12);border-radius:999px;padding:9px 16px;white-space:nowrap}
+.payoff-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:50px;align-items:center}
+
+/* ===========================================================
+   PROBLEM SLIDE (2) — silent decay
+   =========================================================== */
+.split2{position:absolute;inset:0;display:grid;grid-template-columns:1.05fr 1fr}
+.split2 .l{padding:118px 60px 110px 110px;display:flex;flex-direction:column;justify-content:center}
+.split2 .r{padding:96px 110px 96px 40px;display:flex;align-items:center}
+.decay-card{width:100%;padding:30px 30px 26px}
+.decay-card .dh{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.decay-card .dh .t{font-size:16px;color:var(--text2);font-weight:600}
+.decay-card .cap{font-size:13.5px;color:var(--muted);margin-top:14px;text-align:center}
+
+/* ===========================================================
+   3-FACT TRAP SLIDE (3)
+   =========================================================== */
+.facts{position:absolute;left:110px;right:110px;top:300px;display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.fact{padding:34px 32px 32px;position:relative;overflow:hidden}
+.fact .ix{font-size:15px;letter-spacing:1px;color:var(--muted2)}
+.fact .big{font-size:46px;font-weight:700;letter-spacing:-1px;margin:14px 0 4px}
+.fact .ft{font-size:21px;font-weight:600;color:var(--text);margin-bottom:12px}
+.fact p{font-size:17px;line-height:1.5;color:var(--muted)}
+.fact .bar{position:absolute;left:0;top:0;width:100%;height:4px}
+
+/* ===========================================================
+   INSIGHT / REFRAME SLIDE (4)
+   =========================================================== */
+.reframe{position:absolute;left:110px;right:110px;top:300px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.vs{display:flex;flex-direction:column;gap:20px}
+.vsrow{display:flex;align-items:center;gap:20px;padding:22px 24px;border-radius:14px;border:1px solid var(--line);background:var(--inset)}
+.vsrow .tag{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:1.5px;padding:5px 10px;border-radius:6px;white-space:nowrap}
+.vsrow.lag .tag{color:var(--muted);border:1px solid var(--line);background:var(--rail)}
+.vsrow.lead .tag{color:var(--indigo-lt);border:1px solid rgba(129,140,248,.45);background:rgba(129,140,248,.12)}
+.vsrow .txt b{display:block;font-size:19px;color:var(--text);font-weight:600;margin-bottom:3px}
+.vsrow .txt span{font-size:15px;color:var(--muted)}
+.reframe .big-statement{font-size:46px;line-height:1.18;font-weight:700;letter-spacing:-1px}
+.reframe .big-statement .em{color:var(--indigo-lt)}
+.reframe .big-statement .strike{color:var(--muted2);text-decoration:line-through;text-decoration-color:var(--red)}
+
+/* ===========================================================
+   RISK SCORE SLIDE (6) — per-ESP gauges
+   =========================================================== */
+.esp-wrap{display:grid;grid-template-columns:1fr 1fr 1.1fr;gap:28px;align-items:stretch}
+/* risk-engine slide: raw-vs-smoothed chart (left) + per-provider gauges (right) */
+.engine-grid{display:grid;grid-template-columns:1.42fr 1fr;gap:30px;align-items:start}
+.esp-col{display:flex;flex-direction:column;gap:16px}
+.esp-col-label{font-size:13px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.esp-col .esp{padding:20px 26px}
+.rs-legend i{opacity:1}
+.esp{padding:28px 30px;display:flex;flex-direction:column}
+.esp .eh{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.esp .name{display:flex;align-items:center;gap:11px;font-size:19px;font-weight:600}
+.esp .chip{width:13px;height:13px;border-radius:4px}
+.esp .gauge-row{display:flex;align-items:center;gap:24px}
+.esp .metric{flex:1}
+.esp .mlabel{font-size:14px;color:var(--muted);line-height:1.4}
+.esp .mrate{font-size:38px;font-weight:600;margin-top:8px}
+.esp .proj{margin-top:16px;font-size:15px;font-weight:600;display:inline-flex;align-items:center;gap:8px}
+.payoff{padding:30px 32px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(160deg,rgba(129,140,248,.10),var(--panel))}
+.payoff .q{font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--indigo-lt);font-weight:600;margin-bottom:16px}
+.payoff .s{font-size:27px;line-height:1.35;font-weight:600;color:var(--text)}
+.payoff .s .hl{color:var(--amber-lt)} .payoff .s .hl2{color:var(--red-lt)}
+.payoff .tail{font-size:16px;color:var(--muted);margin-top:18px}
+.payoff .tail b{color:var(--indigo-lt)}
+
+/* ===========================================================
+   DEFENSIBILITY TABLE SLIDE (7)
+   =========================================================== */
+.tbl-wrap{display:grid;grid-template-columns:1.35fr 1fr;gap:54px;align-items:start}
+.tbl{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.tbl th{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:16px 22px;background:var(--rail);border-bottom:1px solid var(--line)}
+.tbl td{padding:18px 22px;font-size:17px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .lyr{font-family:'IBM Plex Mono',monospace;font-size:12.5px;font-weight:600;letter-spacing:.5px;padding:4px 10px;border-radius:6px;display:inline-block}
+.tbl .lyr.lead{color:var(--indigo-lt);background:rgba(129,140,248,.14);border:1px solid rgba(129,140,248,.4)}
+.tbl .lyr.lag{color:var(--muted);background:var(--rail);border:1px solid var(--line)}
+.tbl tr.leadrow td{background:rgba(129,140,248,.05)}
+.tbl .src{color:var(--muted);font-size:15px}
+.moat{padding:30px 32px}
+.moat .mt{font-size:21px;font-weight:700;margin-bottom:14px;letter-spacing:-.3px}
+.moat p{font-size:18px;line-height:1.55;color:var(--text2)}
+.moat p b{color:var(--indigo-lt)}
+.moat .quietline{margin-top:20px;padding-top:18px;border-top:1px solid var(--line);font-size:15.5px;color:var(--muted)}
+
+/* ===========================================================
+   PLAYBOOK / STATE-MACHINE SLIDE (8)
+   =========================================================== */
+.machine{display:flex;align-items:stretch;gap:0}
+.stg{flex:1;border:1px solid var(--line);background:var(--inset);border-radius:14px;padding:24px 18px 22px;text-align:center;position:relative}
+.stg .sn{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted2);letter-spacing:1px}
+.stg .sname{font-size:22px;font-weight:700;margin:8px 0 6px;letter-spacing:-.3px}
+.stg .sd{font-size:13.5px;color:var(--muted);line-height:1.4}
+.stg.green{border-color:rgba(34,197,94,.45)} .stg.green .sname{color:var(--green-lt)}
+.stg.amber{border-color:rgba(245,158,11,.45)} .stg.amber .sname{color:var(--amber-lt)}
+.stg.red{border-color:rgba(239,68,68,.6);background:rgba(239,68,68,.10);box-shadow:0 0 0 0 rgba(239,68,68,.4);animation:pulse 2.4s ease-in-out infinite} .stg.red .sname{color:var(--red-lt)}
+.stg.indigo{border-color:rgba(129,140,248,.45)} .stg.indigo .sname{color:var(--indigo-lt)}
+.arrow{display:flex;align-items:center;justify-content:center;width:46px;color:var(--muted2);font-size:24px;flex:none}
+.standby{display:flex;align-items:center;gap:16px;
+  padding:22px 28px;border:1px dashed var(--line);border-radius:14px;background:var(--rail)}
+.standby .dots{display:flex;gap:10px}
+.standby .dots i{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 10px rgba(34,197,94,.6)}
+.standby .st{font-size:18px;color:var(--text2)} .standby .st b{color:var(--green-lt);font-weight:600}
+.standby .right{margin-left:auto;font-size:15px;color:var(--muted);max-width:42ch;text-align:right}
+
+/* ===========================================================
+   POC SLIDE (9)
+   =========================================================== */
+.poc-grid{position:absolute;left:110px;right:110px;top:300px;display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.poc{padding:30px 28px}
+.poc .ic{width:46px;height:46px;border-radius:11px;display:grid;place-items:center;font-size:22px;margin-bottom:18px;border:1px solid var(--line);background:var(--inset)}
+.poc h3{font-size:21px;font-weight:600;margin-bottom:10px}
+.poc p{font-size:16px;line-height:1.5;color:var(--muted)}
+.realbar{position:absolute;left:110px;right:110px;top:640px;display:flex;gap:30px;align-items:center;
+  padding:22px 30px;border-radius:14px;border:1px solid var(--line);background:rgba(129,140,248,.06)}
+.realbar .seg{font-size:17px;color:var(--text2)} .realbar .seg b{font-weight:600}
+.realbar .seg.sim b{color:var(--amber-lt)} .realbar .seg.real b{color:var(--green-lt)}
+.realbar .div{width:1px;height:34px;background:var(--line)}
+
+/* ===========================================================
+   ROADMAP SLIDE (10)
+   =========================================================== */
+.road{position:absolute;left:110px;right:110px;top:320px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;align-items:stretch}
+.rstep{padding:0 26px;position:relative}
+.rstep:not(:last-child)::after{content:"";position:absolute;right:0;top:34px;bottom:34px;width:1px;background:var(--line)}
+.rstep .ver{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.rstep .vtag{font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;padding:6px 13px;border-radius:8px;border:1px solid var(--line);color:var(--muted)}
+.rstep.now .vtag{color:var(--indigo-lt);border-color:rgba(129,140,248,.5);background:rgba(129,140,248,.12)}
+.rstep .here{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--indigo-lt);font-weight:600}
+.rstep h3{font-size:23px;font-weight:600;margin-bottom:14px;letter-spacing:-.3px}
+.rstep ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.rstep li{font-size:16.5px;line-height:1.45;color:var(--muted);padding-left:22px;position:relative}
+.rstep.now li{color:var(--text2)}
+.rstep li::before{content:"";position:absolute;left:0;top:9px;width:8px;height:8px;border-radius:50%;background:var(--muted2)}
+.rstep.now li::before{background:var(--indigo)}
+
+/* ===========================================================
+   CLOSING / CTA SLIDE (11)
+   =========================================================== */
+.cta{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 120px}
+.cta .brand{margin-bottom:40px}
+.cta h1{font-size:78px;line-height:1.05;font-weight:700;letter-spacing:-2px;max-width:18ch}
+.cta h1 .em{color:var(--indigo-lt)}
+.cta .sub{font-size:24px;color:var(--text2);margin-top:28px;max-width:44ch}
+.cta .urlbox{margin-top:46px;display:inline-flex;align-items:center;gap:16px;padding:20px 34px;border-radius:14px;
+  border:1px solid rgba(129,140,248,.45);background:rgba(129,140,248,.10);box-shadow:0 0 40px rgba(129,140,248,.15)}
+.cta .urlbox .lbl{font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.cta .urlbox .u{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;color:var(--indigo-lt)}
+.cta .foot{position:absolute;bottom:54px;font-size:14px;color:var(--muted2)}
+
+/* ===========================================================
+   ANIMATION — staggered reveal on active slide
+   =========================================================== */
+.reveal{opacity:0;transform:translateY(28px);
+  transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.slide.visible .reveal{opacity:1;transform:none}
+.slide.visible .reveal.r1{transition-delay:.08s}
+.slide.visible .reveal.r2{transition-delay:.2s}
+.slide.visible .reveal.r3{transition-delay:.32s}
+.slide.visible .reveal.r4{transition-delay:.44s}
+.slide.visible .reveal.r5{transition-delay:.56s}
+.slide.visible .reveal.r6{transition-delay:.68s}
+.slide.visible .reveal.r7{transition-delay:.8s}
+.slide.visible .reveal.r8{transition-delay:.92s}
+
+/* chart line draw (only on active slide) */
+.draw{stroke-dasharray:1100;stroke-dashoffset:1100}
+.slide.visible .draw{animation:draw 1.7s var(--ease) .5s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+/* gauge ring sweep */
+.ring-fg{transition:stroke-dashoffset 1.3s var(--ease) .4s}
+
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.45)}50%{box-shadow:0 0 0 10px rgba(239,68,68,0)}}
+
+/* ===========================================================
+   DECK CHROME OUTSIDE STAGE — progress bar + counter + edit
+   =========================================================== */
+.deck-progress{position:fixed;left:0;top:0;height:3px;background:var(--indigo);z-index:1000;width:0;
+  box-shadow:0 0 12px rgba(129,140,248,.6);transition:width .4s var(--ease)}
+.deck-counter{position:fixed;right:22px;bottom:18px;z-index:1000;font-family:'IBM Plex Mono',monospace;
+  font-size:13px;color:var(--muted);background:rgba(12,14,20,.7);border:1px solid var(--line);
+  padding:6px 12px;border-radius:8px;backdrop-filter:blur(6px)}
+.deck-hint{position:fixed;left:22px;bottom:18px;z-index:1000;font-family:'IBM Plex Mono',monospace;
+  font-size:12px;color:var(--muted2);background:rgba(12,14,20,.6);border:1px solid var(--line);
+  padding:6px 11px;border-radius:8px;backdrop-filter:blur(6px);transition:opacity .5s}
+
+/* inline editing affordance */
+.edit-hotzone{position:fixed;top:0;left:0;width:80px;height:80px;z-index:10000;cursor:pointer}
+.edit-toggle{position:fixed;top:16px;left:16px;z-index:10001;width:42px;height:42px;border-radius:10px;
+  border:1px solid var(--line);background:rgba(12,14,20,.85);color:var(--text2);font-size:18px;cursor:pointer;
+  opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(6px)}
+.edit-toggle.show,.edit-toggle.active{opacity:1;pointer-events:auto}
+.edit-toggle.active{border-color:var(--indigo);color:var(--indigo-lt);box-shadow:0 0 16px rgba(129,140,248,.3)}
+body.editing [contenteditable]{outline:1px dashed rgba(129,140,248,.5);outline-offset:4px;border-radius:3px}
+body.editing [contenteditable]:focus{outline:1.5px solid var(--indigo);background:rgba(129,140,248,.07)}
+.edit-banner{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:10001;display:none;
+  align-items:center;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--text2);
+  background:rgba(12,14,20,.9);border:1px solid var(--indigo);padding:9px 16px;border-radius:10px}
+body.editing .edit-banner{display:flex}
+.edit-banner b{color:var(--indigo-lt)}
+.edit-banner button{font-family:inherit;font-size:12px;color:var(--text);background:var(--indigo);border:none;
+  padding:6px 12px;border-radius:7px;cursor:pointer;font-weight:600}
+</style>
+</head>
+<body>
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage">
+
+  <!-- ===================================================== -->
+  <!-- SLIDE 1 — TITLE -->
+  <!-- ===================================================== -->
+  <section class="slide title-slide active">
+    <div class="grid-tex"></div>
+    <div class="title-top reveal r1">
+      <div class="brand"><span class="logo"><i></i></span><span class="wm">dEWSentinel</span></div>
+      <div class="sp"></div>
+      <div class="acct mono" style="font-size:15px;color:var(--muted)">Acme Agency — 84 domains</div>
+      <div class="mono" style="font-size:13px;color:var(--muted2);margin-left:24px">proof of concept · 2026</div>
+    </div>
+
+    <div class="title-grid">
+      <div class="title-left">
+        <span class="kicker reveal r2"><span class="dot"></span>Deliverability Early-Warning Sentinel</span>
+        <h1 class="reveal r3">We see the dip <span class="em">before</span> your reply rates do.</h1>
+        <p class="sub reveal r4">A console that reads first-party sending telemetry, scores reputation risk per inbox provider, and trips a failover before the complaint-rate cliff.</p>
+        <div class="title-meta reveal r6">
+          <span class="pill red"><span class="bd r"></span>2 domains critical</span>
+          <span class="url mono">live demo · <b>dewsentinel.vercel.app</b></span>
+        </div>
+      </div>
+
+      <div class="title-right reveal r5">
+        <div class="card lt-card">
+          <div class="lt-h">
+            <div class="lt-t">Lead-time view <span>· Gmail · acme-outreach-03.com</span></div>
+            <div class="lt-days mono" style="font-size:14px">last 30 days</div>
+          </div>
+          <div class="dash-banner">
+            <span class="db-label mono">Today's dashboard</span>
+            <svg class="db-spark" width="104" height="22" viewBox="0 0 130 26" preserveAspectRatio="none" aria-hidden="true">
+              <polyline points="0,16 11,7 22,19 33,9 44,15 55,5 66,18 77,8 88,16 99,6 110,17 121,11 130,13" fill="none" stroke="#4ade80" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+            </svg>
+            <span class="db-text">Sequencer health score — sees nothing wrong</span>
+            <span class="db-score mono">96<small>/100</small></span>
+            <span class="pill green db-pill">✓ all green</span>
+          </div>
+          <svg class="lt-chart-svg" viewBox="0 0 740 256" width="100%" preserveAspectRatio="xMidYMid meet" aria-label="Sentinel health score, last 30 days with 5-day projection"><rect x="76" y="16" width="634" height="37.599999999999994" fill="rgba(34,197,94,.08)"></rect><rect x="76" y="53.599999999999994" width="634" height="75.20000000000002" fill="rgba(245,158,11,.09)"></rect><rect x="76" y="128.8" width="634" height="75.19999999999999" fill="rgba(239,68,68,.11)"></rect><rect x="430.29411764705884" y="16" width="186.4705882352941" height="188" fill="rgba(129,140,248,.14)"></rect><text x="84" y="34.8" font-size="10.5" font-weight="600" fill="#4ade80" font-family="'IBM Plex Sans'" text-anchor="start" letter-spacing="0">HEALTHY</text><text x="84" y="91.2" font-size="10.5" font-weight="600" fill="#fbbf24" font-family="'IBM Plex Sans'" text-anchor="start" letter-spacing="0">WATCH</text><text x="84" y="166.4" font-size="10.5" font-weight="600" fill="#f87171" font-family="'IBM Plex Sans'" text-anchor="start" letter-spacing="0">DANGER</text><text x="523.5294117647059" y="21.640000000000004" font-size="10" font-weight="600" fill="#a5b4fc" font-family="'IBM Plex Sans'" text-anchor="middle" letter-spacing="0">≈ 10 days of warning gained</text><line x1="76" y1="128.8" x2="710" y2="128.8" stroke="#f87171" stroke-width="1.2" stroke-dasharray="6 4" opacity="0.6"></line><text x="710" y="124.80000000000001" font-size="9" text-anchor="end" fill="#f87171" font-family="'IBM Plex Mono'">cliff</text><line x1="76" y1="53.599999999999994" x2="710" y2="53.599999999999994" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="6 4" opacity="0.6"></line><text x="710" y="49.599999999999994" font-size="9" text-anchor="end" fill="#fbbf24" font-family="'IBM Plex Mono'">watch</text><line x1="616.7647058823529" y1="16" x2="616.7647058823529" y2="204" stroke="#6a7080" stroke-dasharray="3 3" opacity="0.65"></line><line x1="430.29411764705884" y1="16" x2="430.29411764705884" y2="204" stroke="#818cf8" stroke-dasharray="3 3" opacity="0.55"></line><line x1="76" y1="16" x2="76" y2="204" stroke="#262b37" stroke-width="1"></line><line x1="76" y1="204" x2="710" y2="204" stroke="#262b37" stroke-width="1"></line><text x="68" y="19" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">100</text><text x="68" y="113" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">50</text><text x="68" y="207" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0</text><text x="76" y="220" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="start">30d ago</text><text x="616.7647058823529" y="220" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="middle">today</text><text x="710" y="220" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="end">+5d</text><text x="40" y="110" font-size="9.5" fill="#6a7080" font-weight="600" font-family="'IBM Plex Sans'" text-anchor="middle" transform="rotate(-90 40 110)">Health score</text><polyline points="76,21.640000000000004 94.64705882352942,21.640000000000004 113.29411764705883,19.760000000000005 131.94117647058823,21.640000000000004 150.58823529411765,19.760000000000005 169.23529411764707,19.760000000000005 187.88235294117646,23.520000000000007 206.52941176470588,27.28000000000001 225.1764705882353,27.28000000000001 243.8235294117647,29.15999999999999 262.47058823529414,36.67999999999999 281.11764705882354,38.56 299.7647058823529,38.56 318.4117647058823,46.080000000000005 337.05882352941177,47.96000000000001 355.70588235294116,46.080000000000005 374.3529411764706,44.2 393,47.96000000000001 411.6470588235294,49.84000000000001 430.29411764705884,57.35999999999999 448.94117647058823,59.239999999999995 467.5882352941177,70.52000000000001 486.2352941176471,79.91999999999999 504.8823529411765,85.56 523.5294117647059,123.16000000000001 542.1764705882354,145.72 560.8235294117646,147.6 579.4705882352941,149.48 598.1176470588235,138.2 616.7647058823529,153.24" fill="none" stroke="#818cf8" stroke-width="7" opacity="0.16"></polyline><polyline points="76,21.640000000000004 94.64705882352942,21.640000000000004 113.29411764705883,19.760000000000005 131.94117647058823,21.640000000000004 150.58823529411765,19.760000000000005 169.23529411764707,19.760000000000005 187.88235294117646,23.520000000000007 206.52941176470588,27.28000000000001 225.1764705882353,27.28000000000001 243.8235294117647,29.15999999999999 262.47058823529414,36.67999999999999 281.11764705882354,38.56 299.7647058823529,38.56 318.4117647058823,46.080000000000005 337.05882352941177,47.96000000000001 355.70588235294116,46.080000000000005 374.3529411764706,44.2 393,47.96000000000001 411.6470588235294,49.84000000000001 430.29411764705884,57.35999999999999 448.94117647058823,59.239999999999995 467.5882352941177,70.52000000000001 486.2352941176471,79.91999999999999 504.8823529411765,85.56 523.5294117647059,123.16000000000001 542.1764705882354,145.72 560.8235294117646,147.6 579.4705882352941,149.48 598.1176470588235,138.2 616.7647058823529,153.24" fill="none" stroke="#818cf8" stroke-width="3"></polyline><polyline points="616.7647058823529,153.24 635.4117647058823,164.52 654.0588235294117,175.79999999999998 672.7058823529412,187.08 691.3529411764706,198.35999999999999 710,204" fill="none" stroke="#818cf8" stroke-width="2" opacity="0.55" stroke-dasharray="2 4"></polyline><circle cx="430.29411764705884" cy="57.35999999999999" r="6" fill="#0c0e14" stroke="#818cf8" stroke-width="2.5"></circle><text x="430.29411764705884" y="236" font-size="10" font-weight="600" fill="#a5b4fc" text-anchor="middle" font-family="'IBM Plex Sans'">▲ Sentinel warned · 10d ago</text><circle cx="616.7647058823529" cy="153.24" r="5" fill="#8a90a0" stroke="#8a90a0" stroke-width="2.5"></circle><text x="616.7647058823529" y="236" font-size="10" font-weight="600" fill="#8a90a0" text-anchor="middle" font-family="'IBM Plex Sans'">▲ reply rates now dropping</text></svg>
+          <div class="lt-foot">
+            <div class="lt-legend2"><span class="ll-line"></span>Sentinel health score · down = danger</div>
+            <div class="warn-pill mono">◀ ≈ 10 days of warning gained ▶</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- SLIDE 2 — THE PROBLEM -->
+  <!-- ===================================================== -->
+  <section class="slide has-chrome">
+    <div class="grid-tex"></div>
+    <div class="split2">
+      <div class="l">
+        <span class="kicker reveal r1"><span class="num">01 —</span> The problem</span>
+        <h2 class="head reveal r2">It looks healthy for months.<br>Then it collapses <span class="c-red">"overnight."</span></h2>
+        <p class="lead reveal r3" style="margin-top:26px">A sending domain reads green for 2–3 months, then deliverability craters. It wasn't overnight — reputation eroded the whole time, invisibly.</p>
+        <p class="lead reveal r4" style="margin-top:20px;color:var(--muted)">The sequencer dashboard stays green because it reports a <b style="color:var(--text2);font-weight:600">lagging</b> warmup score — fine right up until it isn't.</p>
+      </div>
+      <div class="r reveal r5">
+        <div class="card decay-card">
+          <div class="dh"><span class="t">Reputation vs. what the dashboard shows</span><span class="pill green" style="font-size:12px;padding:5px 11px"><span class="bd g"></span>"all green"</span></div>
+          <svg viewBox="0 0 600 320" width="100%" preserveAspectRatio="xMidYMid meet" aria-label="Silent decay chart">
+            <!-- subtle gridlines -->
+            <g stroke="#161a22" stroke-width="1">
+              <line x1="0" y1="80" x2="600" y2="80"/><line x1="0" y1="160" x2="600" y2="160"/><line x1="0" y1="240" x2="600" y2="240"/>
+            </g>
+            <!-- dashboard score: flat high then cliff -->
+            <polyline class="draw" points="0,60 150,58 300,60 430,57 500,62 540,150 575,250 600,285" fill="none" stroke="#4ade80" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- true reputation: slowly eroding the whole time -->
+            <polyline class="draw" points="0,66 120,88 240,120 360,160 460,210 540,255 600,285" fill="none" stroke="#fca5a5" stroke-width="3.2" stroke-dasharray="2 0" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- "the collapse" marker -->
+            <line x1="510" y1="0" x2="510" y2="320" stroke="rgba(239,68,68,.4)" stroke-width="1.3" stroke-dasharray="5 5"/>
+            <text x="518" y="30" fill="#fca5a5" font-size="13" font-family="IBM Plex Mono">"overnight" collapse</text>
+            <text x="14" y="50" fill="#4ade80" font-size="12.5" font-family="IBM Plex Mono">dashboard score</text>
+            <text x="14" y="312" fill="#fca5a5" font-size="12.5" font-family="IBM Plex Mono">true reputation (eroding)</text>
+          </svg>
+          <div class="cap">Decay is silent and continuous. The red line is the truth; the green line is all anyone sees.</div>
+        </div>
+      </div>
+    </div>
+    <!-- chrome injected by JS -->
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- SLIDE 3 — THE STRUCTURAL TRAP (3 facts) -->
+  <!-- ===================================================== -->
+  <section class="slide has-chrome">
+    <div class="grid-tex"></div>
+    <div class="pad">
+      <span class="kicker reveal r1"><span class="num">02 —</span> Why it's a structural trap</span>
+      <h2 class="head reveal r2" style="font-size:58px">Three facts make late detection inevitable.</h2>
+    </div>
+    <div class="facts">
+      <div class="card fact reveal r3">
+        <div class="bar" style="background:linear-gradient(90deg,var(--red),transparent)"></div>
+        <div class="ix mono">01 · The cliff is tiny</div>
+        <div class="big c-red mono">0.30%</div>
+        <div class="ft">~3 complaints per 1,000</div>
+        <p>Google wants bulk senders under 0.10% spam complaints and never at 0.30%. At cold-email volume, a handful of clicks crosses it.</p>
+      </div>
+      <div class="card fact reveal r4">
+        <div class="bar" style="background:linear-gradient(90deg,var(--amber),transparent)"></div>
+        <div class="ix mono">02 · The metric hides itself</div>
+        <div class="big c-amber mono">24–48h</div>
+        <div class="ft">Lagging &amp; self-concealing</div>
+        <p>Postmaster updates late, and counts only inbox-delivered mail. Once filtering starts, complainers never see it — the reported rate can <i>fall</i> as reputation craters.</p>
+      </div>
+      <div class="card fact reveal r5">
+        <div class="bar" style="background:linear-gradient(90deg,var(--indigo),transparent)"></div>
+        <div class="ix mono">03 · The cost is asymmetric</div>
+        <div class="big c-indigo mono">days → weeks</div>
+        <div class="ft">Fast to break, slow to fix</div>
+        <p>Damage lands in days; recovery takes 4–8 weeks (Gmail wants 7 straight clean days). A miss costs weeks — a false alarm costs a day.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- SLIDE 4 — THE INSIGHT / REFRAME -->
+  <!-- ===================================================== -->
+  <section class="slide has-chrome">
+    <div class="grid-tex"></div>
+    <div class="pad">
+      <span class="kicker reveal r1"><span class="num">03 —</span> The insight</span>
+      <h2 class="head reveal r2" style="font-size:58px">Stop watching the complaint rate.</h2>
+    </div>
+    <div class="reframe">
+      <div class="reveal r3">
+        <div class="big-statement">Watch the signals that move <span class="em">before</span> it — and treat the call as <span class="em">risk management</span>, not reporting.</div>
+        <p class="lead" style="margin-top:26px;font-size:20px;color:var(--muted)">The complaint rate is the last thing to break. By the time it spikes, the domain is already gone.</p>
+      </div>
+      <div class="vs reveal r4">
+        <div class="vsrow lag">
+          <span class="tag">LAGGING</span>
+          <div class="txt"><b>Complaint rate · placement score</b><span>What everyone watches — confirms the damage after the fact.</span></div>
+        </div>
+        <div class="vsrow lead">
+          <span class="tag">LEADING</span>
+          <div class="txt"><b>4xx deferrals &amp; throttle codes at send</b><span>The SMTP conversation moves first — before any complaint posts.</span></div>
+        </div>
+        <div class="vsrow lead">
+          <span class="tag">LEADING</span>
+          <div class="txt"><b>Per-ESP smoothed rate + slope-to-cliff</b><span>Gmail and Outlook decay independently — score each, project each.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- SLIDE 5 — LEAD-TIME VIEW (hero chart, explained) -->
+  <!-- ===================================================== -->
+  <section class="slide has-chrome">
+    <div class="grid-tex"></div>
+    <div class="pad flow">
+      <div class="head-block">
+        <span class="kicker reveal r1"><span class="num">04 —</span> The payoff</span>
+        <h2 class="head reveal r2" style="font-size:52px;max-width:40ch">A flat dashboard. A line already falling. <span class="c-indigo">≈ 10 days</span> of runway.</h2>
+      </div>
+      <div class="payoff-grid">
+        <div class="card lt-card reveal r3" style="padding:28px 32px 24px">
+          <div class="lt-h">
+            <div class="lt-t" style="font-size:18px">Lead-time view <span>· Gmail · acme-outreach-03.com</span></div>
+            <div class="lt-days mono" style="font-size:15px">last 30 days</div>
+          </div>
+          <div class="dash-banner">
+            <span class="db-label mono">Today's dashboard</span>
+            <svg class="db-spark" width="118" height="24" viewBox="0 0 130 26" preserveAspectRatio="none" aria-hidden="true">
+              <polyline points="0,16 11,7 22,19 33,9 44,15 55,5 66,18 77,8 88,16 99,6 110,17 121,11 130,13" fill="none" stroke="#4ade80" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+            </svg>
+            <span class="db-text">Sequencer health score — flat all month, sees nothing wrong</span>
+            <span class="db-score mono">96<small>/100</small></span>
+            <span class="pill green db-pill">✓ all green</span>
+          </div>
+          <svg class="lt-chart-svg" viewBox="0 0 740 256" width="100%" preserveAspectRatio="xMidYMid meet" aria-label="Sentinel health score, last 30 days with 5-day projection"><rect x="76" y="16" width="634" height="37.599999999999994" fill="rgba(34,197,94,.08)"></rect><rect x="76" y="53.599999999999994" width="634" height="75.20000000000002" fill="rgba(245,158,11,.09)"></rect><rect x="76" y="128.8" width="634" height="75.19999999999999" fill="rgba(239,68,68,.11)"></rect><rect x="430.29411764705884" y="16" width="186.4705882352941" height="188" fill="rgba(129,140,248,.14)"></rect><text x="84" y="34.8" font-size="10.5" font-weight="600" fill="#4ade80" font-family="'IBM Plex Sans'" text-anchor="start" letter-spacing="0">HEALTHY</text><text x="84" y="91.2" font-size="10.5" font-weight="600" fill="#fbbf24" font-family="'IBM Plex Sans'" text-anchor="start" letter-spacing="0">WATCH</text><text x="84" y="166.4" font-size="10.5" font-weight="600" fill="#f87171" font-family="'IBM Plex Sans'" text-anchor="start" letter-spacing="0">DANGER</text><text x="523.5294117647059" y="21.640000000000004" font-size="10" font-weight="600" fill="#a5b4fc" font-family="'IBM Plex Sans'" text-anchor="middle" letter-spacing="0">≈ 10 days of warning gained</text><line x1="76" y1="128.8" x2="710" y2="128.8" stroke="#f87171" stroke-width="1.2" stroke-dasharray="6 4" opacity="0.6"></line><text x="710" y="124.80000000000001" font-size="9" text-anchor="end" fill="#f87171" font-family="'IBM Plex Mono'">cliff</text><line x1="76" y1="53.599999999999994" x2="710" y2="53.599999999999994" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="6 4" opacity="0.6"></line><text x="710" y="49.599999999999994" font-size="9" text-anchor="end" fill="#fbbf24" font-family="'IBM Plex Mono'">watch</text><line x1="616.7647058823529" y1="16" x2="616.7647058823529" y2="204" stroke="#6a7080" stroke-dasharray="3 3" opacity="0.65"></line><line x1="430.29411764705884" y1="16" x2="430.29411764705884" y2="204" stroke="#818cf8" stroke-dasharray="3 3" opacity="0.55"></line><line x1="76" y1="16" x2="76" y2="204" stroke="#262b37" stroke-width="1"></line><line x1="76" y1="204" x2="710" y2="204" stroke="#262b37" stroke-width="1"></line><text x="68" y="19" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">100</text><text x="68" y="113" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">50</text><text x="68" y="207" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0</text><text x="76" y="220" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="start">30d ago</text><text x="616.7647058823529" y="220" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="middle">today</text><text x="710" y="220" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="end">+5d</text><text x="40" y="110" font-size="9.5" fill="#6a7080" font-weight="600" font-family="'IBM Plex Sans'" text-anchor="middle" transform="rotate(-90 40 110)">Health score</text><polyline points="76,21.640000000000004 94.64705882352942,21.640000000000004 113.29411764705883,19.760000000000005 131.94117647058823,21.640000000000004 150.58823529411765,19.760000000000005 169.23529411764707,19.760000000000005 187.88235294117646,23.520000000000007 206.52941176470588,27.28000000000001 225.1764705882353,27.28000000000001 243.8235294117647,29.15999999999999 262.47058823529414,36.67999999999999 281.11764705882354,38.56 299.7647058823529,38.56 318.4117647058823,46.080000000000005 337.05882352941177,47.96000000000001 355.70588235294116,46.080000000000005 374.3529411764706,44.2 393,47.96000000000001 411.6470588235294,49.84000000000001 430.29411764705884,57.35999999999999 448.94117647058823,59.239999999999995 467.5882352941177,70.52000000000001 486.2352941176471,79.91999999999999 504.8823529411765,85.56 523.5294117647059,123.16000000000001 542.1764705882354,145.72 560.8235294117646,147.6 579.4705882352941,149.48 598.1176470588235,138.2 616.7647058823529,153.24" fill="none" stroke="#818cf8" stroke-width="7" opacity="0.16"></polyline><polyline points="76,21.640000000000004 94.64705882352942,21.640000000000004 113.29411764705883,19.760000000000005 131.94117647058823,21.640000000000004 150.58823529411765,19.760000000000005 169.23529411764707,19.760000000000005 187.88235294117646,23.520000000000007 206.52941176470588,27.28000000000001 225.1764705882353,27.28000000000001 243.8235294117647,29.15999999999999 262.47058823529414,36.67999999999999 281.11764705882354,38.56 299.7647058823529,38.56 318.4117647058823,46.080000000000005 337.05882352941177,47.96000000000001 355.70588235294116,46.080000000000005 374.3529411764706,44.2 393,47.96000000000001 411.6470588235294,49.84000000000001 430.29411764705884,57.35999999999999 448.94117647058823,59.239999999999995 467.5882352941177,70.52000000000001 486.2352941176471,79.91999999999999 504.8823529411765,85.56 523.5294117647059,123.16000000000001 542.1764705882354,145.72 560.8235294117646,147.6 579.4705882352941,149.48 598.1176470588235,138.2 616.7647058823529,153.24" fill="none" stroke="#818cf8" stroke-width="3"></polyline><polyline points="616.7647058823529,153.24 635.4117647058823,164.52 654.0588235294117,175.79999999999998 672.7058823529412,187.08 691.3529411764706,198.35999999999999 710,204" fill="none" stroke="#818cf8" stroke-width="2" opacity="0.55" stroke-dasharray="2 4"></polyline><circle cx="430.29411764705884" cy="57.35999999999999" r="6" fill="#0c0e14" stroke="#818cf8" stroke-width="2.5"></circle><text x="430.29411764705884" y="236" font-size="10" font-weight="600" fill="#a5b4fc" text-anchor="middle" font-family="'IBM Plex Sans'">▲ Sentinel warned · 10d ago</text><circle cx="616.7647058823529" cy="153.24" r="5" fill="#8a90a0" stroke="#8a90a0" stroke-width="2.5"></circle><text x="616.7647058823529" y="236" font-size="10" font-weight="600" fill="#8a90a0" text-anchor="middle" font-family="'IBM Plex Sans'">▲ reply rates now dropping</text></svg>
+          <div class="lt-foot">
+            <div class="lt-legend2"><span class="ll-line"></span>Sentinel health score · 0–100 smoothed · down = danger</div>
+            <div class="warn-pill mono">◀ ≈ 10 days of warning gained ▶</div>
+          </div>
+        </div>
+        <div class="reveal r4">
+          <div class="payoff card" style="background:none;border:none;padding:0">
+            <div class="q">"That sentence is the product."</div>
+            <div class="s" style="font-size:30px">Gmail health at <span class="hl">62/100</span>, falling — hits the <span class="hl2">cliff</span> in <span class="hl2">~5 days</span>.</div>
+            <p class="lead" style="margin-top:28px;font-size:19px;color:var(--muted)">One readable, time-boxed warning — early enough to act, specific enough to trust. That window is the difference between a preemptive save and a churned customer.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- SLIDE 6 — THE RISK SCORE (per-ESP gauges) -->
+  <!-- ===================================================== -->
+  <section class="slide has-chrome">
+    <div class="grid-tex"></div>
+    <div class="pad flow">
+      <div class="head-block">
+        <span class="kicker reveal r1"><span class="num">05 —</span> The risk engine</span>
+        <h2 class="head reveal r2" style="font-size:50px">A leading risk score — per provider, smoothed, projected.</h2>
+        <p class="lead reveal r2" style="margin-top:16px;font-size:19px;max-width:70ch"><b style="color:var(--text2);font-weight:600">Smoothing</b> turns a noisy daily complaint rate into one stable signal you can act on; a <b style="color:var(--text2);font-weight:600">slope-to-cliff projection</b> turns that trend into a date.</p>
+      </div>
+      <div class="engine-grid">
+        <!-- LEFT: raw vs smoothed complaint rate (the smoothing + slope-to-cliff visual) -->
+        <div class="card lt-card reveal r3" style="padding:24px 30px 18px">
+          <div class="lt-h">
+            <div class="lt-t">Raw vs smoothed complaint rate</div>
+            <div class="lt-days mono" style="font-size:14px">Gmail · 30 days</div>
+          </div>
+          <div class="lt-s">How the engine sees through the noise to fire early.</div>
+          <svg class="lt-chart-svg" viewBox="0 0 700 290" width="100%" preserveAspectRatio="xMidYMid meet" aria-label="Raw daily vs smoothed complaint rate with confidence band"><rect x="86" y="20" width="586" height="55.00000000000003" fill="rgba(239,68,68,.07)"></rect><line x1="86" y1="75.00000000000003" x2="672" y2="75.00000000000003" stroke="#ef4444" stroke-width="1.3" stroke-dasharray="6 4" opacity="0.7"></line><text x="672" y="71.00000000000003" font-size="9" text-anchor="end" fill="#ef4444" font-family="'IBM Plex Mono'">0.30% cliff</text><line x1="86" y1="185" x2="672" y2="185" stroke="#fbbf24" stroke-width="1.3" stroke-dasharray="6 4" opacity="0.75"></line><text x="672" y="181" font-size="9" text-anchor="end" fill="#fbbf24" font-family="'IBM Plex Mono'">0.10% watch line</text><line x1="530.5517241379309" y1="20" x2="530.5517241379309" y2="240" stroke="#818cf8" stroke-dasharray="3 3" opacity="0.5"></line><line x1="86" y1="20" x2="86" y2="240" stroke="#262b37" stroke-width="1"></line><line x1="86" y1="240" x2="672" y2="240" stroke="#262b37" stroke-width="1"></line><text x="78" y="23" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0.40%</text><text x="78" y="78.00000000000003" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0.30%</text><text x="78" y="133" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0.20%</text><text x="78" y="188" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0.10%</text><text x="78" y="243" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0.00%</text><text x="86" y="256" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="start">30d ago</text><text x="368.89655172413796" y="256" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="middle">15d ago</text><text x="672" y="256" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="end">today</text><text x="50" y="130" font-size="9.5" fill="#6a7080" font-weight="600" font-family="'IBM Plex Sans'" text-anchor="middle" transform="rotate(-90 50 130)">Complaint rate</text><polyline points="86,240 106.20689655172414,240 126.41379310344828,240 146.6206896551724,240 166.82758620689657,240 187.0344827586207,240 207.24137931034483,8.907563025210074 227.44827586206898,66.49842271293377 247.6551724137931,240 267.8620689655172,240 288.0689655172414,79.65014577259475 308.27586206896547,240 328.48275862068965,240 348.6896551724138,68.125 368.89655172413796,240 389.1034482758621,240 409.3103448275862,240 429.5172413793103,240 449.7241379310345,240 469.9310344827586,-91.3253012048193 490.1379310344828,240 510.3448275862069,-70.73446327683612 530.5517241379309,-201.1764705882353 550.7586206896551,240 570.9655172413793,-254.0119760479041 591.1724137931035,-292.258064516129 611.3793103448276,240 631.5862068965517,240 651.7931034482759,240 672,-680.5020920502092" fill="none" stroke="#ef4444" stroke-width="1.4" opacity="0.55"></polyline><polyline points="86,232.36040374108714 106.20689655172414,232.8565243744047 126.41379310344828,233.19531507753217 146.6206896551724,233.53017292083285 166.82758620689657,233.90649235541767 187.0344827586207,234.18153607447633 207.24137931034483,225.1089752267497 227.44827586206898,217.03401535348345 247.6551724137931,218.33530285125596 267.8620689655172,218.2463186077644 288.0689655172414,210.0752652419672 308.27586206896547,210.20136652319178 328.48275862068965,210.673618105338 348.6896551724138,202.5551312790457 368.89655172413796,202.96621582059842 389.1034482758621,211.57867539402292 409.3103448275862,219.50584728273333 429.5172413793103,219.16545253219883 449.7241379310345,219.10456484890994 469.9310344827586,211.0212803325235 490.1379310344828,210.97455142488568 510.3448275862069,194.8228115465853 530.5517241379309,179.16991675883347 550.7586206896551,179.06350224502887 570.9655172413793,154.52364894584056 591.1724137931035,130.04204274836093 611.3793103448276,130.21956087824356 631.5862068965517,129.7828072967318 651.7931034482759,145.54585023539516 672,112.82483028488423" fill="none" stroke="#818cf8" stroke-width="3"></polyline><path d="M86,216.13930545189007 L106.20689655172414,217.68865295111456 L126.41379310344828,218.74668544434113 L146.6206896551724,219.79244735165537 L166.82758620689657,220.9677076889814 L187.0344827586207,221.82668921934933 L207.24137931034483,205.74765555049544 L227.44827586206898,193.61121938011317 L247.6551724137931,196.23931598155528 L267.8620689655172,196.05960089870322 L288.0689655172414,184.13980456354216 L308.27586206896547,184.37515868641333 L328.48275862068965,185.25656698534218 L348.6896551724138,173.8473733837315 L368.89655172413796,174.57349377485676 L389.1034482758621,186.94577452743965 L409.3103448275862,198.60339939524832 L429.5172413793103,197.91591944180732 L449.7241379310345,197.79294764271285 L469.9310344827586,185.905445125048 L490.1379310344828,185.81822996755403 L510.3448275862069,163.4335715204251 L530.5517241379309,142.89506716193355 L550.7586206896551,142.72523421815683 L570.9655172413793,111.37279699194292 L591.1724137931035,81.04649363779473 L611.3793103448276,81.30302617180394 L631.5862068965517,80.67187139635776 L651.7931034482759,99.96813327945975 L672,59.922955957272606 L672,165.72670461249587 L651.7931034482759,191.12356719133055 L631.5862068965517,178.89374319710583 L611.3793103448276,179.13609558468312 L591.1724137931035,179.0375918589272 L570.9655172413793,197.6745008997382 L550.7586206896551,215.40177027190092 L530.5517241379309,215.44476635573338 L510.3448275862069,226.21205157274557 L490.1379310344828,236.1308728822173 L469.9310344827586,236.137115539999 L449.7241379310345,240 L429.5172413793103,240 L409.3103448275862,240 L389.1034482758621,236.21157626060617 L368.89655172413796,231.35893786634006 L348.6896551724138,231.26288917435986 L328.48275862068965,236.0906692253338 L308.27586206896547,236.0275743599702 L288.0689655172414,236.01072592039222 L267.8620689655172,240 L247.6551724137931,240 L227.44827586206898,240 L207.24137931034483,240 L187.0344827586207,240 L166.82758620689657,240 L146.6206896551724,240 L126.41379310344828,240 L106.20689655172414,240 L86,240 Z" fill="#818cf8" opacity="0.13"></path><circle cx="530.5517241379309" cy="179.16991675883347" r="6" fill="#0c0e14" stroke="#818cf8" stroke-width="2.5"></circle></svg>
+          <div class="warnband" style="margin-top:14px">▲ alert fired here — ~5 days before the cliff, and trustworthy</div>
+          <div class="lt-legend rs-legend">
+            <span><i style="background:#ef4444;opacity:.7"></i>Raw daily complaint rate · noisy</span>
+            <span><i style="background:#818cf8"></i>Smoothed estimate · + confidence band</span>
+          </div>
+        </div>
+
+        <!-- RIGHT: scored per inbox provider -->
+        <div class="esp-col">
+          <div class="esp-col-label reveal r4">Scored per inbox provider</div>
+          <div class="card esp reveal r4">
+            <div class="eh">
+              <div class="name"><span class="chip" style="background:var(--gmail)"></span>Gmail · Google</div>
+              <span class="pill red" style="font-size:12px;padding:4px 11px">Critical</span>
+            </div>
+            <div class="gauge-row">
+              <svg width="104" height="104" viewBox="0 0 120 120" aria-label="Gmail risk 38 of 100">
+                <circle cx="60" cy="60" r="44" fill="none" stroke="#1e2330" stroke-width="9"/>
+                <circle class="ring-fg" cx="60" cy="60" r="44" fill="none" stroke="#ef4444" stroke-width="9" stroke-linecap="round"
+                        stroke-dasharray="276.46" stroke-dashoffset="276.46" data-target="171.4" transform="rotate(-90 60 60)"/>
+                <text x="60" y="58" text-anchor="middle" fill="#fca5a5" font-size="30" font-weight="600" font-family="IBM Plex Mono">38</text>
+                <text x="60" y="78" text-anchor="middle" fill="#8a90a0" font-size="13" font-family="IBM Plex Mono">/100</text>
+              </svg>
+              <div class="metric">
+                <div class="mlabel">Smoothed complaint rate</div>
+                <div class="mrate c-red mono">0.21%</div>
+                <div class="proj c-red mono" style="margin-top:8px">→ hits cliff in ~5 days</div>
+              </div>
+            </div>
+          </div>
+          <div class="card esp reveal r5">
+            <div class="eh">
+              <div class="name"><span class="chip" style="background:var(--outlook)"></span>Outlook · Microsoft</div>
+              <span class="pill green" style="font-size:12px;padding:4px 11px">Healthy</span>
+            </div>
+            <div class="gauge-row">
+              <svg width="104" height="104" viewBox="0 0 120 120" aria-label="Outlook risk 82 of 100">
+                <circle cx="60" cy="60" r="44" fill="none" stroke="#1e2330" stroke-width="9"/>
+                <circle class="ring-fg" cx="60" cy="60" r="44" fill="none" stroke="#22c55e" stroke-width="9" stroke-linecap="round"
+                        stroke-dasharray="276.46" stroke-dashoffset="276.46" data-target="49.8" transform="rotate(-90 60 60)"/>
+                <text x="60" y="58" text-anchor="middle" fill="#4ade80" font-size="30" font-weight="600" font-family="IBM Plex Mono">82</text>
+                <text x="60" y="78" text-anchor="middle" fill="#8a90a0" font-size="13" font-family="IBM Plex Mono">/100</text>
+              </svg>
+              <div class="metric">
+                <div class="mlabel">Smoothed complaint rate</div>
+                <div class="mrate c-green mono">0.04%</div>
+                <div class="proj c-green mono" style="margin-top:8px">→ stable · no trend</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- SLIDE 7 — WHERE THE DATA COMES FROM (defensibility) -->
+  <!-- ===================================================== -->
+  <section class="slide has-chrome">
+    <div class="grid-tex"></div>
+    <div class="pad flow">
+      <div class="head-block">
+        <span class="kicker reveal r1"><span class="num">06 —</span> Why it's defensible</span>
+        <h2 class="head reveal r2" style="font-size:54px">The earliest signal isn't Postmaster. It's the send itself.</h2>
+      </div>
+      <div class="tbl-wrap">
+      <table class="tbl reveal r3">
+        <thead><tr><th style="width:130px">Layer</th><th>Signal</th><th style="width:240px">Source</th></tr></thead>
+        <tbody>
+          <tr class="leadrow"><td><span class="lyr lead">LEADING</span></td><td>Deferrals · 4xx/5xx throttle &amp; spam codes · bounce reasons</td><td class="src">First-party MTA accounting-webhook telemetry, captured at send</td></tr>
+          <tr class="leadrow"><td><span class="lyr lead">LEADING</span></td><td>Inbox vs. spam placement</td><td class="src">Seed-list panel</td></tr>
+          <tr><td><span class="lyr lag">CONFIRMING</span></td><td>Spam rate · domain / IP reputation</td><td class="src">Google Postmaster + Microsoft SNDS / JMRP</td></tr>
+        </tbody>
+      </table>
+      <div class="card moat reveal r4">
+        <div class="mt c-indigo">The moat</div>
+        <p>The leading layer only exists <b>because sending.ac owns the sending infrastructure.</b> It already emits this telemetry — the same first-party stream warm.ac is built on.</p>
+        <p style="margin-top:14px">A competitor layered on someone else's platform is <b>blind to it.</b></p>
+        <div class="quietline">dEWSentinel isn't a new pipeline — it's a predictive, customer-facing consumer of a stream sending.ac already produces.</div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- SLIDE 8 — THE PLAYBOOK (state machine + failover) -->
+  <!-- ===================================================== -->
+  <section class="slide has-chrome">
+    <div class="grid-tex"></div>
+    <div class="pad flow">
+      <div class="head-block">
+        <span class="kicker reveal r1"><span class="num">07 —</span> The playbook</span>
+        <h2 class="head reveal r2" style="font-size:56px">A circuit breaker, then a hot-standby failover.</h2>
+        <p class="lead reveal r3" style="margin-top:22px;font-size:21px">Because a miss costs weeks and a false alarm costs a day, the policy is a conservative breaker that trips on weak early signals.</p>
+      </div>
+      <div class="machine">
+      <div class="stg green reveal r4"><div class="sn mono">01</div><div class="sname">Healthy</div><div class="sd">Sending normally · monitored</div></div>
+      <div class="arrow reveal r4">→</div>
+      <div class="stg amber reveal r5"><div class="sn mono">02</div><div class="sname">Watch</div><div class="sd">Early signals rising</div></div>
+      <div class="arrow reveal r5">→</div>
+      <div class="stg amber reveal r6"><div class="sn mono">03</div><div class="sname">Throttle</div><div class="sd">Slow the burning domain</div></div>
+      <div class="arrow reveal r6">→</div>
+      <div class="stg red reveal r7"><div class="sn mono">04</div><div class="sname">Failover</div><div class="sd">Re-route to pre-warmed standby</div></div>
+      <div class="arrow reveal r7">→</div>
+      <div class="stg indigo reveal r8"><div class="sn mono">05</div><div class="sname">Cooldown</div><div class="sd">Park &amp; re-warm until 7 clean days</div></div>
+    </div>
+    <div class="standby reveal r8">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <div class="st"><b>3 hot-standby domains ready</b> — kept warm for the at-risk ESP</div>
+      <div class="right">The email equivalent of a payments circuit breaker plus a hot / cold-wallet failover.</div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- SLIDE 9 — WHAT'S IN THE POC -->
+  <!-- ===================================================== -->
+  <section class="slide has-chrome">
+    <div class="grid-tex"></div>
+    <div class="pad">
+      <span class="kicker reveal r1"><span class="num">08 —</span> Inside this proof of concept</span>
+      <h2 class="head reveal r2" style="font-size:56px">A runnable console. Real engine, simulated data.</h2>
+    </div>
+    <div class="poc-grid">
+      <div class="card poc reveal r3">
+        <div class="ic">🗓️</div>
+        <h3>Synthetic 30-day scenario</h3>
+        <p>A full timeline of a domain decaying at Gmail — with a Healthy ⇄ Critical toggle to replay either path.</p>
+      </div>
+      <div class="card poc reveal r4">
+        <div class="ic c-indigo">⚙️</div>
+        <h3>The live risk engine</h3>
+        <p>Beta-Binomial smoothing, slope projection, and per-ESP scoring — running in the browser, not faked.</p>
+      </div>
+      <div class="card poc reveal r5">
+        <div class="ic">🔀</div>
+        <h3>The failover state machine</h3>
+        <p>Healthy → Watch → Throttle → Failover → Cooldown, rendered with the standby pool and alert feed.</p>
+      </div>
+    </div>
+    <div class="realbar reveal r6">
+      <div class="seg sim">Data is <b>simulated</b></div>
+      <div class="div"></div>
+      <div class="seg real">The engine &amp; visuals are <b>real</b></div>
+      <div class="div"></div>
+      <div class="seg">Production wiring is <b style="color:var(--text2)">documented, not mocked</b></div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- SLIDE 10 — ROADMAP -->
+  <!-- ===================================================== -->
+  <section class="slide has-chrome">
+    <div class="grid-tex"></div>
+    <div class="pad">
+      <span class="kicker reveal r1"><span class="num">09 —</span> Roadmap</span>
+      <h2 class="head reveal r2" style="font-size:56px">From synthetic console to automated failover.</h2>
+    </div>
+    <div class="road">
+      <div class="rstep now reveal r3">
+        <div class="ver"><span class="vtag">v0</span><span class="here">● this PoC</span></div>
+        <h3>Engine + console</h3>
+        <ul>
+          <li>Risk engine on synthetic data</li>
+          <li>Per-ESP scoring &amp; lead-time view</li>
+          <li>Failover state machine, visualized</li>
+        </ul>
+      </div>
+      <div class="rstep reveal r4">
+        <div class="ver"><span class="vtag">v1</span></div>
+        <h3>Live ingest · real alerts</h3>
+        <ul>
+          <li>Live MTA webhook for one ESP</li>
+          <li>Postmaster / SNDS confirmation</li>
+          <li>Real alerts to customers</li>
+        </ul>
+      </div>
+      <div class="rstep reveal r5">
+        <div class="ver"><span class="vtag">v2</span></div>
+        <h3>Automated failover</h3>
+        <ul>
+          <li>Automated failover execution</li>
+          <li>Standby-pool orchestration</li>
+          <li>Hands-off circuit breaking</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- SLIDE 11 — CLOSING / CTA -->
+  <!-- ===================================================== -->
+  <section class="slide">
+    <div class="grid-tex"></div>
+    <div class="cta">
+      <div class="brand reveal r1"><span class="logo"><i></i></span><span class="wm" style="font-size:30px">dEWSentinel</span></div>
+      <h1 class="reveal r2">See the dip <span class="em">before</span> your reply rates do.</h1>
+      <p class="sub reveal r3">A leading, per-ESP early-warning console with a built-in failover plan — turning a churn-causing surprise into a preemptive save.</p>
+      <a class="urlbox reveal r4" href="https://dewsentinel.vercel.app/" target="_blank" rel="noopener" style="text-decoration:none">
+        <span class="lbl">Live demo</span>
+        <span class="u">dewsentinel.vercel.app</span>
+      </a>
+      <div class="foot reveal r5 mono">Thresholds reflect public Google / Microsoft sender guidance · figures in the demo are illustrative</div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- ===========================================================
+     DECK CHROME (outside the stage)
+     =========================================================== -->
+<div class="deck-progress" id="progress"></div>
+<div class="deck-counter" id="counter">01 / 11</div>
+<div class="deck-hint" id="hint">← → navigate · E to edit</div>
+
+<!-- inline editing affordances -->
+<div class="edit-hotzone" id="editHotzone" title="Edit mode"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏️</button>
+<div class="edit-banner"><span><b>Edit mode</b> — click any text to edit</span><button id="editSave">Save copy</button><button id="editExit" style="background:var(--inset);color:var(--text2)">Exit</button></div>
+
+<script>
+/* ===========================================================
+   SLIDE PRESENTATION CONTROLLER
+   - keyboard / wheel / touch navigation
+   - fixed-stage scaling (1920×1080 → viewport)
+   - progress bar + page counter
+   - injected footer chrome on .has-chrome slides
+   - SVG gauge-ring sweep on slide entry
+   =========================================================== */
+class Deck{
+  constructor(){
+    this.slides=[...document.querySelectorAll('.slide')];
+    this.total=this.slides.length;
+    this.i=0;
+    this.stage=document.getElementById('deckStage');
+    this.progress=document.getElementById('progress');
+    this.counter=document.getElementById('counter');
+    this.injectChrome();
+    this.scale();addEventListener('resize',()=>this.scale());
+    this.bindNav();
+    this.show(0);
+    setTimeout(()=>{const h=document.getElementById('hint');if(h)h.style.opacity='0';},5200);
+  }
+  /* footer brand + page number, added to every slide with .has-chrome */
+  injectChrome(){
+    this.slides.forEach((s,idx)=>{
+      if(!s.classList.contains('has-chrome'))return;
+      const c=document.createElement('div');c.className='chrome';
+      c.innerHTML=`<div class="b"><span class="logo"><i></i></span><b>dEWSentinel</b><span style="color:var(--muted2)">· deliverability early-warning</span></div>`+
+                  `<div class="mono">${String(idx+1).padStart(2,'0')} / ${String(this.total).padStart(2,'0')}</div>`;
+      s.appendChild(c);
+    });
+  }
+  scale(){
+    const k=Math.min(innerWidth/1920,innerHeight/1080);
+    const x=(innerWidth-1920*k)/2, y=(innerHeight-1080*k)/2;
+    this.stage.style.transform=`translate(${x}px,${y}px) scale(${k})`;
+  }
+  show(n){
+    this.i=Math.max(0,Math.min(n,this.total-1));
+    this.slides.forEach((s,k)=>{const on=k===this.i;s.classList.toggle('active',on);s.classList.toggle('visible',on);});
+    this.progress.style.width=((this.i)/(this.total-1)*100)+'%';
+    this.counter.textContent=String(this.i+1).padStart(2,'0')+' / '+String(this.total).padStart(2,'0');
+    this.sweepGauges();
+  }
+  /* animate gauge rings to their data-target offset when a slide shows */
+  sweepGauges(){
+    const cur=this.slides[this.i];
+    cur.querySelectorAll('.ring-fg').forEach(r=>{
+      r.style.strokeDashoffset=r.getAttribute('stroke-dashoffset'); // reset
+      requestAnimationFrame(()=>{requestAnimationFrame(()=>{r.style.strokeDashoffset=r.dataset.target;});});
+    });
+  }
+  next(){this.show(this.i+1);} prev(){this.show(this.i-1);}
+  bindNav(){
+    addEventListener('keydown',e=>{
+      if(document.body.classList.contains('editing'))return;
+      if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();this.next();}
+      else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();this.prev();}
+      else if(e.key==='Home'){this.show(0);} else if(e.key==='End'){this.show(this.total-1);}
+    });
+    let wlock=false;
+    addEventListener('wheel',e=>{
+      if(document.body.classList.contains('editing'))return;
+      if(wlock||Math.abs(e.deltaY)<24)return;wlock=true;
+      (e.deltaY>0?this.next():this.prev());setTimeout(()=>wlock=false,700);
+    },{passive:true});
+    let sx=0,sy=0;
+    addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true});
+    addEventListener('touchend',e=>{
+      const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+      if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))(dx<0?this.next():this.prev());
+    },{passive:true});
+  }
+}
+const deck=new Deck();
+window.deck=deck;
+
+/* ===========================================================
+   INLINE EDITING (post-draft affordance)
+   Hover top-left corner or press E. Edits persist to localStorage.
+   =========================================================== */
+const editor={
+  isActive:false,
+  get sel(){return [...document.querySelectorAll('h1,h2,h3,p,span,td,th,li,.s,.sname,.sd,.mt,.ft,.q,.lt-t,.mlabel,.proj')];},
+  toggle(){this.isActive?this.exit():this.enter();},
+  enter(){
+    this.isActive=true;document.body.classList.add('editing');
+    document.getElementById('editToggle').classList.add('active','show');
+    this.sel.forEach(el=>el.setAttribute('contenteditable','true'));
+    this.load();
+  },
+  exit(){
+    this.isActive=false;document.body.classList.remove('editing');
+    document.getElementById('editToggle').classList.remove('active');
+    this.sel.forEach(el=>el.removeAttribute('contenteditable'));
+    this.save();
+  },
+  key(el){return 'dews-edit-'+([...document.querySelectorAll('*')].indexOf(el));},
+  save(){const d={};this.sel.forEach(el=>{d[this.key(el)]=el.innerHTML;});localStorage.setItem('dews-deck',JSON.stringify(d));},
+  load(){try{const d=JSON.parse(localStorage.getItem('dews-deck')||'{}');this.sel.forEach(el=>{const k=this.key(el);if(d[k]!=null)el.innerHTML=d[k];});}catch(e){}},
+  download(){
+    this.exit();
+    const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+    const blob=new Blob([html],{type:'text/html'});const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download='dewsentinel-deck-edited.html';a.click();
+  }
+};
+/* restore saved edits on load (read-only render) */
+(function(){try{const d=JSON.parse(localStorage.getItem('dews-deck')||'{}');if(Object.keys(d).length)editor.load();}catch(e){}})();
+
+const hotzone=document.getElementById('editHotzone');
+const editToggle=document.getElementById('editToggle');
+let hideTO=null;
+hotzone.addEventListener('mouseenter',()=>{clearTimeout(hideTO);editToggle.classList.add('show');});
+hotzone.addEventListener('mouseleave',()=>{hideTO=setTimeout(()=>{if(!editor.isActive)editToggle.classList.remove('show');},400);});
+editToggle.addEventListener('mouseenter',()=>clearTimeout(hideTO));
+editToggle.addEventListener('mouseleave',()=>{hideTO=setTimeout(()=>{if(!editor.isActive)editToggle.classList.remove('show');},400);});
+editToggle.addEventListener('click',()=>editor.toggle());
+hotzone.addEventListener('click',()=>editor.toggle());
+document.getElementById('editSave').addEventListener('click',()=>editor.download());
+document.getElementById('editExit').addEventListener('click',()=>editor.exit());
+addEventListener('keydown',e=>{if((e.key==='e'||e.key==='E')&&!e.target.getAttribute('contenteditable')){editor.toggle();}});
+</script>
+</body>
+</html>
