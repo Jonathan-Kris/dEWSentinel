@@ -122,20 +122,23 @@
     return lerp(97, 70, (day - 17) / 12); // ~71% by today
   }
 
-  // LAGGING warmup placement — "what the old dashboard sees". Holds until cliff.
+  // LAGGING warmup placement — "what the old dashboard sees".
+  // STAYS GREEN across the whole visible window in BOTH scenarios. This is the
+  // crux of the product story (ENGINE_SPEC §5.5): the lagging dashboard has not
+  // reacted yet at "today" — its decline is implied only AFTER the visible
+  // window. Keeping it flat-green is what makes the "we see it, they don't"
+  // contrast against the rising risk line land.
   function warmupPlacement(scenario, esp, day) {
-    if (esp === 'outlook' || scenario === 'healthy') return 97;
-    if (day <= 26) return 97;
-    return lerp(97, 68, (day - 26) / 3); // only collapses at the very end
+    return 97;
   }
 
-  // LAGGING postmaster tier — provider-side, holds high until the cliff.
+  // LAGGING postmaster tier — provider-side confirmation. Also a lagging signal,
+  // so it likewise holds "high" across the visible window (it only degrades
+  // after "today", off-chart). The risk score is driven by LEADING signals
+  // (complaint level+slope, reply drop, deferral creep, seed-placement drop),
+  // never by these lagging inputs.
   function postmasterTier(scenario, esp, day) {
-    if (esp === 'outlook' || scenario === 'healthy') return 'high';
-    if (day <= 26) return 'high';
-    if (day <= 27) return 'medium';
-    if (day <= 28) return 'low';
-    return 'low';
+    return 'high';
   }
 
   function generate(scenario, seed, days) {
@@ -288,13 +291,29 @@
     const gToday = gmailScores[today];
     const oToday = outlookScores[today];
 
-    /* ---- lead-time (§5.8): gmail health crosses into Watch (<80) vs
-            dashboard proxy dropping below 80 ---- */
-    const sentinelSeries = gmailScores.map((s) => s.score);
-    let crossWatchDay = sentinelSeries.findIndex((v) => v < 80);
+    /* ---- lead-time (§5.8): the hero is a 0–100 HEALTH score that FALLS into
+            danger (down = bad), shown on the SAME scale as the per-ESP gauges
+            so the hero and the cards never disagree. Sentinel "warns" when
+            health first drops below the WATCH line. The lagging dashboard proxy
+            stays green across the visible window — it would only react AFTER
+            today — so the gap between the two is the warning we gained. ---- */
+    const WATCH_HEALTH = 80;   // amber watch line  ("leaving healthy")
+    const DANGER_HEALTH = 40;  // red cliff line    ("critical")
+    const PROJ_DAYS = 5;       // days projected past "today" toward the floor
+
+    const healthSeries = gmailScores.map((s) => s.score);  // observed, days 0..days-1; 100 = healthy
+    // forward projection of the health line from its recent slope, clamped [0,100]
+    const projLo = Math.max(0, today - (SLOPE_WINDOW - 1));
+    const healthSlope = leastSquaresSlope(healthSeries.slice(projLo, today + 1));
+    const healthProjSeries = [];
+    for (let k = 1; k <= PROJ_DAYS; k++) {
+      healthProjSeries.push(clamp(Math.round(healthSeries[today] + healthSlope * k), 0, 100));
+    }
+
+    let crossWatchDay = healthSeries.findIndex((v) => v < WATCH_HEALTH);
     let dashDropDay = dashSeries.findIndex((v) => v < 80);
     if (crossWatchDay < 0) crossWatchDay = today;
-    if (dashDropDay < 0) dashDropDay = today;
+    if (dashDropDay < 0) dashDropDay = today;  // lagging dashboard never dips in-window → pin to today
     const warningGainedDays = Math.max(0, dashDropDay - crossWatchDay);
 
     /* ---- ESP cards ---- */
@@ -453,10 +472,16 @@
       meta: { account: 'Acme Agency', domainCount: 84, lastSyncedMin: 4, scenario, seed, days, today },
       globalStatus,
       leadTime: {
-        dashboardSeries: dashSeries,
-        sentinelSeries,
-        warningGainedDays,
-        crossWatchDay, dashDropDay
+        healthSeries,                // observed 0–100 health, down = danger (days 0..today)
+        healthProjSeries,            // projected health for the PROJ_DAYS after today
+        projDays: PROJ_DAYS,
+        dashboardSeries: dashSeries, // lagging proxy, flat-green (drives the strip)
+        dashboardScore: dashSeries[today],
+        watchHealth: WATCH_HEALTH,   // amber watch line / HEALTHY→WATCH boundary
+        dangerHealth: DANGER_HEALTH, // red cliff line / WATCH→DANGER boundary
+        crossWatchDay,               // Sentinel warned (health first < watchHealth)
+        dashDropDay,                 // lagging tools react (pinned to today when never)
+        warningGainedDays
       },
       esp,
       alerts,
