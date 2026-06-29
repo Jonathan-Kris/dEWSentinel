@@ -5,7 +5,8 @@
 A single-page, client-side proof-of-concept that **computes** (not fakes) per-ESP deliverability risk
 signals from synthetic data and renders them into the dEWSentinel console UI.
 
-**▶ Live demo:** https://jonathan-kris.github.io/dEWSentinel/
+**▶ Live demo:** **https://dewsentinel.vercel.app**
+**↪ Backup mirror:** https://jonathan-kris.github.io/dEWSentinel/ *(use this if the Vercel link shows a "verifying your browser" checkpoint)*
 **📄 One-page insight memo:** [INSIGHT_MEMO.md](./INSIGHT_MEMO.md) — the thesis, the problem, and why it's defensible.
 
 > **Simulated data.** The *engine and visuals are real*; the data is synthetic. In production, leading
@@ -99,20 +100,33 @@ at the engine level (Node) and in headless Chrome against the live deployment:
 
 ## Deployment
 
-The live demo is hosted on **GitHub Pages** (free, no build, serves the repo's static files from `main`):
+### Primary — Vercel (Hobby, free)
 
-- Source: `main` branch, path `/` — `.nojekyll` makes GitHub serve the files verbatim.
+The clean production URL is **https://dewsentinel.vercel.app** (`.vercelignore` ships only the runtime files).
+
+```bash
+vercel --prod --yes --project dewsentinel    # from the repo root
+```
+
+> **Note:** new free Vercel projects can ship with **Attack Challenge Mode** on, which shows every visitor a
+> *"Vercel Security Checkpoint — verifying your browser"* page. If the URL does that, disable it once:
+> `vercel link --yes --project dewsentinel && vercel firewall attack-mode disable`
+> (or Project → Settings → Firewall → turn **Attack Challenge Mode** off). Until then, use the backup below.
+
+### Backup mirror — GitHub Pages (free)
+
+Always-on fallback, no firewall/challenge in the way:
+
 - URL: https://jonathan-kris.github.io/dEWSentinel/
+- Source: `main` branch, path `/` — `.nojekyll` serves the files verbatim.
 - Re-deploy = just push to `main`; Pages rebuilds automatically.
 
 ```bash
-# update the live site
 git add -A && git commit -m "update" && git push origin main
 ```
 
-### Other free static hosts (this is a pure static site, so any will do)
+### Other free static hosts (pure static site, so any will do)
 
-- **Vercel (Hobby, free):** `vercel --prod --yes` from the repo root (`.vercelignore` ships only runtime files).
 - **Cloudflare Pages (free):** `wrangler pages deploy dist`.
 - **Netlify:** `netlify deploy --prod --dir=dist` — note Netlify's free tier meters production deploys
   against monthly **credits**; if the team is out of credits, production publishing is disabled until reset.
