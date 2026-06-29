@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { background:#e8e8ea; }
+  .wf-mono { font-family: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace; }
+  .wf-ph { background: repeating-linear-gradient(45deg,#f1f1f3,#f1f1f3 6px,#e9e9ec 6px,#e9e9ec 12px); border:1px dashed #c7c7cd; color:#9a9aa2; display:flex; align-items:center; justify-content:center; font-family: ui-monospace,'Roboto Mono',monospace; font-size:10px; text-align:center; }
+</style>
+</helmet>
+
+<!-- ===================== SECTION: PRIMARY CONSOLE ===================== -->
+<div data-drags-parent="0" style="position:absolute; left:80px; top:24px; font:700 26px 'Caveat',cursive; color:#3f3f46; letter-spacing:.5px;">Screen 1 — The Console · 3 layout explorations</div>
+<div data-drags-parent="0" style="position:absolute; left:84px; top:58px; font:500 15px 'Caveat',cursive; color:#7c7c85;">all mid-fi · greyscale blocks · real spec labels · status color only where it carries meaning</div>
+
+<!-- ---------- VARIANT A : right-rail alert feed ---------- -->
+<div style="position:absolute; left:80px; top:108px; width:1180px;">
+  <div data-drags-parent="1" style="position:absolute; top:-30px; font:700 19px 'Caveat',cursive; color:#52525b;">A · Alert feed as right rail <span style="font-size:14px;color:#9a9aa2;">(the spec's default)</span></div>
+  <div data-screen-label="Console A" style="background:#fff; border:1.5px solid #d4d4d8; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); min-height:902px; overflow:hidden; font-family:system-ui,sans-serif;">
+    <!-- top bar -->
+    <div style="display:flex; align-items:center; gap:16px; padding:12px 18px; border-bottom:1.5px solid #e4e4e7; background:#fafafa;">
+      <div style="font-weight:800; font-size:16px; letter-spacing:.5px; color:#27272a; display:flex; align-items:center; gap:7px;"><span style="width:14px;height:14px;border:2px solid #4f46e5;border-radius:3px;display:inline-block;"></span>Sentinel</div>
+      <div style="flex:1; max-width:300px; display:flex; align-items:center; justify-content:space-between; padding:7px 12px; border:1.5px solid #d4d4d8; border-radius:6px; font-size:12.5px; color:#3f3f46;"><span class="wf-mono">Acme Agency — 84 domains</span><span style="color:#a1a1aa;">▾</span></div>
+      <div style="flex:1;"></div>
+      <div style="display:flex; align-items:center; gap:6px; padding:6px 11px; border-radius:999px; background:#fdecec; border:1.5px solid #f0b4b4; color:#c01818; font-weight:700; font-size:12px;"><span style="width:8px;height:8px;border-radius:50%;background:#dc2626;display:inline-block;"></span>2 domains critical</div>
+      <div class="wf-mono" style="font-size:11px; color:#a1a1aa;">last synced 4 min ago</div>
+    </div>
+
+    <div style="display:flex; gap:0;">
+      <!-- main column -->
+      <div style="flex:1; padding:18px; display:flex; flex-direction:column; gap:16px; min-width:0;">
+        <!-- ZONE A hero · flat-today-strip + 0-100 risk-score chart -->
+        <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:14px 16px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+            <div style="font:700 13px system-ui; color:#27272a;">Lead-time view <span style="font-weight:500; color:#a1a1aa;">· Gmail · last 30 days</span></div>
+            <div style="font:700 9px system-ui; letter-spacing:.08em; text-transform:uppercase; color:#a1a1aa;">Zone A · signature chart</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:11px; padding:9px 13px; border:1.5px solid #d8ecdd; border-radius:6px; background:#f4faf5; margin-bottom:12px;">
+            <div style="font:700 9px system-ui; letter-spacing:.05em; text-transform:uppercase; color:#9a9aa2; white-space:nowrap;">Today's dashboard</div>
+            <svg viewBox="0 0 200 18" width="96" height="14" preserveAspectRatio="none" style="opacity:.5; flex-shrink:0;"><polyline points="0,10 60,9 120,10 200,9" fill="none" stroke="#16a34a" stroke-width="2.5"/></svg>
+            <div style="flex:1; font-size:10.5px; color:#71717a; min-width:0;">Sequencer health — flat all month, sees nothing</div>
+            <div class="wf-mono" style="font-size:16px; font-weight:700; color:#15803d; white-space:nowrap;">98<span style="font-size:10px; color:#a1a1aa;">/100</span></div>
+            <div style="padding:3px 9px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 10px system-ui; white-space:nowrap;">✓ all green</div>
+          </div>
+          <svg viewBox="0 0 720 230" width="100%" style="display:block; height:auto;">
+            <rect x="78" y="8" width="622" height="54" fill="#dc2626" opacity="0.08"/>
+            <rect x="78" y="62" width="622" height="53" fill="#d97706" opacity="0.10"/>
+            <rect x="78" y="115" width="622" height="71" fill="#16a34a" opacity="0.07"/>
+            <text x="84" y="27" font-size="10" font-weight="700" fill="#c01818">DANGER</text>
+            <text x="84" y="88" font-size="10" font-weight="700" fill="#b45309">WATCH</text>
+            <text x="84" y="158" font-size="10" font-weight="700" fill="#15803d">SAFE</text>
+            <rect x="372" y="8" width="248" height="178" fill="#4f46e5" opacity="0.07"/>
+            <line x1="372" y1="8" x2="372" y2="186" stroke="#4f46e5" stroke-dasharray="3 3" opacity="0.6"/>
+            <line x1="620" y1="8" x2="620" y2="186" stroke="#71717a" stroke-dasharray="3 3" opacity="0.6"/>
+            <line x1="78" y1="62" x2="700" y2="62" stroke="#dc2626" stroke-dasharray="5 4" stroke-width="1.2" opacity="0.6"/>
+            <line x1="78" y1="115" x2="700" y2="115" stroke="#d97706" stroke-dasharray="5 4" stroke-width="1.2" opacity="0.7"/>
+            <line x1="78" y1="8" x2="78" y2="186" stroke="#c4c4cc" stroke-width="1.2"/>
+            <line x1="78" y1="186" x2="700" y2="186" stroke="#c4c4cc" stroke-width="1.2"/>
+            <text x="72" y="16" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">100</text>
+            <text x="72" y="100" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">50</text>
+            <text x="72" y="189" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">0</text>
+            <polyline points="78,172 170,164 260,150 350,120 372,114 470,82 560,54 640,38 700,30" fill="none" stroke="#4f46e5" stroke-width="3"/>
+            <circle cx="372" cy="114" r="5" fill="#4f46e5"/>
+            <circle cx="620" cy="44" r="5" fill="#9a9aa2"/>
+            <text x="78" y="203" font-size="8.5" fill="#a1a1aa">30 days ago</text>
+            <text x="620" y="203" font-size="8.5" fill="#a1a1aa" text-anchor="middle">today</text>
+            <text x="698" y="203" font-size="8.5" fill="#a1a1aa" text-anchor="end">+5d</text>
+            <text x="372" y="221" font-size="9" font-weight="700" fill="#4338ca" text-anchor="middle">▲ Sentinel warned · 12d ago</text>
+            <text x="620" y="221" font-size="9" font-weight="700" fill="#71717a" text-anchor="middle">▲ reply rates now dropping</text>
+          </svg>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:9px; gap:12px;">
+            <div style="display:flex; align-items:center; gap:7px; font-size:11px;"><span style="width:18px;height:3px;background:#4f46e5;border-radius:2px;"></span><span style="color:#52525b;">Sentinel real risk score <span style="color:#a1a1aa;">(0–100, smoothed · up = danger)</span></span></div>
+            <div style="font:700 11px system-ui; color:#4338ca; padding:3px 11px; background:#eef0ff; border:1px solid #c7d2fe; border-radius:999px; white-space:nowrap;">◀ 12 days of warning gained ▶</div>
+          </div>
+        </div>
+
+        <!-- ZONE B ESP cards -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <!-- gmail -->
+          <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div style="font:700 12px system-ui; color:#3f3f46;">Gmail · Google</div><div style="font:700 9px system-ui; letter-spacing:.06em; color:#a1a1aa;">ZONE B</div></div>
+            <div style="display:flex; align-items:center; gap:14px;">
+              <svg viewBox="0 0 84 84" width="76" height="76">
+                <circle cx="42" cy="42" r="34" fill="none" stroke="#eee" stroke-width="9"/>
+                <circle cx="42" cy="42" r="34" fill="none" stroke="#dc2626" stroke-width="9" stroke-linecap="round" stroke-dasharray="81 213" transform="rotate(-90 42 42)"/>
+                <text x="42" y="40" text-anchor="middle" class="wf-mono" font-size="19" font-weight="700" fill="#27272a">38</text>
+                <text x="42" y="55" text-anchor="middle" font-size="9" fill="#a1a1aa">/100</text>
+              </svg>
+              <div style="flex:1;">
+                <div style="font-size:10.5px; color:#71717a; margin-bottom:3px;">Smoothed complaint rate</div>
+                <div class="wf-mono" style="font-size:18px; font-weight:700; color:#27272a;">0.21%</div>
+                <div style="position:relative; height:7px; background:#eee; border-radius:4px; margin:7px 0;">
+                  <div style="position:absolute; left:33%; top:-3px; bottom:-3px; width:1.5px; background:#d97706;"></div>
+                  <div style="position:absolute; left:100%; top:-3px; bottom:-3px; width:1.5px; background:#dc2626; transform:translateX(-1.5px);"></div>
+                  <div style="position:absolute; left:0; top:0; bottom:0; width:70%; background:#dc2626; border-radius:4px; opacity:.55;"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:8.5px; color:#a1a1aa;" class="wf-mono"><span>0.10 watch</span><span>0.30 cliff</span></div>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:10px;">
+              <div style="display:flex; align-items:center; gap:6px; padding:4px 9px; border-radius:999px; background:#fdecec; color:#c01818; font:700 10.5px system-ui;"><span style="width:6px;height:6px;border-radius:50%;background:#dc2626;"></span>→ reaches 0.30% cliff in ~5 days</div>
+              <svg viewBox="0 0 80 26" width="80" height="26"><polyline points="2,8 14,9 26,7 38,11 50,15 62,19 78,23" fill="none" stroke="#dc2626" stroke-width="1.8"/></svg>
+            </div>
+          </div>
+          <!-- outlook -->
+          <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div style="font:700 12px system-ui; color:#3f3f46;">Outlook · Microsoft</div><div style="font:700 9px system-ui; letter-spacing:.06em; color:#a1a1aa;">ZONE B</div></div>
+            <div style="display:flex; align-items:center; gap:14px;">
+              <svg viewBox="0 0 84 84" width="76" height="76">
+                <circle cx="42" cy="42" r="34" fill="none" stroke="#eee" stroke-width="9"/>
+                <circle cx="42" cy="42" r="34" fill="none" stroke="#16a34a" stroke-width="9" stroke-linecap="round" stroke-dasharray="175 213" transform="rotate(-90 42 42)"/>
+                <text x="42" y="40" text-anchor="middle" class="wf-mono" font-size="19" font-weight="700" fill="#27272a">82</text>
+                <text x="42" y="55" text-anchor="middle" font-size="9" fill="#a1a1aa">/100</text>
+              </svg>
+              <div style="flex:1;">
+                <div style="font-size:10.5px; color:#71717a; margin-bottom:3px;">Smoothed complaint rate</div>
+                <div class="wf-mono" style="font-size:18px; font-weight:700; color:#27272a;">0.06%</div>
+                <div style="position:relative; height:7px; background:#eee; border-radius:4px; margin:7px 0;">
+                  <div style="position:absolute; left:33%; top:-3px; bottom:-3px; width:1.5px; background:#d97706;"></div>
+                  <div style="position:absolute; left:100%; top:-3px; bottom:-3px; width:1.5px; background:#dc2626; transform:translateX(-1.5px);"></div>
+                  <div style="position:absolute; left:0; top:0; bottom:0; width:20%; background:#16a34a; border-radius:4px; opacity:.55;"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:8.5px; color:#a1a1aa;" class="wf-mono"><span>0.10 watch</span><span>0.30 cliff</span></div>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:10px;">
+              <div style="display:flex; align-items:center; gap:6px; padding:4px 9px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 10.5px system-ui;"><span style="width:6px;height:6px;border-radius:50%;background:#16a34a;"></span>stable</div>
+              <svg viewBox="0 0 80 26" width="80" height="26"><polyline points="2,16 14,15 26,17 38,14 50,16 62,13 78,15" fill="none" stroke="#16a34a" stroke-width="1.8"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- ZONE D failover playbook -->
+        <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:14px 16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><div style="font:700 12px system-ui; color:#27272a;">Failover playbook · <span class="wf-mono" style="font-weight:600;">acme-outreach-03.com</span></div><div style="font:700 9px system-ui; letter-spacing:.06em; color:#a1a1aa;">ZONE D · state machine</div></div>
+          <div style="display:flex; align-items:center; gap:0; margin-bottom:14px;">
+            <div style="flex:1; text-align:center; padding:8px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 11px system-ui;">Healthy</div>
+            <div style="color:#cbcbd1; padding:0 6px;">→</div>
+            <div style="flex:1; text-align:center; padding:8px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 11px system-ui;">Watch</div>
+            <div style="color:#cbcbd1; padding:0 6px;">→</div>
+            <div style="flex:1; text-align:center; padding:8px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 11px system-ui;">Throttle</div>
+            <div style="color:#cbcbd1; padding:0 6px;">→</div>
+            <div style="flex:1.15; text-align:center; padding:8px 4px; border:2px solid #dc2626; border-radius:6px; color:#fff; background:#dc2626; font:700 11px system-ui; box-shadow:0 0 0 4px #fdecec;">● Failover <span style="font-weight:500; opacity:.85;">(current)</span></div>
+            <div style="color:#cbcbd1; padding:0 6px;">→</div>
+            <div style="flex:1; text-align:center; padding:8px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 11px system-ui;">Cooldown</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; padding:9px 12px; background:#fafafa; border:1px dashed #d4d4d8; border-radius:6px;">
+            <div style="font:700 10.5px system-ui; color:#52525b;">Standby pool</div>
+            <div style="display:flex; gap:6px;"><span style="width:11px;height:11px;border-radius:50%;background:#16a34a;"></span><span style="width:11px;height:11px;border-radius:50%;background:#16a34a;"></span><span style="width:11px;height:11px;border-radius:50%;background:#16a34a;"></span></div>
+            <div class="wf-mono" style="font-size:11px; color:#3f3f46;">3 hot-standby domains ready (Gmail-warmed)</div>
+          </div>
+        </div>
+
+        <!-- ZONE E domains table -->
+        <div style="border:1.5px solid #e4e4e7; border-radius:7px; overflow:hidden;">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#fafafa; border-bottom:1.5px solid #e4e4e7;"><div style="font:700 12px system-ui; color:#27272a;">Domains <span style="color:#a1a1aa; font-weight:500;">· 84</span> <span style="color:#cbcbd1;">▾</span></div><div style="font:700 9px system-ui; letter-spacing:.06em; color:#a1a1aa;">ZONE E · collapsible</div></div>
+          <div style="display:grid; grid-template-columns:2fr 1.1fr .8fr .8fr 1fr 1.4fr; padding:7px 14px; font:700 9px system-ui; letter-spacing:.05em; text-transform:uppercase; color:#a1a1aa; border-bottom:1px solid #ededf0;">
+            <div>Domain</div><div>ESP split</div><div>Gmail</div><div>Outlook</div><div>State</div><div>Last event</div>
+          </div>
+          <div style="display:grid; grid-template-columns:2fr 1.1fr .8fr .8fr 1fr 1.4fr; padding:9px 14px; align-items:center; border-bottom:1px solid #f4f4f5; font-size:11px;">
+            <div class="wf-mono" style="color:#27272a;">acme-outreach-03.com</div>
+            <div style="display:flex; height:8px; border-radius:3px; overflow:hidden; width:64px;"><div style="flex:6; background:#71717a;"></div><div style="flex:3; background:#a1a1aa;"></div><div style="flex:1; background:#d4d4d8;"></div></div>
+            <div class="wf-mono" style="color:#c01818; font-weight:700;">38</div><div class="wf-mono" style="color:#15803d;">82</div>
+            <div><span style="padding:2px 8px; border-radius:999px; background:#fdecec; color:#c01818; font:700 9.5px system-ui;">Failover</span></div>
+            <div class="wf-mono" style="color:#71717a; font-size:10px;">throttled · 6m ago</div>
+          </div>
+          <div style="display:grid; grid-template-columns:2fr 1.1fr .8fr .8fr 1fr 1.4fr; padding:9px 14px; align-items:center; border-bottom:1px solid #f4f4f5; font-size:11px;">
+            <div class="wf-mono" style="color:#27272a;">domain-07.com</div>
+            <div style="display:flex; height:8px; border-radius:3px; overflow:hidden; width:64px;"><div style="flex:5; background:#71717a;"></div><div style="flex:4; background:#a1a1aa;"></div><div style="flex:1; background:#d4d4d8;"></div></div>
+            <div class="wf-mono" style="color:#9a6a00; font-weight:700;">61</div><div class="wf-mono" style="color:#15803d;">88</div>
+            <div><span style="padding:2px 8px; border-radius:999px; background:#fef3e2; color:#b45309; font:700 9.5px system-ui;">Watch</span></div>
+            <div class="wf-mono" style="color:#71717a; font-size:10px;">reply −31% · 1h ago</div>
+          </div>
+          <div style="display:grid; grid-template-columns:2fr 1.1fr .8fr .8fr 1fr 1.4fr; padding:9px 14px; align-items:center; font-size:11px;">
+            <div class="wf-mono" style="color:#27272a;">domain-11.com</div>
+            <div style="display:flex; height:8px; border-radius:3px; overflow:hidden; width:64px;"><div style="flex:7; background:#71717a;"></div><div style="flex:2; background:#a1a1aa;"></div><div style="flex:1; background:#d4d4d8;"></div></div>
+            <div class="wf-mono" style="color:#15803d;">91</div><div class="wf-mono" style="color:#15803d;">94</div>
+            <div><span style="padding:2px 8px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 9.5px system-ui;">Healthy</span></div>
+            <div class="wf-mono" style="color:#71717a; font-size:10px;">cleared · 2h ago</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ZONE C right rail alert feed -->
+      <div style="width:316px; flex-shrink:0; border-left:1.5px solid #e4e4e7; padding:16px 14px; display:flex; flex-direction:column; gap:0; background:#fcfcfd;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div style="font:700 12px system-ui; color:#27272a;">Alert feed</div><div style="font:700 9px system-ui; letter-spacing:.06em; color:#a1a1aa;">ZONE C</div></div>
+        <!-- alert red -->
+        <div style="display:flex; gap:10px; padding:11px 0; border-bottom:1px solid #ededf0;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#dc2626;flex-shrink:0;margin-top:3px;"></span>
+          <div style="flex:1;">
+            <div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; margin-bottom:3px;">11:42 · 6 min ago</div>
+            <div style="font-size:11.5px; color:#27272a; line-height:1.4;">Gmail complaint rate on <span class="wf-mono">acme-outreach-03.com</span> climbing — projected to cross 0.30% in ~5 days.</div>
+            <button style="margin-top:7px; padding:5px 11px; border:none; border-radius:5px; background:#dc2626; color:#fff; font:700 11px system-ui;">Throttle + fail over</button>
+          </div>
+        </div>
+        <!-- alert amber -->
+        <div style="display:flex; gap:10px; padding:11px 0; border-bottom:1px solid #ededf0;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#d97706;flex-shrink:0;margin-top:3px;"></span>
+          <div style="flex:1;">
+            <div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; margin-bottom:3px;">10:08 · 1 hr ago</div>
+            <div style="font-size:11.5px; color:#27272a; line-height:1.4;">Reply rate on <span class="wf-mono">domain-07</span> down 31% over 7 days while complaints flat — early engagement decay.</div>
+            <button style="margin-top:7px; padding:5px 11px; border:1.5px solid #d4d4d8; border-radius:5px; background:#fff; color:#3f3f46; font:700 11px system-ui;">Review list &amp; content</button>
+          </div>
+        </div>
+        <!-- alert green -->
+        <div style="display:flex; gap:10px; padding:11px 0; border-bottom:1px solid #ededf0;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#16a34a;flex-shrink:0;margin-top:3px;"></span>
+          <div style="flex:1;">
+            <div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; margin-bottom:3px;">08:30 · 3 hrs ago</div>
+            <div style="font-size:11.5px; color:#27272a; line-height:1.4;"><span class="wf-mono">domain-11</span> cleared — 7 consecutive clean days. Returned to active rotation.</div>
+          </div>
+        </div>
+        <div class="wf-ph" style="height:54px; border-radius:6px; margin-top:12px;">older alerts ↓</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- VARIANT B : left-column alert feed ---------- -->
+<div style="position:absolute; left:1340px; top:108px; width:1180px;">
+  <div data-drags-parent="1" style="position:absolute; top:-30px; font:700 19px 'Caveat',cursive; color:#52525b;">B · Alert feed as left column <span style="font-size:14px;color:#9a9aa2;">(feed-first, triage-driven)</span></div>
+  <div data-screen-label="Console B" style="background:#fff; border:1.5px solid #d4d4d8; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); min-height:902px; overflow:hidden; font-family:system-ui,sans-serif;">
+    <!-- top bar -->
+    <div style="display:flex; align-items:center; gap:16px; padding:12px 18px; border-bottom:1.5px solid #e4e4e7; background:#fafafa;">
+      <div style="font-weight:800; font-size:16px; letter-spacing:.5px; color:#27272a; display:flex; align-items:center; gap:7px;"><span style="width:14px;height:14px;border:2px solid #4f46e5;border-radius:3px;display:inline-block;"></span>Sentinel</div>
+      <div style="flex:1; max-width:300px; display:flex; align-items:center; justify-content:space-between; padding:7px 12px; border:1.5px solid #d4d4d8; border-radius:6px; font-size:12.5px; color:#3f3f46;"><span class="wf-mono">Acme Agency — 84 domains</span><span style="color:#a1a1aa;">▾</span></div>
+      <div style="flex:1;"></div>
+      <div style="display:flex; align-items:center; gap:6px; padding:6px 11px; border-radius:999px; background:#fdecec; border:1.5px solid #f0b4b4; color:#c01818; font-weight:700; font-size:12px;"><span style="width:8px;height:8px;border-radius:50%;background:#dc2626;display:inline-block;"></span>2 domains critical</div>
+      <div class="wf-mono" style="font-size:11px; color:#a1a1aa;">last synced 4 min ago</div>
+    </div>
+
+    <div style="display:flex;">
+      <!-- ZONE C left column feed -->
+      <div style="width:300px; flex-shrink:0; border-right:1.5px solid #e4e4e7; padding:16px 14px; background:#fcfcfd;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><div style="font:700 12px system-ui; color:#27272a;">Alert feed</div><div style="font:700 9px system-ui; letter-spacing:.06em; color:#a1a1aa;">ZONE C</div></div>
+        <div style="font-size:10px; color:#a1a1aa; margin-bottom:10px;">time-ordered · newest first</div>
+        <div style="display:flex; gap:10px; padding:11px 0; border-top:1px solid #ededf0;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#dc2626;flex-shrink:0;margin-top:3px;"></span>
+          <div style="flex:1;"><div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; margin-bottom:3px;">11:42 · 6 min ago</div><div style="font-size:11.5px; color:#27272a; line-height:1.4;">Gmail complaint rate on <span class="wf-mono">acme-outreach-03</span> climbing — crosses 0.30% in ~5 days.</div><button style="margin-top:7px; padding:5px 11px; border:none; border-radius:5px; background:#dc2626; color:#fff; font:700 11px system-ui;">Throttle + fail over</button></div>
+        </div>
+        <div style="display:flex; gap:10px; padding:11px 0; border-top:1px solid #ededf0;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#d97706;flex-shrink:0;margin-top:3px;"></span>
+          <div style="flex:1;"><div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; margin-bottom:3px;">10:08 · 1 hr ago</div><div style="font-size:11.5px; color:#27272a; line-height:1.4;">Reply rate on <span class="wf-mono">domain-07</span> down 31% / 7d, complaints flat — engagement decay.</div><button style="margin-top:7px; padding:5px 11px; border:1.5px solid #d4d4d8; border-radius:5px; background:#fff; color:#3f3f46; font:700 11px system-ui;">Review list &amp; content</button></div>
+        </div>
+        <div style="display:flex; gap:10px; padding:11px 0; border-top:1px solid #ededf0;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#16a34a;flex-shrink:0;margin-top:3px;"></span>
+          <div style="flex:1;"><div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; margin-bottom:3px;">08:30 · 3 hrs ago</div><div style="font-size:11.5px; color:#27272a; line-height:1.4;"><span class="wf-mono">domain-11</span> cleared — 7 clean days. Back in rotation.</div></div>
+        </div>
+        <div class="wf-ph" style="height:48px; border-radius:6px; margin:10px 0; border-top:1px solid #ededf0;">+ 9 earlier today</div>
+        <div class="wf-ph" style="height:120px; border-radius:6px;">scroll history</div>
+      </div>
+
+      <!-- main -->
+      <div style="flex:1; padding:18px; display:flex; flex-direction:column; gap:16px; min-width:0;">
+        <!-- hero full width -->
+        <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:14px 16px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;"><div style="font:700 13px system-ui; color:#27272a;">Lead-time view <span style="font-weight:500; color:#a1a1aa;">· Gmail · last 30 days</span></div><div style="font:700 9px system-ui; letter-spacing:.08em; text-transform:uppercase; color:#a1a1aa;">Zone A</div></div>
+          <div style="display:flex; align-items:center; gap:11px; padding:9px 13px; border:1.5px solid #d8ecdd; border-radius:6px; background:#f4faf5; margin-bottom:12px;">
+            <div style="font:700 9px system-ui; letter-spacing:.05em; text-transform:uppercase; color:#9a9aa2; white-space:nowrap;">Today's dashboard</div>
+            <svg viewBox="0 0 200 18" width="96" height="14" preserveAspectRatio="none" style="opacity:.5; flex-shrink:0;"><polyline points="0,10 60,9 120,10 200,9" fill="none" stroke="#16a34a" stroke-width="2.5"/></svg>
+            <div style="flex:1; font-size:10.5px; color:#71717a; min-width:0;">Sequencer health — flat all month, sees nothing</div>
+            <div class="wf-mono" style="font-size:16px; font-weight:700; color:#15803d; white-space:nowrap;">98<span style="font-size:10px; color:#a1a1aa;">/100</span></div>
+            <div style="padding:3px 9px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 10px system-ui; white-space:nowrap;">✓ all green</div>
+          </div>
+          <svg viewBox="0 0 720 230" width="100%" style="display:block; height:auto;">
+            <rect x="78" y="8" width="622" height="54" fill="#dc2626" opacity="0.08"/>
+            <rect x="78" y="62" width="622" height="53" fill="#d97706" opacity="0.10"/>
+            <rect x="78" y="115" width="622" height="71" fill="#16a34a" opacity="0.07"/>
+            <text x="84" y="27" font-size="10" font-weight="700" fill="#c01818">DANGER</text>
+            <text x="84" y="88" font-size="10" font-weight="700" fill="#b45309">WATCH</text>
+            <text x="84" y="158" font-size="10" font-weight="700" fill="#15803d">SAFE</text>
+            <rect x="372" y="8" width="248" height="178" fill="#4f46e5" opacity="0.07"/>
+            <line x1="372" y1="8" x2="372" y2="186" stroke="#4f46e5" stroke-dasharray="3 3" opacity="0.6"/>
+            <line x1="620" y1="8" x2="620" y2="186" stroke="#71717a" stroke-dasharray="3 3" opacity="0.6"/>
+            <line x1="78" y1="62" x2="700" y2="62" stroke="#dc2626" stroke-dasharray="5 4" stroke-width="1.2" opacity="0.6"/>
+            <line x1="78" y1="115" x2="700" y2="115" stroke="#d97706" stroke-dasharray="5 4" stroke-width="1.2" opacity="0.7"/>
+            <line x1="78" y1="8" x2="78" y2="186" stroke="#c4c4cc" stroke-width="1.2"/>
+            <line x1="78" y1="186" x2="700" y2="186" stroke="#c4c4cc" stroke-width="1.2"/>
+            <text x="72" y="16" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">100</text>
+            <text x="72" y="100" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">50</text>
+            <text x="72" y="189" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">0</text>
+            <polyline points="78,172 170,164 260,150 350,120 372,114 470,82 560,54 640,38 700,30" fill="none" stroke="#4f46e5" stroke-width="3"/>
+            <circle cx="372" cy="114" r="5" fill="#4f46e5"/>
+            <circle cx="620" cy="44" r="5" fill="#9a9aa2"/>
+            <text x="78" y="203" font-size="8.5" fill="#a1a1aa">30 days ago</text>
+            <text x="620" y="203" font-size="8.5" fill="#a1a1aa" text-anchor="middle">today</text>
+            <text x="698" y="203" font-size="8.5" fill="#a1a1aa" text-anchor="end">+5d</text>
+            <text x="372" y="221" font-size="9" font-weight="700" fill="#4338ca" text-anchor="middle">▲ Sentinel warned · 12d ago</text>
+            <text x="620" y="221" font-size="9" font-weight="700" fill="#71717a" text-anchor="middle">▲ reply rates now dropping</text>
+          </svg>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:9px; gap:12px;">
+            <div style="display:flex; align-items:center; gap:7px; font-size:11px;"><span style="width:18px;height:3px;background:#4f46e5;border-radius:2px;"></span><span style="color:#52525b;">Sentinel real risk score <span style="color:#a1a1aa;">(0–100, smoothed · up = danger)</span></span></div>
+            <div style="font:700 11px system-ui; color:#4338ca; padding:3px 11px; background:#eef0ff; border:1px solid #c7d2fe; border-radius:999px; white-space:nowrap;">◀ 12 days of warning gained ▶</div>
+          </div>
+        </div>
+
+        <!-- ESP + playbook side by side -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:13px;">
+            <div style="font:700 12px system-ui; color:#3f3f46; margin-bottom:10px;">Gmail · Google <span style="float:right; font:700 9px system-ui; color:#a1a1aa;">ZONE B</span></div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <svg viewBox="0 0 80 80" width="68" height="68"><circle cx="40" cy="40" r="32" fill="none" stroke="#eee" stroke-width="8.5"/><circle cx="40" cy="40" r="32" fill="none" stroke="#dc2626" stroke-width="8.5" stroke-linecap="round" stroke-dasharray="76 201" transform="rotate(-90 40 40)"/><text x="40" y="38" text-anchor="middle" class="wf-mono" font-size="18" font-weight="700" fill="#27272a">38</text><text x="40" y="52" text-anchor="middle" font-size="8.5" fill="#a1a1aa">/100</text></svg>
+              <div style="flex:1;"><div style="font-size:10px; color:#71717a;">complaint rate</div><div class="wf-mono" style="font-size:16px; font-weight:700;">0.21%</div><div style="display:flex; align-items:center; gap:5px; margin-top:6px; padding:3px 7px; border-radius:999px; background:#fdecec; color:#c01818; font:700 9.5px system-ui;"><span style="width:5px;height:5px;border-radius:50%;background:#dc2626;"></span>→ 0.30% cliff ~5 days</div></div>
+            </div>
+          </div>
+          <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:13px;">
+            <div style="font:700 12px system-ui; color:#3f3f46; margin-bottom:10px;">Outlook · Microsoft <span style="float:right; font:700 9px system-ui; color:#a1a1aa;">ZONE B</span></div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <svg viewBox="0 0 80 80" width="68" height="68"><circle cx="40" cy="40" r="32" fill="none" stroke="#eee" stroke-width="8.5"/><circle cx="40" cy="40" r="32" fill="none" stroke="#16a34a" stroke-width="8.5" stroke-linecap="round" stroke-dasharray="165 201" transform="rotate(-90 40 40)"/><text x="40" y="38" text-anchor="middle" class="wf-mono" font-size="18" font-weight="700" fill="#27272a">82</text><text x="40" y="52" text-anchor="middle" font-size="8.5" fill="#a1a1aa">/100</text></svg>
+              <div style="flex:1;"><div style="font-size:10px; color:#71717a;">complaint rate</div><div class="wf-mono" style="font-size:16px; font-weight:700;">0.06%</div><div style="display:flex; align-items:center; gap:5px; margin-top:6px; padding:3px 7px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 9.5px system-ui;"><span style="width:5px;height:5px;border-radius:50%;background:#16a34a;"></span>stable</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- playbook -->
+        <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:14px 16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><div style="font:700 12px system-ui; color:#27272a;">Failover playbook · <span class="wf-mono" style="font-weight:600;">acme-outreach-03</span></div><div style="font:700 9px system-ui; color:#a1a1aa;">ZONE D</div></div>
+          <div style="display:flex; align-items:center; margin-bottom:12px;">
+            <div style="flex:1; text-align:center; padding:7px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 10.5px system-ui;">Healthy</div><div style="color:#cbcbd1; padding:0 5px;">→</div>
+            <div style="flex:1; text-align:center; padding:7px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 10.5px system-ui;">Watch</div><div style="color:#cbcbd1; padding:0 5px;">→</div>
+            <div style="flex:1; text-align:center; padding:7px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 10.5px system-ui;">Throttle</div><div style="color:#cbcbd1; padding:0 5px;">→</div>
+            <div style="flex:1.2; text-align:center; padding:7px 4px; border:2px solid #dc2626; border-radius:6px; color:#fff; background:#dc2626; font:700 10.5px system-ui; box-shadow:0 0 0 4px #fdecec;">● Failover</div><div style="color:#cbcbd1; padding:0 5px;">→</div>
+            <div style="flex:1; text-align:center; padding:7px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 10.5px system-ui;">Cooldown</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 12px; background:#fafafa; border:1px dashed #d4d4d8; border-radius:6px;"><div style="font:700 10.5px system-ui; color:#52525b;">Standby pool</div><div style="display:flex; gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#16a34a;"></span><span style="width:10px;height:10px;border-radius:50%;background:#16a34a;"></span><span style="width:10px;height:10px;border-radius:50%;background:#16a34a;"></span></div><div class="wf-mono" style="font-size:10.5px; color:#3f3f46;">3 hot-standby domains ready (Gmail-warmed)</div></div>
+        </div>
+
+        <!-- table compact -->
+        <div style="border:1.5px solid #e4e4e7; border-radius:7px; overflow:hidden;">
+          <div style="padding:9px 14px; background:#fafafa; border-bottom:1.5px solid #e4e4e7; font:700 12px system-ui; color:#27272a;">Domains <span style="color:#a1a1aa; font-weight:500;">· 84</span> <span style="float:right; font:700 9px system-ui; color:#a1a1aa;">ZONE E</span></div>
+          <div style="display:grid; grid-template-columns:2fr 1fr .8fr .8fr 1fr; padding:9px 14px; align-items:center; border-bottom:1px solid #f4f4f5; font-size:11px;"><div class="wf-mono">acme-outreach-03</div><div style="display:flex; height:7px; border-radius:3px; overflow:hidden; width:56px;"><div style="flex:6; background:#71717a;"></div><div style="flex:3; background:#a1a1aa;"></div><div style="flex:1; background:#d4d4d8;"></div></div><div class="wf-mono" style="color:#c01818; font-weight:700;">38</div><div class="wf-mono" style="color:#15803d;">82</div><div><span style="padding:2px 7px; border-radius:999px; background:#fdecec; color:#c01818; font:700 9px system-ui;">Failover</span></div></div>
+          <div style="display:grid; grid-template-columns:2fr 1fr .8fr .8fr 1fr; padding:9px 14px; align-items:center; border-bottom:1px solid #f4f4f5; font-size:11px;"><div class="wf-mono">domain-07</div><div style="display:flex; height:7px; border-radius:3px; overflow:hidden; width:56px;"><div style="flex:5; background:#71717a;"></div><div style="flex:4; background:#a1a1aa;"></div><div style="flex:1; background:#d4d4d8;"></div></div><div class="wf-mono" style="color:#9a6a00; font-weight:700;">61</div><div class="wf-mono" style="color:#15803d;">88</div><div><span style="padding:2px 7px; border-radius:999px; background:#fef3e2; color:#b45309; font:700 9px system-ui;">Watch</span></div></div>
+          <div style="display:grid; grid-template-columns:2fr 1fr .8fr .8fr 1fr; padding:9px 14px; align-items:center; font-size:11px;"><div class="wf-mono">domain-11</div><div style="display:flex; height:7px; border-radius:3px; overflow:hidden; width:56px;"><div style="flex:7; background:#71717a;"></div><div style="flex:2; background:#a1a1aa;"></div><div style="flex:1; background:#d4d4d8;"></div></div><div class="wf-mono" style="color:#15803d;">91</div><div class="wf-mono" style="color:#15803d;">94</div><div><span style="padding:2px 7px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 9px system-ui;">Healthy</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- VARIANT C : top ticker + focused hero ---------- -->
+<div style="position:absolute; left:2600px; top:108px; width:1180px;">
+  <div data-drags-parent="1" style="position:absolute; top:-30px; font:700 19px 'Caveat',cursive; color:#52525b;">C · Top alert ticker + hero as the stage <span style="font-size:14px;color:#9a9aa2;">(chart-first, gauges flank it)</span></div>
+  <div data-screen-label="Console C" style="background:#fff; border:1.5px solid #d4d4d8; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); min-height:902px; overflow:hidden; font-family:system-ui,sans-serif;">
+    <!-- top bar -->
+    <div style="display:flex; align-items:center; gap:16px; padding:12px 18px; border-bottom:1.5px solid #e4e4e7; background:#fafafa;">
+      <div style="font-weight:800; font-size:16px; letter-spacing:.5px; color:#27272a; display:flex; align-items:center; gap:7px;"><span style="width:14px;height:14px;border:2px solid #4f46e5;border-radius:3px;display:inline-block;"></span>Sentinel</div>
+      <div style="flex:1; max-width:300px; display:flex; align-items:center; justify-content:space-between; padding:7px 12px; border:1.5px solid #d4d4d8; border-radius:6px; font-size:12.5px; color:#3f3f46;"><span class="wf-mono">Acme Agency — 84 domains</span><span style="color:#a1a1aa;">▾</span></div>
+      <div style="flex:1;"></div>
+      <div style="display:flex; align-items:center; gap:6px; padding:6px 11px; border-radius:999px; background:#fdecec; border:1.5px solid #f0b4b4; color:#c01818; font-weight:700; font-size:12px;"><span style="width:8px;height:8px;border-radius:50%;background:#dc2626;display:inline-block;"></span>2 domains critical</div>
+      <div class="wf-mono" style="font-size:11px; color:#a1a1aa;">last synced 4 min ago</div>
+    </div>
+
+    <!-- ZONE C alert ticker strip -->
+    <div style="display:flex; align-items:stretch; border-bottom:1.5px solid #e4e4e7; background:#fcfcfd;">
+      <div style="display:flex; align-items:center; gap:7px; padding:10px 14px; border-right:1.5px solid #e4e4e7; font:700 10px system-ui; letter-spacing:.06em; color:#71717a; text-transform:uppercase; white-space:nowrap;">Alert feed <span style="font-weight:500; color:#a1a1aa;">ZONE C →</span></div>
+      <div style="flex:1; display:flex; align-items:center; gap:10px; padding:8px 14px; border-right:1px solid #ededf0; min-width:0;"><span style="width:8px;height:8px;border-radius:50%;background:#dc2626;flex-shrink:0;"></span><div style="min-width:0;"><div style="font-size:11px; color:#27272a; line-height:1.3; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Gmail complaints on <span class="wf-mono">acme-outreach-03</span> — cross 0.30% in ~5d</div></div><button style="margin-left:auto; flex-shrink:0; padding:4px 9px; border:none; border-radius:5px; background:#dc2626; color:#fff; font:700 10px system-ui;">Throttle + fail over</button></div>
+      <div style="flex:1; display:flex; align-items:center; gap:10px; padding:8px 14px; border-right:1px solid #ededf0; min-width:0;"><span style="width:8px;height:8px;border-radius:50%;background:#d97706;flex-shrink:0;"></span><div style="font-size:11px; color:#27272a; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Reply −31%/7d on <span class="wf-mono">domain-07</span></div><button style="margin-left:auto; flex-shrink:0; padding:4px 9px; border:1.5px solid #d4d4d8; border-radius:5px; background:#fff; color:#3f3f46; font:700 10px system-ui;">Review</button></div>
+      <div style="display:flex; align-items:center; gap:7px; padding:8px 14px; white-space:nowrap;"><span style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;"></span><div style="font-size:11px; color:#71717a;"><span class="wf-mono">domain-11</span> cleared</div></div>
+    </div>
+
+    <div style="padding:18px; display:flex; flex-direction:column; gap:16px;">
+      <!-- hero + gauges flanking -->
+      <div style="display:flex; gap:14px;">
+        <div style="flex:1; border:1.5px solid #e4e4e7; border-radius:7px; padding:16px 18px; min-width:0;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;"><div style="font:700 14px system-ui; color:#27272a;">Lead-time view <span style="font-weight:500; color:#a1a1aa;">· Gmail · last 30 days</span></div><div style="font:700 9px system-ui; letter-spacing:.08em; text-transform:uppercase; color:#a1a1aa;">Zone A · the money shot</div></div>
+          <div style="display:flex; align-items:center; gap:11px; padding:9px 13px; border:1.5px solid #d8ecdd; border-radius:6px; background:#f4faf5; margin-bottom:12px;">
+            <div style="font:700 9px system-ui; letter-spacing:.05em; text-transform:uppercase; color:#9a9aa2; white-space:nowrap;">Today's dashboard</div>
+            <svg viewBox="0 0 200 18" width="96" height="14" preserveAspectRatio="none" style="opacity:.5; flex-shrink:0;"><polyline points="0,10 60,9 120,10 200,9" fill="none" stroke="#16a34a" stroke-width="2.5"/></svg>
+            <div style="flex:1; font-size:10.5px; color:#71717a; min-width:0;">Sequencer health — flat all month, sees nothing</div>
+            <div class="wf-mono" style="font-size:16px; font-weight:700; color:#15803d; white-space:nowrap;">98<span style="font-size:10px; color:#a1a1aa;">/100</span></div>
+            <div style="padding:3px 9px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 10px system-ui; white-space:nowrap;">✓ all green</div>
+          </div>
+          <svg viewBox="0 0 700 250" width="100%" style="display:block; height:auto;">
+            <rect x="78" y="8" width="602" height="60" fill="#dc2626" opacity="0.08"/>
+            <rect x="78" y="68" width="602" height="58" fill="#d97706" opacity="0.10"/>
+            <rect x="78" y="126" width="602" height="78" fill="#16a34a" opacity="0.07"/>
+            <text x="84" y="28" font-size="10" font-weight="700" fill="#c01818">DANGER</text>
+            <text x="84" y="96" font-size="10" font-weight="700" fill="#b45309">WATCH</text>
+            <text x="84" y="172" font-size="10" font-weight="700" fill="#15803d">SAFE</text>
+            <rect x="362" y="8" width="240" height="196" fill="#4f46e5" opacity="0.07"/>
+            <line x1="362" y1="8" x2="362" y2="204" stroke="#4f46e5" stroke-dasharray="3 3" opacity="0.6"/>
+            <line x1="602" y1="8" x2="602" y2="204" stroke="#71717a" stroke-dasharray="3 3" opacity="0.6"/>
+            <line x1="78" y1="68" x2="680" y2="68" stroke="#dc2626" stroke-dasharray="5 4" stroke-width="1.2" opacity="0.6"/>
+            <line x1="78" y1="126" x2="680" y2="126" stroke="#d97706" stroke-dasharray="5 4" stroke-width="1.2" opacity="0.7"/>
+            <line x1="78" y1="8" x2="78" y2="204" stroke="#c4c4cc" stroke-width="1.2"/>
+            <line x1="78" y1="204" x2="680" y2="204" stroke="#c4c4cc" stroke-width="1.2"/>
+            <text x="72" y="16" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">100</text>
+            <text x="72" y="110" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">50</text>
+            <text x="72" y="207" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">0</text>
+            <polyline points="78,188 168,180 258,164 348,132 362,124 460,88 552,56 632,40 680,32" fill="none" stroke="#4f46e5" stroke-width="3"/>
+            <circle cx="362" cy="124" r="5" fill="#4f46e5"/>
+            <circle cx="602" cy="48" r="5" fill="#9a9aa2"/>
+            <text x="78" y="221" font-size="8.5" fill="#a1a1aa">30 days ago</text>
+            <text x="602" y="221" font-size="8.5" fill="#a1a1aa" text-anchor="middle">today</text>
+            <text x="678" y="221" font-size="8.5" fill="#a1a1aa" text-anchor="end">+5d</text>
+            <text x="362" y="239" font-size="9" font-weight="700" fill="#4338ca" text-anchor="middle">▲ Sentinel warned · 12d ago</text>
+            <text x="602" y="239" font-size="9" font-weight="700" fill="#71717a" text-anchor="middle">▲ reply rates drop</text>
+          </svg>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; gap:12px;">
+            <div style="display:flex; align-items:center; gap:7px; font-size:11.5px;"><span style="width:20px;height:3px;background:#4f46e5;border-radius:2px;"></span><span style="color:#52525b;">Sentinel real risk score <span style="color:#a1a1aa;">(0–100, up = danger)</span></span></div>
+            <div style="font:700 11px system-ui; color:#4338ca; padding:3px 11px; background:#eef0ff; border:1px solid #c7d2fe; border-radius:999px; white-space:nowrap;">◀ 12 days gained ▶</div>
+          </div>
+        </div>
+        <!-- gauges stacked to the right -->
+        <div style="width:230px; flex-shrink:0; display:flex; flex-direction:column; gap:14px;">
+          <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:13px; text-align:center;">
+            <div style="font:700 11.5px system-ui; color:#3f3f46; margin-bottom:6px; text-align:left;">Gmail · Google</div>
+            <svg viewBox="0 0 90 90" width="84" height="84"><circle cx="45" cy="45" r="36" fill="none" stroke="#eee" stroke-width="9"/><circle cx="45" cy="45" r="36" fill="none" stroke="#dc2626" stroke-width="9" stroke-linecap="round" stroke-dasharray="86 226" transform="rotate(-90 45 45)"/><text x="45" y="43" text-anchor="middle" class="wf-mono" font-size="22" font-weight="700" fill="#27272a">38</text><text x="45" y="59" text-anchor="middle" font-size="9" fill="#a1a1aa">/100</text></svg>
+            <div class="wf-mono" style="font-size:13px; font-weight:700; margin-top:2px;">0.21%</div>
+            <div style="margin-top:6px; padding:4px 8px; border-radius:999px; background:#fdecec; color:#c01818; font:700 9.5px system-ui; display:inline-block;">→ cliff in ~5 days</div>
+          </div>
+          <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:13px; text-align:center;">
+            <div style="font:700 11.5px system-ui; color:#3f3f46; margin-bottom:6px; text-align:left;">Outlook · Microsoft</div>
+            <svg viewBox="0 0 90 90" width="84" height="84"><circle cx="45" cy="45" r="36" fill="none" stroke="#eee" stroke-width="9"/><circle cx="45" cy="45" r="36" fill="none" stroke="#16a34a" stroke-width="9" stroke-linecap="round" stroke-dasharray="186 226" transform="rotate(-90 45 45)"/><text x="45" y="43" text-anchor="middle" class="wf-mono" font-size="22" font-weight="700" fill="#27272a">82</text><text x="45" y="59" text-anchor="middle" font-size="9" fill="#a1a1aa">/100</text></svg>
+            <div class="wf-mono" style="font-size:13px; font-weight:700; margin-top:2px;">0.06%</div>
+            <div style="margin-top:6px; padding:4px 8px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 9.5px system-ui; display:inline-block;">stable</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- playbook -->
+      <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:14px 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><div style="font:700 12px system-ui; color:#27272a;">Failover playbook · <span class="wf-mono" style="font-weight:600;">acme-outreach-03.com</span></div><div style="font:700 9px system-ui; color:#a1a1aa;">ZONE D · backup plan in motion</div></div>
+        <div style="display:flex; align-items:center; margin-bottom:12px;">
+          <div style="flex:1; text-align:center; padding:8px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 11px system-ui;">Healthy</div><div style="color:#cbcbd1; padding:0 6px;">→</div>
+          <div style="flex:1; text-align:center; padding:8px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 11px system-ui;">Watch</div><div style="color:#cbcbd1; padding:0 6px;">→</div>
+          <div style="flex:1; text-align:center; padding:8px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 11px system-ui;">Throttle</div><div style="color:#cbcbd1; padding:0 6px;">→</div>
+          <div style="flex:1.2; text-align:center; padding:8px 4px; border:2px solid #dc2626; border-radius:6px; color:#fff; background:#dc2626; font:700 11px system-ui; box-shadow:0 0 0 4px #fdecec;">● Failover <span style="font-weight:500; opacity:.85;">(current)</span></div><div style="color:#cbcbd1; padding:0 6px;">→</div>
+          <div style="flex:1; text-align:center; padding:8px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 11px system-ui;">Cooldown</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; padding:9px 12px; background:#fafafa; border:1px dashed #d4d4d8; border-radius:6px;"><div style="font:700 10.5px system-ui; color:#52525b;">Standby pool</div><div style="display:flex; gap:6px;"><span style="width:11px;height:11px;border-radius:50%;background:#16a34a;"></span><span style="width:11px;height:11px;border-radius:50%;background:#16a34a;"></span><span style="width:11px;height:11px;border-radius:50%;background:#16a34a;"></span></div><div class="wf-mono" style="font-size:11px; color:#3f3f46;">3 hot-standby domains ready (Gmail-warmed)</div></div>
+      </div>
+
+      <!-- table -->
+      <div style="border:1.5px solid #e4e4e7; border-radius:7px; overflow:hidden;">
+        <div style="padding:10px 14px; background:#fafafa; border-bottom:1.5px solid #e4e4e7; font:700 12px system-ui; color:#27272a;">Domains <span style="color:#a1a1aa; font-weight:500;">· 84</span> <span style="float:right; font:700 9px system-ui; color:#a1a1aa;">ZONE E</span></div>
+        <div style="display:grid; grid-template-columns:2fr 1.1fr .8fr .8fr 1fr 1.4fr; padding:7px 14px; font:700 9px system-ui; letter-spacing:.05em; text-transform:uppercase; color:#a1a1aa; border-bottom:1px solid #ededf0;"><div>Domain</div><div>ESP split</div><div>Gmail</div><div>Outlook</div><div>State</div><div>Last event</div></div>
+        <div style="display:grid; grid-template-columns:2fr 1.1fr .8fr .8fr 1fr 1.4fr; padding:9px 14px; align-items:center; border-bottom:1px solid #f4f4f5; font-size:11px;"><div class="wf-mono">acme-outreach-03.com</div><div style="display:flex; height:8px; border-radius:3px; overflow:hidden; width:64px;"><div style="flex:6; background:#71717a;"></div><div style="flex:3; background:#a1a1aa;"></div><div style="flex:1; background:#d4d4d8;"></div></div><div class="wf-mono" style="color:#c01818; font-weight:700;">38</div><div class="wf-mono" style="color:#15803d;">82</div><div><span style="padding:2px 8px; border-radius:999px; background:#fdecec; color:#c01818; font:700 9.5px system-ui;">Failover</span></div><div class="wf-mono" style="color:#71717a; font-size:10px;">throttled · 6m</div></div>
+        <div style="display:grid; grid-template-columns:2fr 1.1fr .8fr .8fr 1fr 1.4fr; padding:9px 14px; align-items:center; border-bottom:1px solid #f4f4f5; font-size:11px;"><div class="wf-mono">domain-07.com</div><div style="display:flex; height:8px; border-radius:3px; overflow:hidden; width:64px;"><div style="flex:5; background:#71717a;"></div><div style="flex:4; background:#a1a1aa;"></div><div style="flex:1; background:#d4d4d8;"></div></div><div class="wf-mono" style="color:#9a6a00; font-weight:700;">61</div><div class="wf-mono" style="color:#15803d;">88</div><div><span style="padding:2px 8px; border-radius:999px; background:#fef3e2; color:#b45309; font:700 9.5px system-ui;">Watch</span></div><div class="wf-mono" style="color:#71717a; font-size:10px;">reply −31% · 1h</div></div>
+        <div style="display:grid; grid-template-columns:2fr 1.1fr .8fr .8fr 1fr 1.4fr; padding:9px 14px; align-items:center; font-size:11px;"><div class="wf-mono">domain-11.com</div><div style="display:flex; height:8px; border-radius:3px; overflow:hidden; width:64px;"><div style="flex:7; background:#71717a;"></div><div style="flex:2; background:#a1a1aa;"></div><div style="flex:1; background:#d4d4d8;"></div></div><div class="wf-mono" style="color:#15803d;">91</div><div class="wf-mono" style="color:#15803d;">94</div><div><span style="padding:2px 8px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 9.5px system-ui;">Healthy</span></div><div class="wf-mono" style="color:#71717a; font-size:10px;">cleared · 2h</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SECTION: DRILL-DOWN ===================== -->
+<div data-drags-parent="0" style="position:absolute; left:80px; top:1090px; font:700 26px 'Caveat',cursive; color:#3f3f46;">Screen 2 — Domain detail (drill-down)</div>
+<div data-drags-parent="0" style="position:absolute; left:84px; top:1124px; font:500 15px 'Caveat',cursive; color:#7c7c85;">opened by clicking a domain — answers "why is the score what it is?"</div>
+
+<div style="position:absolute; left:80px; top:1168px; width:1180px;">
+  <div data-screen-label="Domain detail" style="background:#fff; border:1.5px solid #d4d4d8; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); overflow:hidden; font-family:system-ui,sans-serif;">
+    <!-- header -->
+    <div style="display:flex; align-items:center; gap:16px; padding:14px 18px; border-bottom:1.5px solid #e4e4e7; background:#fafafa;">
+      <div style="font:600 12px system-ui; color:#a1a1aa;">← Console</div>
+      <div class="wf-mono" style="font-size:17px; font-weight:700; color:#27272a;">acme-outreach-03.com</div>
+      <div style="padding:3px 10px; border-radius:999px; background:#fdecec; color:#c01818; font:700 11px system-ui;">● Failover</div>
+      <div style="flex:1;"></div>
+      <div style="text-align:right;"><div style="font:600 9px system-ui; letter-spacing:.05em; text-transform:uppercase; color:#a1a1aa;">Overall risk score</div><div class="wf-mono" style="font-size:22px; font-weight:700; color:#c01818;">38<span style="font-size:12px; color:#a1a1aa;">/100</span></div></div>
+    </div>
+
+    <div style="display:flex; gap:0;">
+      <!-- left: raw vs smoothed chart -->
+      <div style="flex:1.55; padding:18px; min-width:0; border-right:1.5px solid #e4e4e7;">
+        <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:16px 18px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;"><div style="font:700 13px system-ui; color:#27272a;">Raw vs smoothed complaint rate <span style="font-weight:500; color:#a1a1aa;">· 30 days</span></div><div style="font:700 9px system-ui; letter-spacing:.06em; text-transform:uppercase; color:#a1a1aa;">the statistical engine</div></div>
+          <div style="position:relative;">
+            <svg viewBox="0 0 700 280" width="100%" style="display:block; height:auto;">
+              <!-- threshold lines -->
+              <line x1="20" y1="170" x2="680" y2="170" stroke="#e7b86a" stroke-dasharray="5 4" stroke-width="1.3"/>
+              <text x="24" y="165" font-size="9" class="wf-mono" fill="#b45309">0.10% watch line</text>
+              <line x1="20" y1="80" x2="680" y2="80" stroke="#e89a9a" stroke-dasharray="5 4" stroke-width="1.3"/>
+              <text x="24" y="75" font-size="9" class="wf-mono" fill="#c01818">0.30% cliff</text>
+              <!-- confidence band around smoothed -->
+              <path d="M20,230 L120,214 L240,196 L340,168 L440,138 L540,116 L680,96 L680,128 L540,148 L440,170 L340,200 L240,228 L120,246 L20,260 Z" fill="#4f46e5" opacity="0.10"/>
+              <!-- raw jagged red -->
+              <polyline points="20,238 60,210 100,244 140,206 180,236 220,198 260,224 300,172 340,196 380,150 420,176 460,128 500,150 540,108 580,132 620,96 660,118" fill="none" stroke="#dc2626" stroke-width="1.4" opacity="0.7"/>
+              <!-- smoothed indigo -->
+              <polyline points="20,245 120,230 240,212 340,184 440,154 540,132 680,112" fill="none" stroke="#4f46e5" stroke-width="2.8"/>
+              <!-- alert marker where smoothed crosses 0.10 (y=170) -->
+              <circle cx="350" cy="170" r="6" fill="#fff" stroke="#4f46e5" stroke-width="2.5"/>
+            </svg>
+            <div style="position:absolute; top:42%; left:50%; font:700 10.5px system-ui; color:#4338ca; background:#fff; padding:2px 6px; border:1px solid #c7d2fe; border-radius:5px;">▲ alert fired here — early &amp; trustworthy</div>
+          </div>
+          <div style="display:flex; gap:22px; margin-top:10px; font-size:11px;">
+            <div style="display:flex; align-items:center; gap:7px;"><span style="width:18px;height:3px;background:#dc2626; opacity:.7; border-radius:2px;"></span><span style="color:#52525b;">Raw daily complaint rate <span style="color:#a1a1aa;">(noisy)</span></span></div>
+            <div style="display:flex; align-items:center; gap:7px;"><span style="width:18px;height:3px;background:#4f46e5;border-radius:2px;"></span><span style="color:#52525b;">Smoothed estimate <span style="color:#a1a1aa;">+ confidence band</span></span></div>
+          </div>
+        </div>
+
+        <!-- recommended action card -->
+        <div style="border:1.5px solid #f0b4b4; border-radius:7px; padding:16px; margin-top:16px; background:#fffafa;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><div style="font:700 13px system-ui; color:#c01818;">Recommended action</div><div style="font:700 9px system-ui; color:#a1a1aa;">failover steps</div></div>
+          <div style="display:flex; flex-direction:column; gap:7px; margin-bottom:14px;">
+            <div style="display:flex; align-items:center; gap:9px; font-size:12px; color:#3f3f46;"><span class="wf-mono" style="width:18px;height:18px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">1</span>Throttle Gmail sends on this domain to 20%</div>
+            <div style="display:flex; align-items:center; gap:9px; font-size:12px; color:#3f3f46;"><span class="wf-mono" style="width:18px;height:18px;border-radius:50%;background:#dc2626;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">2</span>Fail traffic over to <span class="wf-mono">standby-gmail-02</span> (hot, warmed)</div>
+            <div style="display:flex; align-items:center; gap:9px; font-size:12px; color:#3f3f46;"><span class="wf-mono" style="width:18px;height:18px;border-radius:50%;background:#71717a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">3</span>Hold in Cooldown until 7 clean days</div>
+          </div>
+          <button style="width:100%; padding:10px; border:none; border-radius:6px; background:#dc2626; color:#fff; font:700 13px system-ui;">Apply failover playbook</button>
+        </div>
+      </div>
+
+      <!-- right: signal breakdown -->
+      <div style="width:380px; flex-shrink:0; padding:18px; background:#fcfcfd;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><div style="font:700 13px system-ui; color:#27272a;">Signal breakdown</div></div>
+        <div style="font-size:10.5px; color:#a1a1aa; margin-bottom:14px;">weighted inputs feeding the score</div>
+        <div style="display:flex; gap:14px; margin-bottom:14px; font-size:10px;">
+          <div style="display:flex; align-items:center; gap:6px;"><span style="width:11px;height:4px;background:#4f46e5;border-radius:2px;"></span><span style="color:#52525b;">leading (Sentinel's edge)</span></div>
+          <div style="display:flex; align-items:center; gap:6px;"><span style="width:11px;height:4px;background:#a1a1aa;border-radius:2px;"></span><span style="color:#52525b;">lagging</span></div>
+        </div>
+        <!-- signal rows -->
+        <div style="display:flex; flex-direction:column; gap:13px;">
+          <!-- each row: label/value, weight, bar -->
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;"><div style="font-size:11.5px; color:#27272a;">Smoothed complaint rate</div><div class="wf-mono" style="font-size:11px; color:#c01818; font-weight:700;">0.21%</div></div>
+            <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:7px; background:#eee; border-radius:4px; overflow:hidden;"><div style="width:80%; height:100%; background:#a1a1aa;"></div></div><div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; width:34px; text-align:right;">w 28%</div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;"><div style="font-size:11.5px; color:#27272a;">Complaint-rate slope <span style="color:#4f46e5; font-size:9px; font-weight:700;">LEADING</span></div><div class="wf-mono" style="font-size:11px; color:#c01818; font-weight:700;">+0.04%/d</div></div>
+            <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:7px; background:#eee; border-radius:4px; overflow:hidden;"><div style="width:64%; height:100%; background:#4f46e5;"></div></div><div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; width:34px; text-align:right;">w 22%</div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;"><div style="font-size:11.5px; color:#27272a;">Reply trend (7d) <span style="color:#4f46e5; font-size:9px; font-weight:700;">LEADING</span></div><div class="wf-mono" style="font-size:11px; color:#9a6a00; font-weight:700;">−31%</div></div>
+            <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:7px; background:#eee; border-radius:4px; overflow:hidden;"><div style="width:52%; height:100%; background:#4f46e5;"></div></div><div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; width:34px; text-align:right;">w 16%</div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;"><div style="font-size:11.5px; color:#27272a;">Soft-bounce / deferral rate <span style="color:#4f46e5; font-size:9px; font-weight:700;">LEADING</span></div><div class="wf-mono" style="font-size:11px; color:#27272a;">3.8%</div></div>
+            <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:7px; background:#eee; border-radius:4px; overflow:hidden;"><div style="width:44%; height:100%; background:#4f46e5;"></div></div><div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; width:34px; text-align:right;">w 14%</div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;"><div style="font-size:11.5px; color:#27272a;">Postmaster reputation tier <span style="color:#4f46e5; font-size:9px; font-weight:700;">LEADING</span></div><div class="wf-mono" style="font-size:11px; color:#9a6a00; font-weight:700;">Medium ↓</div></div>
+            <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:7px; background:#eee; border-radius:4px; overflow:hidden;"><div style="width:30%; height:100%; background:#4f46e5;"></div></div><div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; width:34px; text-align:right;">w 8%</div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;"><div style="font-size:11.5px; color:#27272a;">Hard bounces</div><div class="wf-mono" style="font-size:11px; color:#27272a;">0.6%</div></div>
+            <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:7px; background:#eee; border-radius:4px; overflow:hidden;"><div style="width:22%; height:100%; background:#a1a1aa;"></div></div><div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; width:34px; text-align:right;">w 6%</div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;"><div style="font-size:11.5px; color:#27272a;">Seed-list placement <span style="color:#4f46e5; font-size:9px; font-weight:700;">LEADING</span></div><div class="wf-mono" style="font-size:11px; color:#27272a;">71% inbox</div></div>
+            <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:7px; background:#eee; border-radius:4px; overflow:hidden;"><div style="width:22%; height:100%; background:#4f46e5;"></div></div><div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; width:34px; text-align:right;">w 6%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SECTION: CALM VARIANT ===================== -->
+<div data-drags-parent="0" style="position:absolute; left:1340px; top:1090px; font:700 26px 'Caveat',cursive; color:#3f3f46;">Calm variant — "all healthy"</div>
+<div data-drags-parent="0" style="position:absolute; left:1344px; top:1124px; font:500 15px 'Caveat',cursive; color:#7c7c85;">same console, nothing firing — so the critical state's contrast lands</div>
+
+<div style="position:absolute; left:1340px; top:1168px; width:1180px;">
+  <div data-screen-label="Console calm" style="background:#fff; border:1.5px solid #d4d4d8; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); overflow:hidden; font-family:system-ui,sans-serif;">
+    <!-- top bar -->
+    <div style="display:flex; align-items:center; gap:16px; padding:12px 18px; border-bottom:1.5px solid #e4e4e7; background:#fafafa;">
+      <div style="font-weight:800; font-size:16px; letter-spacing:.5px; color:#27272a; display:flex; align-items:center; gap:7px;"><span style="width:14px;height:14px;border:2px solid #4f46e5;border-radius:3px;display:inline-block;"></span>Sentinel</div>
+      <div style="flex:1; max-width:300px; display:flex; align-items:center; justify-content:space-between; padding:7px 12px; border:1.5px solid #d4d4d8; border-radius:6px; font-size:12.5px; color:#3f3f46;"><span class="wf-mono">Northwind Co — 41 domains</span><span style="color:#a1a1aa;">▾</span></div>
+      <div style="flex:1;"></div>
+      <div style="display:flex; align-items:center; gap:6px; padding:6px 11px; border-radius:999px; background:#e9f6ec; border:1.5px solid #b6e0c2; color:#15803d; font-weight:700; font-size:12px;"><span style="width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block;"></span>All systems healthy</div>
+      <div class="wf-mono" style="font-size:11px; color:#a1a1aa;">last synced 2 min ago</div>
+    </div>
+
+    <div style="display:flex;">
+      <div style="flex:1; padding:18px; display:flex; flex-direction:column; gap:16px; min-width:0;">
+        <!-- hero calm: both lines high & flat together -->
+        <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:14px 16px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;"><div style="font:700 13px system-ui; color:#27272a;">Lead-time view <span style="font-weight:500; color:#a1a1aa;">· Gmail · last 30 days</span></div><div style="display:flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 10px system-ui;"><span style="width:6px;height:6px;border-radius:50%;background:#16a34a;"></span>risk staying safe</div></div>
+          <div style="display:flex; align-items:center; gap:11px; padding:9px 13px; border:1.5px solid #d8ecdd; border-radius:6px; background:#f4faf5; margin-bottom:12px;">
+            <div style="font:700 9px system-ui; letter-spacing:.05em; text-transform:uppercase; color:#9a9aa2; white-space:nowrap;">Today's dashboard</div>
+            <svg viewBox="0 0 200 18" width="96" height="14" preserveAspectRatio="none" style="opacity:.5; flex-shrink:0;"><polyline points="0,10 60,9 120,10 200,9" fill="none" stroke="#16a34a" stroke-width="2.5"/></svg>
+            <div style="flex:1; font-size:10.5px; color:#71717a; min-width:0;">Sequencer health — flat &amp; healthy</div>
+            <div class="wf-mono" style="font-size:16px; font-weight:700; color:#15803d; white-space:nowrap;">96<span style="font-size:10px; color:#a1a1aa;">/100</span></div>
+            <div style="padding:3px 9px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 10px system-ui; white-space:nowrap;">✓ all green</div>
+          </div>
+          <svg viewBox="0 0 720 205" width="100%" style="display:block; height:auto;">
+            <rect x="78" y="8" width="622" height="54" fill="#dc2626" opacity="0.05"/>
+            <rect x="78" y="62" width="622" height="53" fill="#d97706" opacity="0.06"/>
+            <rect x="78" y="115" width="622" height="71" fill="#16a34a" opacity="0.10"/>
+            <text x="84" y="27" font-size="10" font-weight="700" fill="#d9a9a9">DANGER</text>
+            <text x="84" y="88" font-size="10" font-weight="700" fill="#dcc39a">WATCH</text>
+            <text x="84" y="158" font-size="10" font-weight="700" fill="#15803d">SAFE</text>
+            <line x1="78" y1="62" x2="700" y2="62" stroke="#dc2626" stroke-dasharray="5 4" stroke-width="1" opacity="0.35"/>
+            <line x1="78" y1="115" x2="700" y2="115" stroke="#d97706" stroke-dasharray="5 4" stroke-width="1" opacity="0.45"/>
+            <line x1="78" y1="8" x2="78" y2="186" stroke="#c4c4cc" stroke-width="1.2"/>
+            <line x1="78" y1="186" x2="700" y2="186" stroke="#c4c4cc" stroke-width="1.2"/>
+            <text x="72" y="16" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">100</text>
+            <text x="72" y="100" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">50</text>
+            <text x="72" y="189" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">0</text>
+            <polyline points="78,170 200,168 340,172 480,167 600,170 700,168" fill="none" stroke="#4f46e5" stroke-width="3"/>
+            <text x="78" y="203" font-size="8.5" fill="#a1a1aa">30 days ago</text>
+            <text x="640" y="203" font-size="8.5" fill="#a1a1aa" text-anchor="end">today</text>
+          </svg>
+          <div style="display:flex; gap:18px; margin-top:8px; font-size:11px;">
+            <div style="display:flex; align-items:center; gap:7px;"><span style="width:18px;height:3px;background:#4f46e5;border-radius:2px;"></span><span style="color:#52525b;">Sentinel real risk score <span style="color:#a1a1aa;">— sitting safely in the green, nothing firing</span></span></div>
+          </div>
+        </div>
+        <!-- ESP both healthy -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+          <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:13px;">
+            <div style="font:700 12px system-ui; color:#3f3f46; margin-bottom:10px;">Gmail · Google</div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <svg viewBox="0 0 80 80" width="68" height="68"><circle cx="40" cy="40" r="32" fill="none" stroke="#eee" stroke-width="8.5"/><circle cx="40" cy="40" r="32" fill="none" stroke="#16a34a" stroke-width="8.5" stroke-linecap="round" stroke-dasharray="190 201" transform="rotate(-90 40 40)"/><text x="40" y="38" text-anchor="middle" class="wf-mono" font-size="18" font-weight="700" fill="#27272a">94</text><text x="40" y="52" text-anchor="middle" font-size="8.5" fill="#a1a1aa">/100</text></svg>
+              <div style="flex:1;"><div style="font-size:10px; color:#71717a;">complaint rate</div><div class="wf-mono" style="font-size:16px; font-weight:700;">0.04%</div><div style="display:flex; align-items:center; gap:5px; margin-top:6px; padding:3px 7px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 9.5px system-ui;"><span style="width:5px;height:5px;border-radius:50%;background:#16a34a;"></span>stable</div></div>
+            </div>
+          </div>
+          <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:13px;">
+            <div style="font:700 12px system-ui; color:#3f3f46; margin-bottom:10px;">Outlook · Microsoft</div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <svg viewBox="0 0 80 80" width="68" height="68"><circle cx="40" cy="40" r="32" fill="none" stroke="#eee" stroke-width="8.5"/><circle cx="40" cy="40" r="32" fill="none" stroke="#16a34a" stroke-width="8.5" stroke-linecap="round" stroke-dasharray="178 201" transform="rotate(-90 40 40)"/><text x="40" y="38" text-anchor="middle" class="wf-mono" font-size="18" font-weight="700" fill="#27272a">88</text><text x="40" y="52" text-anchor="middle" font-size="8.5" fill="#a1a1aa">/100</text></svg>
+              <div style="flex:1;"><div style="font-size:10px; color:#71717a;">complaint rate</div><div class="wf-mono" style="font-size:16px; font-weight:700;">0.05%</div><div style="display:flex; align-items:center; gap:5px; margin-top:6px; padding:3px 7px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 9.5px system-ui;"><span style="width:5px;height:5px;border-radius:50%;background:#16a34a;"></span>stable</div></div>
+            </div>
+          </div>
+        </div>
+        <!-- playbook all at healthy -->
+        <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:14px 16px;">
+          <div style="font:700 12px system-ui; color:#27272a; margin-bottom:12px;">Failover playbook · <span style="color:#a1a1aa; font-weight:500;">no domains flagged</span></div>
+          <div style="display:flex; align-items:center;">
+            <div style="flex:1.2; text-align:center; padding:8px 4px; border:2px solid #16a34a; border-radius:6px; color:#fff; background:#16a34a; font:700 11px system-ui; box-shadow:0 0 0 4px #e9f6ec;">● Healthy <span style="font-weight:500; opacity:.85;">(all 41)</span></div><div style="color:#cbcbd1; padding:0 6px;">→</div>
+            <div style="flex:1; text-align:center; padding:8px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 11px system-ui;">Watch</div><div style="color:#cbcbd1; padding:0 6px;">→</div>
+            <div style="flex:1; text-align:center; padding:8px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 11px system-ui;">Throttle</div><div style="color:#cbcbd1; padding:0 6px;">→</div>
+            <div style="flex:1; text-align:center; padding:8px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 11px system-ui;">Failover</div><div style="color:#cbcbd1; padding:0 6px;">→</div>
+            <div style="flex:1; text-align:center; padding:8px 4px; border:1.5px solid #e4e4e7; border-radius:6px; color:#a1a1aa; font:600 11px system-ui;">Cooldown</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- right rail feed: quiet -->
+      <div style="width:316px; flex-shrink:0; border-left:1.5px solid #e4e4e7; padding:16px 14px; background:#fcfcfd;">
+        <div style="font:700 12px system-ui; color:#27272a; margin-bottom:10px;">Alert feed</div>
+        <div style="display:flex; gap:10px; padding:11px 0; border-bottom:1px solid #ededf0;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#16a34a;flex-shrink:0;margin-top:3px;"></span>
+          <div style="flex:1;"><div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; margin-bottom:3px;">06:00 · today</div><div style="font-size:11.5px; color:#27272a; line-height:1.4;">All 41 domains within healthy thresholds. No leading signals tripped.</div></div>
+        </div>
+        <div style="display:flex; gap:10px; padding:11px 0; border-bottom:1px solid #ededf0;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#16a34a;flex-shrink:0;margin-top:3px;"></span>
+          <div style="flex:1;"><div class="wf-mono" style="font-size:9.5px; color:#a1a1aa; margin-bottom:3px;">yesterday</div><div style="font-size:11.5px; color:#27272a; line-height:1.4;"><span class="wf-mono">nw-sales-02</span> completed warm-up — added to standby pool.</div></div>
+        </div>
+        <div class="wf-ph" style="height:140px; border-radius:6px; margin-top:14px;">quiet — nothing to triage</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== POST-IT ANNOTATIONS ===================== -->
+<div style="position:absolute; left:1015px; top:330px; width:184px; background:#fef4a8; padding:12px; font:14px/1.35 'Caveat',cursive; color:#5c4a00; box-shadow:0 2px 6px rgba(0,0,0,.12); transform:rotate(-2deg);">The shaded band is the "money shot" — make the 12-day gap impossible to miss.</div>
+<div style="position:absolute; left:2400px; top:560px; width:188px; background:#cfe9ff; padding:12px; font:14px/1.35 'Caveat',cursive; color:#0a3a5c; box-shadow:0 2px 6px rgba(0,0,0,.12); transform:rotate(1.5deg);">Gmail 38 red vs Outlook 82 green in the same view = "they decay independently."</div>
+<div style="position:absolute; left:3800px; top:120px; width:196px; background:#fef4a8; padding:12px; font:14px/1.35 'Caveat',cursive; color:#5c4a00; box-shadow:0 2px 6px rgba(0,0,0,.12); transform:rotate(1.5deg);">My pick to develop: a hybrid of A's calm hero + C's gauges-flank-chart. Which feels right to you?</div>
+<div style="position:absolute; left:1278px; top:1500px; width:180px; background:#d8f5d8; padding:12px; font:14px/1.35 'Caveat',cursive; color:#1c4a1c; box-shadow:0 2px 6px rgba(0,0,0,.12); transform:rotate(-1.5deg);">All numbers/domains in mono throughout — "infra tool" signal per the spec.</div>
+
+<!-- ===================== HERO CHART BRAINSTORM ===================== -->
+<div data-drags-parent="0" style="position:absolute; left:80px; top:1880px; font:700 26px 'Caveat',cursive; color:#3f3f46;">Hero chart — direction &amp; axis brainstorm</div>
+<div data-drags-parent="0" style="position:absolute; left:84px; top:1914px; font:500 15px 'Caveat',cursive; color:#7c7c85;">the fix: pick ONE metaphor, label the axes, name the zones. 4 directions below 👇</div>
+
+<!-- OPTION 1 — Risk climbs (recommended) -->
+<div style="position:absolute; left:80px; top:1968px; width:560px;">
+  <div data-drags-parent="1" style="position:absolute; top:-30px; font:700 19px 'Caveat',cursive; color:#15803d;">① Risk climbs into the danger zone ✓ recommended</div>
+  <div style="background:#fff; border:2px solid #16a34a; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); padding:16px 18px; font-family:system-ui,sans-serif;">
+    <div style="font:700 12px system-ui; color:#27272a; margin-bottom:2px;">Lead-time view</div>
+    <div style="font-size:10.5px; color:#a1a1aa; margin-bottom:8px;">up = worse · matches "it climbs until it hits the warning zone"</div>
+    <svg viewBox="0 0 520 320" width="100%" style="display:block; height:auto;">
+      <!-- zone bands -->
+      <rect x="84" y="20" width="406" height="74" fill="#dc2626" opacity="0.09"/>
+      <rect x="84" y="94" width="406" height="78" fill="#d97706" opacity="0.11"/>
+      <rect x="84" y="172" width="406" height="90" fill="#16a34a" opacity="0.09"/>
+      <text x="90" y="40" font-size="10" font-weight="700" fill="#c01818">DANGER · spam-foldered</text>
+      <text x="90" y="123" font-size="10" font-weight="700" fill="#b45309">WATCH</text>
+      <text x="90" y="200" font-size="10" font-weight="700" fill="#15803d">SAFE</text>
+      <!-- axes -->
+      <line x1="84" y1="16" x2="84" y2="262" stroke="#b4b4bc" stroke-width="1.3"/>
+      <line x1="84" y1="262" x2="490" y2="262" stroke="#b4b4bc" stroke-width="1.3"/>
+      <text x="78" y="265" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">0</text>
+      <text x="78" y="176" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">50</text>
+      <text x="78" y="24" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">100</text>
+      <!-- warning gap -->
+      <rect x="300" y="16" width="118" height="246" fill="#4f46e5" opacity="0.07"/>
+      <line x1="300" y1="16" x2="300" y2="262" stroke="#4f46e5" stroke-dasharray="3 3" opacity="0.6"/>
+      <line x1="418" y1="16" x2="418" y2="262" stroke="#71717a" stroke-dasharray="3 3" opacity="0.6"/>
+      <!-- today's dashboard line: flat low, jumps late -->
+      <polyline points="84,240 170,238 250,240 330,237 395,234 414,228 426,88 490,72" fill="none" stroke="#9a9aa2" stroke-width="2.4"/>
+      <!-- sentinel risk: climbs early -->
+      <polyline points="84,238 160,226 225,202 290,170 300,162 352,118 412,84 490,70" fill="none" stroke="#4f46e5" stroke-width="3"/>
+      <circle cx="300" cy="162" r="5" fill="#4f46e5"/>
+      <circle cx="418" cy="118" r="5" fill="#9a9aa2"/>
+      <!-- marker labels -->
+      <text x="300" y="288" font-size="9" font-weight="700" fill="#4338ca" text-anchor="middle">▲ Sentinel warns</text>
+      <text x="418" y="302" font-size="9" font-weight="700" fill="#71717a" text-anchor="middle">▲ reply rates drop</text>
+      <text x="359" y="13" font-size="9.5" font-weight="700" fill="#4338ca" text-anchor="middle">12 days gained</text>
+      <!-- x axis labels -->
+      <text x="84" y="277" font-size="8.5" fill="#a1a1aa">30d ago</text>
+      <text x="418" y="277" font-size="8.5" fill="#a1a1aa" text-anchor="middle">today</text>
+      <text x="488" y="277" font-size="8.5" fill="#a1a1aa" text-anchor="end">+5d</text>
+    </svg>
+    <div style="display:flex; gap:18px; margin-top:8px; font-size:10.5px;">
+      <div style="display:flex; align-items:center; gap:6px;"><span style="width:16px;height:3px;background:#9a9aa2;border-radius:2px;"></span><span style="color:#52525b;">Today's dashboard</span></div>
+      <div style="display:flex; align-items:center; gap:6px;"><span style="width:16px;height:3px;background:#4f46e5;border-radius:2px;"></span><span style="color:#52525b;">Sentinel risk</span></div>
+    </div>
+    <div style="margin-top:10px; padding-top:10px; border-top:1px solid #ededf0; font-size:11px; color:#3f3f46; line-height:1.5;"><b style="color:#15803d;">Reads as:</b> "Our line climbed into the red 12 days before the old dashboard even flinched." Up = danger is the most universal cue.</div>
+  </div>
+</div>
+
+<!-- OPTION 2 — Health falls -->
+<div style="position:absolute; left:692px; top:1968px; width:560px;">
+  <div data-drags-parent="1" style="position:absolute; top:-30px; font:700 19px 'Caveat',cursive; color:#52525b;">② Health drains toward the cliff</div>
+  <div style="background:#fff; border:1.5px solid #d4d4d8; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); padding:16px 18px; font-family:system-ui,sans-serif;">
+    <div style="font:700 12px system-ui; color:#27272a; margin-bottom:2px;">Reputation health</div>
+    <div style="font-size:10.5px; color:#a1a1aa; margin-bottom:8px;">down = worse · like a battery / fuel gauge draining</div>
+    <svg viewBox="0 0 520 320" width="100%" style="display:block; height:auto;">
+      <rect x="84" y="20" width="406" height="84" fill="#16a34a" opacity="0.09"/>
+      <rect x="84" y="104" width="406" height="74" fill="#d97706" opacity="0.11"/>
+      <rect x="84" y="178" width="406" height="84" fill="#dc2626" opacity="0.09"/>
+      <text x="90" y="40" font-size="10" font-weight="700" fill="#15803d">HEALTHY</text>
+      <text x="90" y="133" font-size="10" font-weight="700" fill="#b45309">WATCH</text>
+      <text x="90" y="208" font-size="10" font-weight="700" fill="#c01818">CLIFF · filtered as spam</text>
+      <line x1="84" y1="16" x2="84" y2="262" stroke="#b4b4bc" stroke-width="1.3"/>
+      <line x1="84" y1="262" x2="490" y2="262" stroke="#b4b4bc" stroke-width="1.3"/>
+      <text x="78" y="24" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">100</text>
+      <text x="78" y="176" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">50</text>
+      <text x="78" y="265" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">0</text>
+      <rect x="300" y="16" width="118" height="246" fill="#4f46e5" opacity="0.07"/>
+      <line x1="300" y1="16" x2="300" y2="262" stroke="#4f46e5" stroke-dasharray="3 3" opacity="0.6"/>
+      <line x1="418" y1="16" x2="418" y2="262" stroke="#71717a" stroke-dasharray="3 3" opacity="0.6"/>
+      <polyline points="84,44 170,46 250,44 330,47 395,50 414,56 426,196 490,212" fill="none" stroke="#9a9aa2" stroke-width="2.4"/>
+      <polyline points="84,46 160,58 225,84 290,118 300,126 352,168 412,200 490,214" fill="none" stroke="#4f46e5" stroke-width="3"/>
+      <circle cx="300" cy="126" r="5" fill="#4f46e5"/>
+      <circle cx="418" cy="168" r="5" fill="#9a9aa2"/>
+      <text x="300" y="288" font-size="9" font-weight="700" fill="#4338ca" text-anchor="middle">▲ Sentinel warns</text>
+      <text x="418" y="302" font-size="9" font-weight="700" fill="#71717a" text-anchor="middle">▲ reply rates drop</text>
+      <text x="359" y="13" font-size="9.5" font-weight="700" fill="#4338ca" text-anchor="middle">12 days gained</text>
+      <text x="84" y="277" font-size="8.5" fill="#a1a1aa">30d ago</text>
+      <text x="418" y="277" font-size="8.5" fill="#a1a1aa" text-anchor="middle">today</text>
+      <text x="488" y="277" font-size="8.5" fill="#a1a1aa" text-anchor="end">+5d</text>
+    </svg>
+    <div style="display:flex; gap:18px; margin-top:8px; font-size:10.5px;">
+      <div style="display:flex; align-items:center; gap:6px;"><span style="width:16px;height:3px;background:#9a9aa2;border-radius:2px;"></span><span style="color:#52525b;">Today's dashboard</span></div>
+      <div style="display:flex; align-items:center; gap:6px;"><span style="width:16px;height:3px;background:#4f46e5;border-radius:2px;"></span><span style="color:#52525b;">Sentinel health</span></div>
+    </div>
+    <div style="margin-top:10px; padding-top:10px; border-top:1px solid #ededf0; font-size:11px; color:#3f3f46; line-height:1.5;"><b style="color:#52525b;">Reads as:</b> "Reputation is a tank draining toward empty." Familiar gauge metaphor, but danger-at-the-bottom is slightly less instinctive than up=bad.</div>
+  </div>
+</div>
+
+<!-- OPTION 3 — Runway countdown -->
+<div style="position:absolute; left:1304px; top:1968px; width:560px;">
+  <div data-drags-parent="1" style="position:absolute; top:-30px; font:700 19px 'Caveat',cursive; color:#52525b;">③ "Days of runway" countdown</div>
+  <div style="background:#fff; border:1.5px solid #d4d4d8; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); padding:16px 18px; font-family:system-ui,sans-serif;">
+    <div style="font:700 12px system-ui; color:#27272a; margin-bottom:2px;">Time-to-cliff</div>
+    <div style="font-size:10.5px; color:#a1a1aa; margin-bottom:14px;">no chart literacy needed · answers "how long have I got?"</div>
+    <!-- gmail -->
+    <div style="border:1.5px solid #f0b4b4; border-radius:7px; padding:13px; margin-bottom:12px; background:#fffafa;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;"><div style="font:700 12px system-ui; color:#3f3f46;">Gmail · Google</div><div><span class="wf-mono" style="font-size:24px; font-weight:700; color:#c01818;">~5</span><span style="font-size:11px; color:#71717a;"> days left</span></div></div>
+      <div style="position:relative; height:11px; background:#f0e0e0; border-radius:6px; overflow:hidden;"><div style="width:22%; height:100%; background:#dc2626; border-radius:6px;"></div></div>
+      <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:9px; color:#a1a1aa;" class="wf-mono"><span>cliff</span><span>30 days of runway</span></div>
+      <div style="display:flex; align-items:center; gap:7px; margin-top:9px; font-size:10.5px; color:#71717a;">trend <svg viewBox="0 0 70 18" width="70" height="18"><polyline points="2,5 18,6 34,9 50,13 68,16" fill="none" stroke="#dc2626" stroke-width="1.8"/></svg> getting shorter fast</div>
+    </div>
+    <!-- outlook -->
+    <div style="border:1.5px solid #b6e0c2; border-radius:7px; padding:13px; background:#fbfffc;">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;"><div style="font:700 12px system-ui; color:#3f3f46;">Outlook · Microsoft</div><div><span class="wf-mono" style="font-size:18px; font-weight:700; color:#15803d;">30+</span><span style="font-size:11px; color:#71717a;"> days · stable</span></div></div>
+      <div style="position:relative; height:11px; background:#e0efe4; border-radius:6px; overflow:hidden;"><div style="width:92%; height:100%; background:#16a34a; border-radius:6px;"></div></div>
+      <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:9px; color:#a1a1aa;" class="wf-mono"><span>cliff</span><span>plenty of runway</span></div>
+    </div>
+    <div style="margin-top:12px; padding-top:10px; border-top:1px solid #ededf0; font-size:11px; color:#3f3f46; line-height:1.5;"><b style="color:#52525b;">Reads as:</b> dead simple for non-technical readers — but it drops the dramatic "we saw it before the old dashboard" overlay. Best as a <i>companion</i> to ① or ②, not a replacement.</div>
+  </div>
+</div>
+
+<!-- OPTION 4 — Split panels -->
+<div style="position:absolute; left:1916px; top:1968px; width:560px;">
+  <div data-drags-parent="1" style="position:absolute; top:-30px; font:700 19px 'Caveat',cursive; color:#52525b;">④ Two stacked panels: "them vs us"</div>
+  <div style="background:#fff; border:1.5px solid #d4d4d8; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); padding:16px 18px; font-family:system-ui,sans-serif;">
+    <div style="font:700 12px system-ui; color:#27272a; margin-bottom:2px;">Side-by-side, shared timeline</div>
+    <div style="font-size:10.5px; color:#a1a1aa; margin-bottom:12px;">removes the "two lines, one axis" clash entirely</div>
+    <!-- top: today's dashboard -->
+    <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:10px 12px; margin-bottom:10px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><div style="font:700 10.5px system-ui; color:#71717a;">What today's dashboard shows</div><div style="font:700 9.5px system-ui; color:#15803d;">✓ all good</div></div>
+      <svg viewBox="0 0 480 90" width="100%" style="display:block; height:auto;">
+        <rect x="0" y="0" width="480" height="90" fill="#16a34a" opacity="0.05"/>
+        <line x1="430" y1="6" x2="430" y2="84" stroke="#71717a" stroke-dasharray="3 3" opacity="0.5"/>
+        <polyline points="6,22 120,20 240,24 360,21 430,23 474,40" fill="none" stroke="#16a34a" stroke-width="2.6"/>
+      </svg>
+    </div>
+    <!-- bottom: sentinel -->
+    <div style="border:1.5px solid #c7d2fe; border-radius:7px; padding:10px 12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><div style="font:700 10.5px system-ui; color:#4338ca;">What Sentinel sees</div><div style="font:700 9.5px system-ui; color:#c01818;">▲ risk rising</div></div>
+      <svg viewBox="0 0 480 110" width="100%" style="display:block; height:auto;">
+        <rect x="0" y="0" width="480" height="34" fill="#dc2626" opacity="0.08"/>
+        <rect x="0" y="34" width="480" height="34" fill="#d97706" opacity="0.10"/>
+        <rect x="0" y="68" width="480" height="40" fill="#16a34a" opacity="0.07"/>
+        <line x1="270" y1="4" x2="270" y2="106" stroke="#4f46e5" stroke-dasharray="3 3" opacity="0.6"/>
+        <line x1="430" y1="4" x2="430" y2="106" stroke="#71717a" stroke-dasharray="3 3" opacity="0.5"/>
+        <polyline points="6,92 120,80 230,58 270,48 350,28 430,16 474,10" fill="none" stroke="#4f46e5" stroke-width="2.8"/>
+        <circle cx="270" cy="48" r="4.5" fill="#4f46e5"/>
+        <text x="270" y="103" font-size="8.5" font-weight="700" fill="#4338ca" text-anchor="middle">warns here</text>
+      </svg>
+    </div>
+    <div style="text-align:center; margin-top:8px; font:700 10px system-ui; color:#4338ca;">↑ same 12-day gap, aligned on one timeline ↑</div>
+    <div style="margin-top:10px; padding-top:10px; border-top:1px solid #ededf0; font-size:11px; color:#3f3f46; line-height:1.5;"><b style="color:#52525b;">Reads as:</b> "they're blind / we're not." Each panel has one job, so neither direction fights the other. Costs more vertical space.</div>
+  </div>
+</div>
+
+<!-- brainstorm post-its -->
+<div style="position:absolute; left:80px; top:2380px; width:240px; background:#fef4a8; padding:13px; font:15px/1.4 'Caveat',cursive; color:#5c4a00; box-shadow:0 2px 6px rgba(0,0,0,.12); transform:rotate(-1.5deg);">My vote: ① as the hero (it's your exact mental model) + ③ as a small "days of runway" chip on each ESP card. Best of both — drama AND plain-language.</div>
+<div style="position:absolute; left:1916px; top:2440px; width:236px; background:#cfe9ff; padding:13px; font:15px/1.4 'Caveat',cursive; color:#0a3a5c; box-shadow:0 2px 6px rgba(0,0,0,.12); transform:rotate(1.5deg);">Whichever we pick, I'll re-skin all 3 console heroes + the calm variant to match. Want me to do that next?</div>
+
+<!-- OPTION 4b — refined stacked, the honest version -->
+<div style="position:absolute; left:80px; top:2580px; width:760px;">
+  <div data-drags-parent="1" style="position:absolute; top:-30px; font:700 19px 'Caveat',cursive; color:#15803d;">④b Refined stacked — each metric keeps its OWN unit &amp; axis ✓</div>
+  <div style="background:#fff; border:2px solid #16a34a; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.07); padding:18px 20px; font-family:system-ui,sans-serif;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;"><div style="font:700 13px system-ui; color:#27272a;">Lead-time view · Gmail — <span class="wf-mono" style="font-weight:600;">acme-outreach-03.com</span></div><div style="font:700 9px system-ui; letter-spacing:.06em; text-transform:uppercase; color:#a1a1aa;">two panels · one shared timeline</div></div>
+
+    <!-- TOP: today's dashboard health score (own unit: /100) -->
+    <div style="border:1.5px solid #e4e4e7; border-radius:7px; padding:10px 12px 6px; margin-bottom:8px; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;"><div style="font:700 11px system-ui; color:#71717a;">What today's dashboard shows · <span style="font-weight:500;">Sequencer health</span></div><div style="display:flex; align-items:center; gap:5px; padding:2px 8px; border-radius:999px; background:#e9f6ec; color:#15803d; font:700 10px system-ui;"><span style="width:6px;height:6px;border-radius:50%;background:#16a34a;"></span>98/100 · looks fine</div></div>
+      <svg viewBox="0 0 680 110" width="100%" style="display:block; height:auto;">
+        <rect x="92" y="8" width="556" height="86" fill="#16a34a" opacity="0.06"/>
+        <!-- warning gap band (shared x) -->
+        <rect x="430" y="8" width="130" height="86" fill="#4f46e5" opacity="0.07"/>
+        <line x1="430" y1="8" x2="430" y2="94" stroke="#4f46e5" stroke-dasharray="3 3" opacity="0.55"/>
+        <line x1="560" y1="8" x2="560" y2="94" stroke="#71717a" stroke-dasharray="3 3" opacity="0.55"/>
+        <!-- axes -->
+        <line x1="92" y1="8" x2="92" y2="94" stroke="#c4c4cc" stroke-width="1.2"/>
+        <text x="86" y="16" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">100</text>
+        <text x="86" y="60" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">80</text>
+        <text x="20" y="55" font-size="9" fill="#9a9aa2" font-weight="700">Health</text>
+        <text x="20" y="67" font-size="9" fill="#9a9aa2" font-weight="700">/100</text>
+        <!-- flat reassuring line, dips only at the end -->
+        <polyline points="92,20 220,18 350,21 460,19 540,20 560,24 600,52 648,64" fill="none" stroke="#16a34a" stroke-width="2.6"/>
+      </svg>
+    </div>
+
+    <!-- BOTTOM: sentinel real rate (own unit: complaint % with 0.10 / 0.30 lines) -->
+    <div style="border:1.5px solid #c7d2fe; border-radius:7px; padding:10px 12px 6px; position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;"><div style="font:700 11px system-ui; color:#4338ca;">What Sentinel sees · <span style="font-weight:500;">smoothed complaint rate</span></div><div style="display:flex; align-items:center; gap:5px; padding:2px 8px; border-radius:999px; background:#fdecec; color:#c01818; font:700 10px system-ui;"><span style="width:6px;height:6px;border-radius:50%;background:#dc2626;"></span>0.21% · rising</div></div>
+      <svg viewBox="0 0 680 150" width="100%" style="display:block; height:auto;">
+        <!-- zones -->
+        <rect x="92" y="8" width="556" height="30" fill="#dc2626" opacity="0.08"/>
+        <rect x="92" y="38" width="556" height="56" fill="#d97706" opacity="0.10"/>
+        <rect x="92" y="94" width="556" height="30" fill="#16a34a" opacity="0.07"/>
+        <!-- warning gap band (same x as top) -->
+        <rect x="430" y="8" width="130" height="116" fill="#4f46e5" opacity="0.07"/>
+        <line x1="430" y1="8" x2="430" y2="124" stroke="#4f46e5" stroke-dasharray="3 3" opacity="0.55"/>
+        <line x1="560" y1="8" x2="560" y2="124" stroke="#71717a" stroke-dasharray="3 3" opacity="0.55"/>
+        <!-- threshold lines -->
+        <line x1="92" y1="38" x2="648" y2="38" stroke="#dc2626" stroke-dasharray="5 4" stroke-width="1.2" opacity="0.7"/>
+        <text x="650" y="41" font-size="8.5" class="wf-mono" fill="#c01818">0.30% cliff</text>
+        <line x1="92" y1="94" x2="648" y2="94" stroke="#d97706" stroke-dasharray="5 4" stroke-width="1.2" opacity="0.8"/>
+        <text x="650" y="97" font-size="8.5" class="wf-mono" fill="#b45309">0.10% watch</text>
+        <!-- axes -->
+        <line x1="92" y1="8" x2="92" y2="124" stroke="#c4c4cc" stroke-width="1.2"/>
+        <line x1="92" y1="124" x2="648" y2="124" stroke="#c4c4cc" stroke-width="1.2"/>
+        <text x="86" y="127" font-size="8.5" text-anchor="end" fill="#a1a1aa" class="wf-mono">0</text>
+        <text x="20" y="62" font-size="9" fill="#4338ca" font-weight="700">Rate</text>
+        <text x="20" y="74" font-size="9" fill="#4338ca" font-weight="700">%</text>
+        <!-- rising smoothed line -->
+        <polyline points="92,116 190,110 280,100 380,95 430,90 510,66 590,44 648,36" fill="none" stroke="#4f46e5" stroke-width="2.8"/>
+        <circle cx="430" cy="90" r="5" fill="#4f46e5"/>
+        <!-- x labels -->
+        <text x="92" y="139" font-size="8.5" fill="#a1a1aa">30 days ago</text>
+        <text x="560" y="139" font-size="8.5" fill="#a1a1aa" text-anchor="middle">today</text>
+        <text x="646" y="139" font-size="8.5" fill="#a1a1aa" text-anchor="end">+5d projected</text>
+      </svg>
+    </div>
+
+    <!-- shared gap callout -->
+    <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div style="display:flex; align-items:center; gap:5px; font:700 10.5px system-ui; color:#4338ca;"><span style="width:9px;height:9px;border-radius:50%;background:#4f46e5;"></span>Sentinel crosses 0.10% watch</div>
+        <div style="font:700 11px system-ui; color:#4338ca; padding:3px 10px; background:#eef0ff; border:1px solid #c7d2fe; border-radius:999px;">◀ 12 days of warning gained ▶</div>
+        <div style="display:flex; align-items:center; gap:5px; font:700 10.5px system-ui; color:#71717a;"><span style="width:9px;height:9px;border-radius:50%;background:#9a9aa2;"></span>health score finally dips</div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px; padding-top:11px; border-top:1px solid #ededf0; font-size:11.5px; color:#3f3f46; line-height:1.55;"><b style="color:#15803d;">Why this is the honest version:</b> each metric keeps its real unit and real direction — no fake shared axis to manipulate. The top stays calm in the green; the bottom climbs past the 0.10% and 0.30% lines from the spec. The shaded band, aligned across both panels on the same dates, is the only thing that needs to connect them.</div>
+  </div>
+</div>
+
+<div style="position:absolute; left:880px; top:2640px; width:236px; background:#d8f5d8; padding:13px; font:15px/1.4 'Caveat',cursive; color:#1c4a1c; box-shadow:0 2px 6px rgba(0,0,0,.12); transform:rotate(-1.5deg);">✓ DECIDED: top = flat "98/100 all green" strip · bottom = smoothed 0–100 risk score climbing into the danger zone. Now applied to all 3 consoles + the calm variant above. ☝️</div>
+
+<!-- legend / key -->
+<div style="position:absolute; left:80px; top:1640px; width:760px; background:#fff; border:1.5px solid #d4d4d8; border-radius:8px; padding:16px 20px; font-family:system-ui,sans-serif;">
+  <div style="font:700 13px system-ui; color:#27272a; margin-bottom:12px;">Status &amp; color system <span style="font-weight:500; color:#a1a1aa;">— applied consistently across every frame</span></div>
+  <div style="display:flex; flex-wrap:wrap; gap:18px 28px;">
+    <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:#3f3f46;"><span style="width:12px;height:12px;border-radius:50%;background:#16a34a;"></span>Healthy <span class="wf-mono" style="color:#a1a1aa;">score ≥ 80</span></div>
+    <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:#3f3f46;"><span style="width:12px;height:12px;border-radius:50%;background:#d97706;"></span>Watch <span class="wf-mono" style="color:#a1a1aa;">60–79 / near 0.10%</span></div>
+    <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:#3f3f46;"><span style="width:12px;height:12px;border-radius:50%;background:#ea580c;"></span>Warn <span class="wf-mono" style="color:#a1a1aa;">40–59</span></div>
+    <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:#3f3f46;"><span style="width:12px;height:12px;border-radius:50%;background:#dc2626;"></span>Critical <span class="wf-mono" style="color:#a1a1aa;">&lt; 40 / crossing 0.30%</span></div>
+    <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:#3f3f46;"><span style="width:12px;height:12px;border-radius:3px;background:#4f46e5;"></span>Indigo = Sentinel's intelligence</div>
+    <div style="display:flex; align-items:center; gap:8px; font-size:12px; color:#3f3f46;"><span class="wf-mono" style="color:#a1a1aa;">0.10% watch · 0.30% cliff — on every rate chart</span></div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

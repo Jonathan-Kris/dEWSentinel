@@ -9,6 +9,11 @@ signals from synthetic data and renders them into the dEWSentinel console UI.
 **↪ Backup mirror:** https://jonathan-kris.github.io/dEWSentinel/ *(use this if the Vercel link shows a "verifying your browser" checkpoint)*
 **📄 One-page insight memo:** [INSIGHT_MEMO.md](./INSIGHT_MEMO.md) — the thesis, the problem, and why it's defensible.
 
+> **⚛️ React / Next.js rebuild** — a test-driven port of this POC now lives in [`/app`](./app)
+> (Next.js 16 + TypeScript, one deep engine module behind a `runEngine → ViewModel` seam, data-driven
+> SVG charts, 78 tests). It is the build the Vercel project now deploys (Root Directory = `app`).
+> See [`app/README.md`](./app/README.md) and the plan in [`spec/REACT_BUILD_PLAN.md`](./spec/REACT_BUILD_PLAN.md).
+
 > **Simulated data.** The *engine and visuals are real*; the data is synthetic. In production, leading
 > signals come from sending.ac's own MTA accounting-webhook telemetry (bounces, deferrals, 4xx/5xx
 > provider codes), confirmed by Google Postmaster + Microsoft SNDS. This is shown as a persistent label

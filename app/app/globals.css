@@ -1,0 +1,49 @@
+/* Base resets + dark app shell. Tokens come from styles/tokens.css and fonts
+ * from styles/fonts.css (both imported in layout.tsx before this file). */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--app-bg);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  padding: 34px 26px 60px;
+}
+
+/* Mono for ALL numbers, rates, codes, domains, timestamps (deliberate infra-tool
+ * signal, aids scanning) — HANDOFF Typography. */
+.mono {
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  font-feature-settings: 'tnum' 1;
+}
+
+.screen-label {
+  font: 600 15px 'IBM Plex Sans', sans-serif;
+  color: #c7ccd6;
+  letter-spacing: 0.3px;
+  margin: 0 0 14px 4px;
+}
+.screen-label span {
+  color: #7a8090;
+  font-weight: 400;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+svg {
+  display: block;
+}

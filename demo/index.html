@@ -276,8 +276,7 @@ svg{display:block;}
         <button data-scenario="critical">Critical</button>
         <button data-scenario="healthy">Healthy</button>
       </div>
-      <div class="ctl">seed <input class="mono is-interactive" id="seed-input" data-step="2" type="number" value="42" min="0" step="1" title="Change the random seed, then Replay"></div>
-      <button class="btn is-interactive" id="replay-btn" data-step="3" title="Re-run — same seed reproduces an identical render">↻ Replay</button>
+      <div class="ctl">seed <input class="mono is-interactive" id="seed-input" data-step="2" type="number" value="42" min="0" step="1" title="Change the seed to reshuffle the synthetic noise — re-renders on change (same seed always reproduces an identical render)"></div>
       <button class="btn hint-toggle" id="hint-toggle" aria-pressed="false" title="Highlight every clickable / selectable element for a guided walkthrough">🧭 Guide</button>
     </div>
     <div class="vsep"></div>
@@ -314,7 +313,7 @@ svg{display:block;}
         <div class="legend-row">
           <div class="legend">
             <span class="swatch" style="background:var(--accent);"></span>
-            <span>dEWSentinel health <span style="color:#5a6070;">· 0–100 smoothed · down = danger</span></span>
+            <span>Sentinel health score <span style="color:#5a6070;">· 0–100 smoothed · down = danger</span></span>
           </div>
           <div class="warn-badge" id="warn-badge">◀ — days of warning gained ▶</div>
         </div>
@@ -428,12 +427,12 @@ svg{display:block;}
 <div id="view-detail" style="display:none;">
 <div class="console">
   <div class="detail-head">
-    <div class="crumb is-interactive" id="back-to-console" data-step="5" role="button" tabindex="0" style="cursor:pointer;" title="Return to the console">← Console</div>
+    <div class="crumb is-interactive" id="back-to-console" data-step="4" role="button" tabindex="0" style="cursor:pointer;" title="Return to the console">← Console</div>
     <div class="mono dname" id="detail-domain">acme-outreach-03.com</div>
     <div class="pill red" id="detail-state-pill" style="padding:4px 11px; font-size:11.5px;"><span class="dot"></span><span class="txt">—</span></div>
     <div class="grow"></div>
     <div class="right">
-      <div class="cap">Overall risk score</div>
+      <div class="cap">Overall health score</div>
       <div class="mono val" id="detail-score">—<span style="font-size:13px; color:#6a7080;">/100</span></div>
     </div>
   </div>
@@ -487,10 +486,9 @@ svg{display:block;}
   <div class="gp-head">🧭 Reviewer walkthrough <span>· the interactive controls</span></div>
   <ol class="gp-steps">
     <li><span class="gp-n">1</span> <b>Switch scenario</b> — flip Critical ⇄ Healthy; both ESP gauges and the whole console re-compute.</li>
-    <li><span class="gp-n">2</span> <b>Change the seed</b> — any integer reshuffles the synthetic noise.</li>
-    <li><span class="gp-n">3</span> <b>Replay</b> — same seed always reproduces an identical render (deterministic).</li>
-    <li><span class="gp-n">4</span> <b>Click the flagged domain row</b> (<span class="mono">acme-outreach-03.com ›</span>) — opens the domain detail.</li>
-    <li><span class="gp-n">5</span> <b>← Console</b> — returns from the detail view.</li>
+    <li><span class="gp-n">2</span> <b>Change the seed</b> — any integer reshuffles the synthetic noise and re-renders; the same integer always reproduces an identical render (deterministic).</li>
+    <li><span class="gp-n">3</span> <b>Click the flagged domain row</b> (<span class="mono">acme-outreach-03.com ›</span>) — opens the domain detail.</li>
+    <li><span class="gp-n">4</span> <b>← Console</b> — returns from the detail view.</li>
   </ol>
   <div class="gp-note">Pulsing dashed outlines mark every clickable / selectable control. Buttons without an outline
   (alert actions, “Apply failover playbook”) are illustrative product affordances, not wired in this POC.</div>
@@ -511,7 +509,6 @@ svg{display:block;}
   var state = { scenario: 'critical' };
   var toggle = document.getElementById('scenario-toggle');
   var seedInput = document.getElementById('seed-input');
-  var replayBtn = document.getElementById('replay-btn');
   var viewConsole = document.getElementById('view-console');
   var viewDetail = document.getElementById('view-detail');
 
@@ -540,7 +537,6 @@ svg{display:block;}
     var btn = e.target.closest('button'); if (!btn) return;
     state.scenario = btn.dataset.scenario; syncToggle(); run();
   });
-  replayBtn.addEventListener('click', run);
   seedInput.addEventListener('change', run);
   seedInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') run(); });
 
