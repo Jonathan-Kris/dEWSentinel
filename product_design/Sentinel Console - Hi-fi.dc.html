@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{ --accent:#818cf8; --accent-soft:rgba(129,140,248,.16); }
+  body{ background:#1a1c22; }
+  .mono{ font-family:'IBM Plex Mono',ui-monospace,monospace; font-feature-settings:'tnum' 1; }
+  @keyframes sPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(239,68,68,.45);} 50%{ box-shadow:0 0 0 6px rgba(239,68,68,0);} }
+  @keyframes sBlink{ 0%,100%{ opacity:1;} 50%{ opacity:.35;} }
+</style>
+</helmet>
+
+<!-- ===== labels ===== -->
+<div data-drags-parent="0" style="position:absolute; left:80px; top:30px; font:600 15px 'IBM Plex Sans',sans-serif; color:#c7ccd6; letter-spacing:.3px;">Screen 1 — The Console · hi-fi <span style="color:#7a8090; font-weight:400;">(Layout A · dark observability theme)</span></div>
+
+<!-- =========================== CONSOLE A =========================== -->
+<div style="position:absolute; left:80px; top:64px; width:1280px;">
+  <div data-screen-label="Console A (hi-fi)" style="background:#0c0e14; border:1px solid #20242f; border-radius:14px; box-shadow:0 24px 60px rgba(0,0,0,.45); overflow:hidden; font-family:'IBM Plex Sans',system-ui,sans-serif; color:#e7e9f0;">
+
+    <!-- top bar -->
+    <div style="display:flex; align-items:center; gap:16px; padding:14px 20px; border-bottom:1px solid #1b1f29; background:linear-gradient(180deg,#11141c,#0e1118);">
+      <div style="display:flex; align-items:center; gap:9px; font-weight:700; font-size:16px; letter-spacing:.2px; color:#f2f3f7;">
+        <span style="width:18px; height:18px; border-radius:5px; background:var(--accent,#818cf8); display:flex; align-items:center; justify-content:center; box-shadow:0 0 14px var(--accent-soft,rgba(129,140,248,.5));"><span style="width:6px;height:6px;border-radius:50%;background:#0c0e14;"></span></span>
+        Sentinel
+      </div>
+      <div style="width:1px; height:22px; background:#262b37;"></div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; min-width:280px; padding:8px 13px; border:1px solid #262b37; border-radius:9px; background:#11141c; font-size:13px; color:#cfd3dd;">
+        <span><span class="mono" style="color:#f2f3f7;">Acme Agency</span> <span style="color:#6a7080;">— 84 domains</span></span>
+        <span style="color:#6a7080;">▾</span>
+      </div>
+      <div style="flex:1;"></div>
+      <div style="display:flex; align-items:center; gap:8px; padding:7px 13px; border-radius:999px; background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.4); color:#fca5a5; font-weight:600; font-size:13px;">
+        <span style="width:8px; height:8px; border-radius:50%; background:#ef4444; animation:sBlink 1.6s ease-in-out infinite;"></span>2 domains critical
+      </div>
+      <div class="mono" style="font-size:12px; color:#6a7080;">last synced 4 min ago</div>
+    </div>
+
+    <div style="display:flex;">
+      <!-- main column -->
+      <div style="flex:1; min-width:0; padding:20px; display:flex; flex-direction:column; gap:18px;">
+
+        <!-- ZONE A — hero -->
+        <div style="border:1px solid #20242f; border-radius:12px; background:linear-gradient(180deg,#10131b,#0d1016); padding:18px 20px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;">
+            <div>
+              <div style="font-size:15px; font-weight:600; color:#f2f3f7;">Lead-time view <span style="color:#6a7080; font-weight:400;">· Gmail · acme-outreach-03.com</span></div>
+              <div style="font-size:12.5px; color:#8a90a0; margin-top:3px;">We see the dip before your reply rates do.</div>
+            </div>
+            <div style="font-size:12.5px; color:#6a7080;">last 30 days</div>
+          </div>
+
+          <!-- today's dashboard flat strip -->
+          <div style="display:flex; align-items:center; gap:13px; padding:10px 14px; border:1px solid #1d2a22; border-radius:9px; background:rgba(34,197,94,.05); margin-bottom:14px;">
+            <div style="font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#6a7080; white-space:nowrap;">Today's dashboard</div>
+            <svg viewBox="0 0 220 20" width="110" height="16" preserveAspectRatio="none" style="flex-shrink:0; opacity:.65;"><polyline points="0,11 70,10 140,11 220,10" fill="none" stroke="#34d399" stroke-width="2.5"/></svg>
+            <div style="flex:1; font-size:12px; color:#8a90a0; min-width:0;">Sequencer health score — flat all month, sees nothing wrong</div>
+            <div class="mono" style="font-size:17px; font-weight:600; color:#4ade80; white-space:nowrap;">98<span style="font-size:11px; color:#6a7080;">/100</span></div>
+            <div style="padding:3px 10px; border-radius:999px; background:rgba(34,197,94,.13); color:#4ade80; font-size:11px; font-weight:600; white-space:nowrap;">✓ all green</div>
+          </div>
+
+          <!-- the chart -->
+          <svg viewBox="0 0 740 256" width="100%" style="display:block; height:auto;">
+            <!-- zone bands -->
+            <rect x="80" y="14" width="620" height="58" fill="rgba(239,68,68,.10)"/>
+            <rect x="80" y="72" width="620" height="58" fill="rgba(245,158,11,.09)"/>
+            <rect x="80" y="130" width="620" height="76" fill="rgba(34,197,94,.08)"/>
+            <text x="88" y="32" font-size="10.5" font-weight="600" fill="#f87171" font-family="'IBM Plex Sans'">DANGER</text>
+            <text x="88" y="96" font-size="10.5" font-weight="600" fill="#fbbf24" font-family="'IBM Plex Sans'">WATCH</text>
+            <text x="88" y="166" font-size="10.5" font-weight="600" fill="#4ade80" font-family="'IBM Plex Sans'">SAFE</text>
+            <!-- warning gap band -->
+            <rect x="360" y="14" width="240" height="192" fill="var(--accent-soft,rgba(129,140,248,.16))"/>
+            <line x1="360" y1="14" x2="360" y2="206" stroke="var(--accent,#818cf8)" stroke-dasharray="3 3" opacity="0.7" style="stroke:var(--accent,#818cf8);"/>
+            <line x1="600" y1="14" x2="600" y2="206" stroke="#6a7080" stroke-dasharray="3 3" opacity="0.8"/>
+            <!-- threshold guides -->
+            <line x1="80" y1="72" x2="700" y2="72" stroke="#f87171" stroke-dasharray="5 5" stroke-width="1" opacity="0.30"/>
+            <line x1="80" y1="130" x2="700" y2="130" stroke="#fbbf24" stroke-dasharray="5 5" stroke-width="1" opacity="0.35"/>
+            <!-- axes -->
+            <line x1="80" y1="14" x2="80" y2="206" stroke="#262b37" stroke-width="1"/>
+            <line x1="80" y1="206" x2="700" y2="206" stroke="#262b37" stroke-width="1"/>
+            <text x="72" y="18" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">100</text>
+            <text x="72" y="113" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">50</text>
+            <text x="72" y="208" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0</text>
+            <text x="44" y="106" font-size="9.5" fill="#6a7080" font-weight="600" font-family="'IBM Plex Sans'" transform="rotate(-90 44 106)" text-anchor="middle">Risk score</text>
+            <!-- glow underlay + sentinel line -->
+            <polyline points="80,180 170,172 260,158 340,132 360,126 460,90 540,62 620,46 700,38" fill="none" stroke="var(--accent,#818cf8)" stroke-width="7" opacity="0.18" style="stroke:var(--accent,#818cf8);"/>
+            <polyline points="80,180 170,172 260,158 340,132 360,126 460,90 540,62 620,46 700,38" fill="none" stroke="var(--accent,#818cf8)" stroke-width="3" style="stroke:var(--accent,#818cf8);"/>
+            <circle cx="360" cy="126" r="5.5" fill="#0c0e14" stroke="var(--accent,#818cf8)" stroke-width="2.5" style="stroke:var(--accent,#818cf8);"/>
+            <circle cx="600" cy="44" r="5" fill="#6a7080"/>
+            <!-- x labels -->
+            <text x="80" y="222" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'">30d ago</text>
+            <text x="600" y="222" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="middle">today</text>
+            <text x="700" y="222" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="end">+5d</text>
+            <!-- marker labels -->
+            <text x="360" y="242" font-size="10" font-weight="600" fill="#a5b4fc" text-anchor="middle" font-family="'IBM Plex Sans'">▲ Sentinel warned · 12d ago</text>
+            <text x="600" y="242" font-size="10" font-weight="600" fill="#8a90a0" text-anchor="middle" font-family="'IBM Plex Sans'">▲ reply rates now dropping</text>
+          </svg>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px; gap:14px;">
+            <div style="display:flex; align-items:center; gap:8px; font-size:12px;"><span style="width:20px; height:3px; border-radius:2px; background:var(--accent,#818cf8);"></span><span style="color:#8a90a0;">Sentinel real risk score <span style="color:#5a6070;">· 0–100 smoothed · up = danger</span></span></div>
+            <div style="font-size:12px; font-weight:600; color:#a5b4fc; padding:5px 14px; background:var(--accent-soft,rgba(129,140,248,.16)); border:1px solid rgba(129,140,248,.4); border-radius:999px; white-space:nowrap;">◀ 12 days of warning gained ▶</div>
+          </div>
+        </div>
+
+        <!-- ZONE B — ESP cards -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+          <!-- Gmail -->
+          <div style="border:1px solid #20242f; border-radius:12px; background:#10131b; padding:16px 17px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+              <div style="display:flex; align-items:center; gap:9px; font-size:13.5px; font-weight:600; color:#f2f3f7;"><span style="width:9px;height:9px;border-radius:2px;background:#ea4335;"></span>Gmail · Google</div>
+              <div style="padding:3px 9px; border-radius:999px; background:rgba(239,68,68,.13); color:#fca5a5; font-size:11px; font-weight:600;">Critical</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:16px;">
+              <svg viewBox="0 0 92 92" width="86" height="86" style="flex-shrink:0;">
+                <circle cx="46" cy="46" r="37" fill="none" stroke="#1e2330" stroke-width="9"/>
+                <circle cx="46" cy="46" r="37" fill="none" stroke="#ef4444" stroke-width="9" stroke-linecap="round" stroke-dasharray="88 232" transform="rotate(-90 46 46)"/>
+                <text x="46" y="44" text-anchor="middle" font-size="22" font-weight="600" fill="#f2f3f7" font-family="'IBM Plex Mono'">38</text>
+                <text x="46" y="60" text-anchor="middle" font-size="9.5" fill="#6a7080" font-family="'IBM Plex Mono'">/100</text>
+              </svg>
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:11px; color:#8a90a0; margin-bottom:4px;">Smoothed complaint rate</div>
+                <div class="mono" style="font-size:20px; font-weight:600; color:#f2f3f7;">0.21%</div>
+                <div style="position:relative; height:7px; background:#1e2330; border-radius:4px; margin:9px 0 5px;">
+                  <div style="position:absolute; left:0; top:0; bottom:0; width:70%; background:linear-gradient(90deg,#fb923c,#ef4444); border-radius:4px;"></div>
+                  <div style="position:absolute; left:33%; top:-3px; bottom:-3px; width:1.5px; background:#fbbf24;"></div>
+                  <div style="position:absolute; right:0; top:-3px; bottom:-3px; width:1.5px; background:#ef4444;"></div>
+                </div>
+                <div class="mono" style="display:flex; justify-content:space-between; font-size:9px; color:#5a6070;"><span>0.10 watch</span><span>0.30 cliff</span></div>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:14px;">
+              <div style="display:flex; align-items:center; gap:7px; padding:5px 11px; border-radius:999px; background:rgba(239,68,68,.13); color:#fca5a5; font-size:11.5px; font-weight:600;"><span style="width:6px;height:6px;border-radius:50%;background:#ef4444;"></span>→ crosses 0.30% cliff in ~5 days</div>
+              <svg viewBox="0 0 96 30" width="96" height="30"><polyline points="3,22 18,21 33,19 48,16 63,13 78,8 93,4" fill="none" stroke="#ef4444" stroke-width="2"/></svg>
+            </div>
+          </div>
+          <!-- Outlook -->
+          <div style="border:1px solid #20242f; border-radius:12px; background:#10131b; padding:16px 17px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+              <div style="display:flex; align-items:center; gap:9px; font-size:13.5px; font-weight:600; color:#f2f3f7;"><span style="width:9px;height:9px;border-radius:2px;background:#0078d4;"></span>Outlook · Microsoft</div>
+              <div style="padding:3px 9px; border-radius:999px; background:rgba(34,197,94,.13); color:#4ade80; font-size:11px; font-weight:600;">Healthy</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:16px;">
+              <svg viewBox="0 0 92 92" width="86" height="86" style="flex-shrink:0;">
+                <circle cx="46" cy="46" r="37" fill="none" stroke="#1e2330" stroke-width="9"/>
+                <circle cx="46" cy="46" r="37" fill="none" stroke="#22c55e" stroke-width="9" stroke-linecap="round" stroke-dasharray="190 232" transform="rotate(-90 46 46)"/>
+                <text x="46" y="44" text-anchor="middle" font-size="22" font-weight="600" fill="#f2f3f7" font-family="'IBM Plex Mono'">82</text>
+                <text x="46" y="60" text-anchor="middle" font-size="9.5" fill="#6a7080" font-family="'IBM Plex Mono'">/100</text>
+              </svg>
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:11px; color:#8a90a0; margin-bottom:4px;">Smoothed complaint rate</div>
+                <div class="mono" style="font-size:20px; font-weight:600; color:#f2f3f7;">0.06%</div>
+                <div style="position:relative; height:7px; background:#1e2330; border-radius:4px; margin:9px 0 5px;">
+                  <div style="position:absolute; left:0; top:0; bottom:0; width:20%; background:#22c55e; border-radius:4px;"></div>
+                  <div style="position:absolute; left:33%; top:-3px; bottom:-3px; width:1.5px; background:#fbbf24;"></div>
+                  <div style="position:absolute; right:0; top:-3px; bottom:-3px; width:1.5px; background:#ef4444;"></div>
+                </div>
+                <div class="mono" style="display:flex; justify-content:space-between; font-size:9px; color:#5a6070;"><span>0.10 watch</span><span>0.30 cliff</span></div>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:14px;">
+              <div style="display:flex; align-items:center; gap:7px; padding:5px 11px; border-radius:999px; background:rgba(34,197,94,.13); color:#4ade80; font-size:11.5px; font-weight:600;"><span style="width:6px;height:6px;border-radius:50%;background:#22c55e;"></span>stable</div>
+              <svg viewBox="0 0 96 30" width="96" height="30"><polyline points="3,18 18,17 33,19 48,16 63,18 78,15 93,17" fill="none" stroke="#22c55e" stroke-width="2"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- ZONE D — failover playbook -->
+        <div style="border:1px solid #20242f; border-radius:12px; background:#10131b; padding:17px 19px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <div style="font-size:13.5px; font-weight:600; color:#f2f3f7;">Failover playbook <span class="mono" style="color:#8a90a0; font-weight:400; font-size:12.5px;">· acme-outreach-03.com</span></div>
+            <div style="font-size:11px; color:#6a7080;">backup plan in motion</div>
+          </div>
+          <div style="display:flex; align-items:center; margin-bottom:16px;">
+            <div style="flex:1; text-align:center; padding:9px 4px; border:1px solid #262b37; border-radius:8px; color:#6a7080; font-size:11.5px; font-weight:500;">Healthy</div>
+            <div style="color:#3a4050; padding:0 7px;">→</div>
+            <div style="flex:1; text-align:center; padding:9px 4px; border:1px solid #262b37; border-radius:8px; color:#6a7080; font-size:11.5px; font-weight:500;">Watch</div>
+            <div style="color:#3a4050; padding:0 7px;">→</div>
+            <div style="flex:1; text-align:center; padding:9px 4px; border:1px solid #4a3a1a; border-radius:8px; color:#fbbf24; font-size:11.5px; font-weight:500; background:rgba(245,158,11,.06);">Throttle</div>
+            <div style="color:#3a4050; padding:0 7px;">→</div>
+            <div style="flex:1.15; text-align:center; padding:9px 4px; border:1.5px solid #ef4444; border-radius:8px; color:#fff; font-size:11.5px; font-weight:600; background:rgba(239,68,68,.22); animation:sPulse 2s ease-in-out infinite;">● Failover <span style="opacity:.8; font-weight:400;">· current</span></div>
+            <div style="color:#3a4050; padding:0 7px;">→</div>
+            <div style="flex:1; text-align:center; padding:9px 4px; border:1px solid #262b37; border-radius:8px; color:#6a7080; font-size:11.5px; font-weight:500;">Cooldown</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; padding:11px 14px; background:#0d1016; border:1px solid #1b1f29; border-radius:9px;">
+            <div style="font-size:11.5px; font-weight:600; color:#a0a6b4;">Standby pool</div>
+            <div style="display:flex; gap:7px;"><span style="width:11px;height:11px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.5);"></span><span style="width:11px;height:11px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.5);"></span><span style="width:11px;height:11px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.5);"></span></div>
+            <div class="mono" style="font-size:12px; color:#cfd3dd;">3 hot-standby domains ready <span style="color:#6a7080;">(Gmail-warmed)</span></div>
+          </div>
+        </div>
+
+        <!-- ZONE E — domains table -->
+        <div style="border:1px solid #20242f; border-radius:12px; background:#10131b; overflow:hidden;">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:13px 16px; border-bottom:1px solid #1b1f29;">
+            <div style="font-size:13.5px; font-weight:600; color:#f2f3f7;">Domains <span style="color:#6a7080; font-weight:400;">· 84</span></div>
+            <div style="font-size:11px; color:#6a7080;">sorted by risk ▾</div>
+          </div>
+          <div class="mono" style="display:grid; grid-template-columns:2fr 1.1fr .8fr .8fr 1fr 1.4fr; padding:9px 16px; font-size:9.5px; letter-spacing:.04em; text-transform:uppercase; color:#5a6070; border-bottom:1px solid #161a22;">
+            <div>Domain</div><div>ESP split</div><div>Gmail</div><div>Outlook</div><div>State</div><div>Last event</div>
+          </div>
+          <div style="display:grid; grid-template-columns:2fr 1.1fr .8fr .8fr 1fr 1.4fr; padding:11px 16px; align-items:center; border-bottom:1px solid #161a22; font-size:12px;">
+            <div class="mono" style="color:#e7e9f0;">acme-outreach-03.com</div>
+            <div style="display:flex; height:8px; border-radius:3px; overflow:hidden; width:66px;"><div style="flex:6; background:#ea4335;"></div><div style="flex:3; background:#0078d4;"></div><div style="flex:1; background:#3a4050;"></div></div>
+            <div class="mono" style="color:#f87171; font-weight:600;">38</div><div class="mono" style="color:#4ade80;">82</div>
+            <div><span style="padding:2px 9px; border-radius:999px; background:rgba(239,68,68,.13); color:#fca5a5; font-size:10px; font-weight:600;">Failover</span></div>
+            <div class="mono" style="color:#8a90a0; font-size:11px;">throttled · 6m ago</div>
+          </div>
+          <div style="display:grid; grid-template-columns:2fr 1.1fr .8fr .8fr 1fr 1.4fr; padding:11px 16px; align-items:center; border-bottom:1px solid #161a22; font-size:12px;">
+            <div class="mono" style="color:#e7e9f0;">domain-07.com</div>
+            <div style="display:flex; height:8px; border-radius:3px; overflow:hidden; width:66px;"><div style="flex:5; background:#ea4335;"></div><div style="flex:4; background:#0078d4;"></div><div style="flex:1; background:#3a4050;"></div></div>
+            <div class="mono" style="color:#fbbf24; font-weight:600;">61</div><div class="mono" style="color:#4ade80;">88</div>
+            <div><span style="padding:2px 9px; border-radius:999px; background:rgba(245,158,11,.13); color:#fbbf24; font-size:10px; font-weight:600;">Watch</span></div>
+            <div class="mono" style="color:#8a90a0; font-size:11px;">reply −31% · 1h ago</div>
+          </div>
+          <div style="display:grid; grid-template-columns:2fr 1.1fr .8fr .8fr 1fr 1.4fr; padding:11px 16px; align-items:center; font-size:12px;">
+            <div class="mono" style="color:#e7e9f0;">domain-11.com</div>
+            <div style="display:flex; height:8px; border-radius:3px; overflow:hidden; width:66px;"><div style="flex:7; background:#ea4335;"></div><div style="flex:2; background:#0078d4;"></div><div style="flex:1; background:#3a4050;"></div></div>
+            <div class="mono" style="color:#4ade80;">91</div><div class="mono" style="color:#4ade80;">94</div>
+            <div><span style="padding:2px 9px; border-radius:999px; background:rgba(34,197,94,.13); color:#4ade80; font-size:10px; font-weight:600;">Healthy</span></div>
+            <div class="mono" style="color:#8a90a0; font-size:11px;">cleared · 2h ago</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ZONE C — alert feed right rail -->
+      <sc-if value="{{ showAlertRail }}" hint-placeholder-val="{{ true }}">
+      <div style="width:340px; flex-shrink:0; border-left:1px solid #1b1f29; background:#0a0c11; padding:18px 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <div style="font-size:13.5px; font-weight:600; color:#f2f3f7;">Alert feed</div>
+          <div class="mono" style="font-size:10.5px; color:#5a6070;">newest first</div>
+        </div>
+        <div style="height:1px; background:#1b1f29; margin-bottom:4px;"></div>
+        <!-- critical -->
+        <div style="display:flex; gap:11px; padding:14px 0; border-bottom:1px solid #161a22;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#ef4444;flex-shrink:0;margin-top:4px;box-shadow:0 0 8px rgba(239,68,68,.6);"></span>
+          <div style="flex:1; min-width:0;">
+            <div class="mono" style="font-size:10px; color:#5a6070; margin-bottom:5px;">11:42 · 6 min ago</div>
+            <div style="font-size:12.5px; color:#d8dbe3; line-height:1.45;">Gmail complaint rate on <span class="mono" style="color:#f2f3f7;">acme-outreach-03.com</span> climbing — projected to cross 0.30% in ~5 days.</div>
+            <button style="margin-top:9px; padding:7px 13px; border:none; border-radius:7px; background:#ef4444; color:#fff; font:600 11.5px 'IBM Plex Sans'; cursor:pointer;">Throttle + fail over</button>
+          </div>
+        </div>
+        <!-- amber -->
+        <div style="display:flex; gap:11px; padding:14px 0; border-bottom:1px solid #161a22;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#fbbf24;flex-shrink:0;margin-top:4px;"></span>
+          <div style="flex:1; min-width:0;">
+            <div class="mono" style="font-size:10px; color:#5a6070; margin-bottom:5px;">10:08 · 1 hr ago</div>
+            <div style="font-size:12.5px; color:#d8dbe3; line-height:1.45;">Reply rate on <span class="mono" style="color:#f2f3f7;">domain-07</span> down 31% over 7 days while complaints flat — early engagement decay.</div>
+            <button style="margin-top:9px; padding:7px 13px; border:1px solid #2c3240; border-radius:7px; background:#11141c; color:#cfd3dd; font:600 11.5px 'IBM Plex Sans'; cursor:pointer;">Review list &amp; content</button>
+          </div>
+        </div>
+        <!-- green -->
+        <div style="display:flex; gap:11px; padding:14px 0; border-bottom:1px solid #161a22;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#22c55e;flex-shrink:0;margin-top:4px;"></span>
+          <div style="flex:1; min-width:0;">
+            <div class="mono" style="font-size:10px; color:#5a6070; margin-bottom:5px;">08:30 · 3 hrs ago</div>
+            <div style="font-size:12.5px; color:#d8dbe3; line-height:1.45;"><span class="mono" style="color:#f2f3f7;">domain-11</span> cleared — 7 consecutive clean days. Returned to active rotation.</div>
+          </div>
+        </div>
+        <!-- green 2 -->
+        <div style="display:flex; gap:11px; padding:14px 0;">
+          <span style="width:9px;height:9px;border-radius:50%;background:#22c55e;flex-shrink:0;margin-top:4px;"></span>
+          <div style="flex:1; min-width:0;">
+            <div class="mono" style="font-size:10px; color:#5a6070; margin-bottom:5px;">yesterday</div>
+            <div style="font-size:12.5px; color:#d8dbe3; line-height:1.45;"><span class="mono" style="color:#f2f3f7;">standby-gmail-02</span> finished warm-up — added to hot-standby pool.</div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+
+<!-- =========================== DOMAIN DETAIL =========================== -->
+<div data-drags-parent="0" style="position:absolute; left:1440px; top:30px; font:600 15px 'IBM Plex Sans',sans-serif; color:#c7ccd6; letter-spacing:.3px;">Screen 2 — Domain detail <span style="color:#7a8090; font-weight:400;">(raw vs smoothed, now with labeled axes)</span></div>
+
+<div style="position:absolute; left:1440px; top:64px; width:1180px;">
+  <div data-screen-label="Domain detail (hi-fi)" style="background:#0c0e14; border:1px solid #20242f; border-radius:14px; box-shadow:0 24px 60px rgba(0,0,0,.45); overflow:hidden; font-family:'IBM Plex Sans',system-ui,sans-serif; color:#e7e9f0;">
+    <!-- header -->
+    <div style="display:flex; align-items:center; gap:16px; padding:16px 20px; border-bottom:1px solid #1b1f29; background:linear-gradient(180deg,#11141c,#0e1118);">
+      <div style="font-size:12.5px; color:#6a7080; cursor:pointer;">← Console</div>
+      <div class="mono" style="font-size:18px; font-weight:600; color:#f2f3f7;">acme-outreach-03.com</div>
+      <div style="display:flex; align-items:center; gap:7px; padding:4px 11px; border-radius:999px; background:rgba(239,68,68,.13); border:1px solid rgba(239,68,68,.35); color:#fca5a5; font-size:11.5px; font-weight:600;"><span style="width:7px;height:7px;border-radius:50%;background:#ef4444;"></span>Failover</div>
+      <div style="flex:1;"></div>
+      <div style="text-align:right;">
+        <div style="font-size:9.5px; letter-spacing:.06em; text-transform:uppercase; color:#6a7080;">Overall risk score</div>
+        <div class="mono" style="font-size:24px; font-weight:600; color:#f87171; line-height:1.1;">38<span style="font-size:13px; color:#6a7080;">/100</span></div>
+      </div>
+    </div>
+
+    <div style="display:flex;">
+      <!-- left: chart + action -->
+      <div style="flex:1.5; min-width:0; padding:20px; border-right:1px solid #1b1f29; display:flex; flex-direction:column; gap:18px;">
+        <!-- raw vs smoothed -->
+        <div style="border:1px solid #20242f; border-radius:12px; background:linear-gradient(180deg,#10131b,#0d1016); padding:18px 20px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;">
+            <div>
+              <div style="font-size:14.5px; font-weight:600; color:#f2f3f7;">Raw vs smoothed complaint rate</div>
+              <div style="font-size:12px; color:#8a90a0; margin-top:3px;">How the engine sees through the noise to fire early.</div>
+            </div>
+            <div style="font-size:12px; color:#6a7080;">Gmail · 30 days</div>
+          </div>
+
+          <svg viewBox="0 0 700 290" width="100%" style="display:block; height:auto;">
+            <!-- plot frame: y top=20 (0.40%), bottom=240 (0.00%); x 86..672 -->
+            <!-- zone tint above cliff -->
+            <rect x="86" y="20" width="586" height="55" fill="rgba(239,68,68,.07)"/>
+            <!-- gridlines + Y labels (rate %) -->
+            <line x1="86" y1="20"  x2="672" y2="20"  stroke="#161a22" stroke-width="1"/>
+            <line x1="86" y1="75"  x2="672" y2="75"  stroke="#161a22" stroke-width="1"/>
+            <line x1="86" y1="130" x2="672" y2="130" stroke="#161a22" stroke-width="1"/>
+            <line x1="86" y1="185" x2="672" y2="185" stroke="#161a22" stroke-width="1"/>
+            <line x1="86" y1="240" x2="672" y2="240" stroke="#262b37" stroke-width="1"/>
+            <text x="78" y="24"  font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0.40%</text>
+            <text x="78" y="79"  font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0.30%</text>
+            <text x="78" y="134" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0.20%</text>
+            <text x="78" y="189" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0.10%</text>
+            <text x="78" y="243" font-size="9" text-anchor="end" fill="#5a6070" font-family="'IBM Plex Mono'">0.00%</text>
+            <text x="40" y="130" font-size="9.5" fill="#6a7080" font-weight="600" font-family="'IBM Plex Sans'" transform="rotate(-90 40 130)" text-anchor="middle">Complaint rate</text>
+            <line x1="86" y1="20" x2="86" y2="240" stroke="#262b37" stroke-width="1"/>
+            <!-- threshold lines -->
+            <line x1="86" y1="75" x2="672" y2="75" stroke="#ef4444" stroke-dasharray="6 4" stroke-width="1.3" opacity="0.7"/>
+            <text x="668" y="69" font-size="9" text-anchor="end" fill="#f87171" font-family="'IBM Plex Mono'">0.30% cliff</text>
+            <line x1="86" y1="185" x2="672" y2="185" stroke="#fbbf24" stroke-dasharray="6 4" stroke-width="1.3" opacity="0.75"/>
+            <text x="668" y="179" font-size="9" text-anchor="end" fill="#fbbf24" font-family="'IBM Plex Mono'">0.10% watch line</text>
+            <!-- confidence band around smoothed -->
+            <path d="M86,222 L170,210 L260,190 L330,168 L420,144 L520,128 L672,114 L672,142 L520,154 L420,170 L330,194 L260,214 L170,232 L86,244 Z" fill="var(--accent,#818cf8)" opacity="0.13" style="fill:var(--accent,#818cf8);"/>
+            <!-- raw jagged red -->
+            <polyline points="86,232 118,206 150,238 182,202 214,230 246,196 278,222 310,168 342,194 374,150 406,176 438,128 470,150 502,112 534,138 566,100 598,124 630,104 662,120" fill="none" stroke="#ef4444" stroke-width="1.4" opacity="0.55"/>
+            <!-- smoothed indigo -->
+            <polyline points="86,233 170,221 260,200 330,180 420,157 520,141 672,128" fill="none" stroke="var(--accent,#818cf8)" stroke-width="3" style="stroke:var(--accent,#818cf8);"/>
+            <!-- alert marker where smoothed crosses 0.10 (y=185) ~ x=305 -->
+            <line x1="305" y1="20" x2="305" y2="240" stroke="var(--accent,#818cf8)" stroke-dasharray="3 3" opacity="0.5" style="stroke:var(--accent,#818cf8);"/>
+            <circle cx="305" cy="185" r="6" fill="#0c0e14" stroke="var(--accent,#818cf8)" stroke-width="2.5" style="stroke:var(--accent,#818cf8);"/>
+            <!-- x axis labels -->
+            <text x="86" y="257" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'">30d ago</text>
+            <text x="380" y="257" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="middle">15d ago</text>
+            <text x="672" y="257" font-size="9" fill="#5a6070" font-family="'IBM Plex Mono'" text-anchor="end">today</text>
+          </svg>
+          <!-- alert callout -->
+          <div style="display:flex; justify-content:center; margin-top:6px;">
+            <div style="display:inline-flex; align-items:center; gap:7px; font-size:11.5px; font-weight:600; color:#a5b4fc; padding:5px 13px; background:var(--accent-soft,rgba(129,140,248,.16)); border:1px solid rgba(129,140,248,.35); border-radius:999px;">▲ alert fired here — 12 days early &amp; trustworthy</div>
+          </div>
+          <div style="display:flex; gap:24px; margin-top:14px; font-size:11.5px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:8px;"><span style="width:18px;height:3px;border-radius:2px;background:#ef4444; opacity:.6;"></span><span style="color:#8a90a0;">Raw daily complaint rate <span style="color:#5a6070;">· noisy</span></span></div>
+            <div style="display:flex; align-items:center; gap:8px;"><span style="width:18px;height:3px;border-radius:2px;background:var(--accent,#818cf8);"></span><span style="color:#8a90a0;">Smoothed estimate <span style="color:#5a6070;">· + confidence band</span></span></div>
+          </div>
+        </div>
+
+        <!-- recommended action -->
+        <div style="border:1px solid rgba(239,68,68,.3); border-radius:12px; background:rgba(239,68,68,.05); padding:18px 20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+            <div style="font-size:14px; font-weight:600; color:#fca5a5;">Recommended action</div>
+            <div style="font-size:11px; color:#6a7080;">failover playbook · 3 steps</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
+            <div style="display:flex; align-items:center; gap:11px; font-size:12.5px; color:#d8dbe3;"><span class="mono" style="width:20px;height:20px;border-radius:50%;background:#ef4444;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">1</span>Throttle Gmail sends on this domain to 20%</div>
+            <div style="display:flex; align-items:center; gap:11px; font-size:12.5px; color:#d8dbe3;"><span class="mono" style="width:20px;height:20px;border-radius:50%;background:#ef4444;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">2</span>Fail traffic over to <span class="mono" style="color:#f2f3f7;">standby-gmail-02</span> <span style="color:#6a7080;">(hot, warmed)</span></div>
+            <div style="display:flex; align-items:center; gap:11px; font-size:12.5px; color:#d8dbe3;"><span class="mono" style="width:20px;height:20px;border-radius:50%;background:#3a4050;color:#cfd3dd;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">3</span>Hold in Cooldown until 7 consecutive clean days</div>
+          </div>
+          <button style="width:100%; padding:12px; border:none; border-radius:9px; background:#ef4444; color:#fff; font:600 13.5px 'IBM Plex Sans'; cursor:pointer;">Apply failover playbook</button>
+        </div>
+      </div>
+
+      <!-- right: signal breakdown -->
+      <div style="width:380px; flex-shrink:0; padding:20px; background:#0a0c11;">
+        <div style="font-size:14px; font-weight:600; color:#f2f3f7;">Signal breakdown</div>
+        <div style="font-size:11.5px; color:#6a7080; margin:3px 0 14px;">weighted inputs feeding the score</div>
+        <div style="display:flex; gap:16px; margin-bottom:16px; font-size:10.5px;">
+          <div style="display:flex; align-items:center; gap:7px;"><span style="width:12px;height:4px;border-radius:2px;background:var(--accent,#818cf8);"></span><span style="color:#8a90a0;">leading <span style="color:#5a6070;">· Sentinel's edge</span></span></div>
+          <div style="display:flex; align-items:center; gap:7px;"><span style="width:12px;height:4px;border-radius:2px;background:#5a6070;"></span><span style="color:#8a90a0;">lagging</span></div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:15px;">
+          <!-- row helper repeated -->
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px;"><div style="font-size:12px; color:#d8dbe3;">Smoothed complaint rate</div><div class="mono" style="font-size:11.5px; color:#f87171; font-weight:600;">0.21%</div></div>
+            <div style="display:flex; align-items:center; gap:9px;"><div style="flex:1; height:7px; background:#1a1e28; border-radius:4px; overflow:hidden;"><div style="width:80%; height:100%; background:#5a6070;"></div></div><div class="mono" style="font-size:9.5px; color:#6a7080; width:36px; text-align:right;">w 28%</div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px;"><div style="font-size:12px; color:#d8dbe3;">Complaint-rate slope <span style="color:#a5b4fc; font-size:9px; font-weight:600;">LEADING</span></div><div class="mono" style="font-size:11.5px; color:#f87171; font-weight:600;">+0.04%/d</div></div>
+            <div style="display:flex; align-items:center; gap:9px;"><div style="flex:1; height:7px; background:#1a1e28; border-radius:4px; overflow:hidden;"><div style="width:64%; height:100%; background:var(--accent,#818cf8);"></div></div><div class="mono" style="font-size:9.5px; color:#6a7080; width:36px; text-align:right;">w 22%</div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px;"><div style="font-size:12px; color:#d8dbe3;">Reply trend (7d) <span style="color:#a5b4fc; font-size:9px; font-weight:600;">LEADING</span></div><div class="mono" style="font-size:11.5px; color:#fbbf24; font-weight:600;">−31%</div></div>
+            <div style="display:flex; align-items:center; gap:9px;"><div style="flex:1; height:7px; background:#1a1e28; border-radius:4px; overflow:hidden;"><div style="width:52%; height:100%; background:var(--accent,#818cf8);"></div></div><div class="mono" style="font-size:9.5px; color:#6a7080; width:36px; text-align:right;">w 16%</div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px;"><div style="font-size:12px; color:#d8dbe3;">Soft-bounce / deferral rate <span style="color:#a5b4fc; font-size:9px; font-weight:600;">LEADING</span></div><div class="mono" style="font-size:11.5px; color:#d8dbe3;">3.8%</div></div>
+            <div style="display:flex; align-items:center; gap:9px;"><div style="flex:1; height:7px; background:#1a1e28; border-radius:4px; overflow:hidden;"><div style="width:44%; height:100%; background:var(--accent,#818cf8);"></div></div><div class="mono" style="font-size:9.5px; color:#6a7080; width:36px; text-align:right;">w 14%</div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px;"><div style="font-size:12px; color:#d8dbe3;">Postmaster reputation tier <span style="color:#a5b4fc; font-size:9px; font-weight:600;">LEADING</span></div><div class="mono" style="font-size:11.5px; color:#fbbf24; font-weight:600;">Medium ↓</div></div>
+            <div style="display:flex; align-items:center; gap:9px;"><div style="flex:1; height:7px; background:#1a1e28; border-radius:4px; overflow:hidden;"><div style="width:30%; height:100%; background:var(--accent,#818cf8);"></div></div><div class="mono" style="font-size:9.5px; color:#6a7080; width:36px; text-align:right;">w 8%</div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px;"><div style="font-size:12px; color:#d8dbe3;">Hard bounces</div><div class="mono" style="font-size:11.5px; color:#d8dbe3;">0.6%</div></div>
+            <div style="display:flex; align-items:center; gap:9px;"><div style="flex:1; height:7px; background:#1a1e28; border-radius:4px; overflow:hidden;"><div style="width:22%; height:100%; background:#5a6070;"></div></div><div class="mono" style="font-size:9.5px; color:#6a7080; width:36px; text-align:right;">w 6%</div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:5px;"><div style="font-size:12px; color:#d8dbe3;">Seed-list placement <span style="color:#a5b4fc; font-size:9px; font-weight:600;">LEADING</span></div><div class="mono" style="font-size:11.5px; color:#d8dbe3;">71% inbox</div></div>
+            <div style="display:flex; align-items:center; gap:9px;"><div style="flex:1; height:7px; background:#1a1e28; border-radius:4px; overflow:hidden;"><div style="width:22%; height:100%; background:var(--accent,#818cf8);"></div></div><div class="mono" style="font-size:9.5px; color:#6a7080; width:36px; text-align:right;">w 6%</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#818cf8&quot;,&quot;options&quot;:[&quot;#818cf8&quot;,&quot;#a78bfa&quot;,&quot;#5e9bf0&quot;,&quot;#22d3ee&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;showAlertRail&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this._applyVars(); }
+  componentDidUpdate() { this._applyVars(); }
+  _applyVars() {
+    const a = this.props.accent || '#818cf8';
+    const root = document.documentElement;
+    root.style.setProperty('--accent', a);
+    root.style.setProperty('--accent-soft', this._soft(a, 0.16));
+  }
+  _soft(hex, al) {
+    try {
+      let h = String(hex).replace('#', '');
+      if (h.length === 3) h = h.split('').map(c => c + c).join('');
+      const n = parseInt(h, 16);
+      return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${al})`;
+    } catch (e) { return `rgba(129,140,248,${al})`; }
+  }
+  renderVals() {
+    return { showAlertRail: this.props.showAlertRail !== false };
+  }
+}
+</script>
+</body>
+</html>
