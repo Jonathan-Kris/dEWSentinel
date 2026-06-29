@@ -1,0 +1,42 @@
+/* Design tokens — every value lifted from HANDOFF "Design Tokens" / the Hi-Fi
+ * export, as CSS custom properties. The single source of colour, so the engine
+ * stays pure and components never hardcode a hex they could read from a token. */
+:root {
+  --app-bg: #1a1c22;
+  --panel: #0c0e14;
+  --card: #10131b;
+  --rail: #0a0c11;
+  --deep-inset: #0d1016;
+
+  --border: #20242f;
+  --divider: #1b1f29;
+  --hair: #161a22;
+  --stroke2: #262b37;
+  --track: #1e2330;
+
+  --text: #e7e9f0;
+  --text2: #d8dbe3;
+  --text-strong: #f2f3f7;
+  --muted: #8a90a0;
+  --muted2: #6a7080;
+  --muted3: #5a6070;
+  --secondary: #a0a6b4;
+
+  --accent: #818cf8;
+  --accent-soft: rgba(129, 140, 248, 0.16);
+  --accent-2: #a5b4fc;
+  --accent-deep: #6366f1;
+
+  --amber: #f59e0b;
+  --amber2: #fbbf24;
+  --orange: #fb923c;
+  --red: #ef4444;
+  --red2: #fca5a5;
+  --red3: #f87171;
+  --green: #22c55e;
+  --green2: #4ade80;
+  --green3: #34d399;
+
+  --gmail: #ea4335;
+  --outlook: #0078d4;
+}
