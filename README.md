@@ -5,7 +5,7 @@
 A single-page, client-side proof-of-concept that **computes** (not fakes) per-ESP deliverability risk
 signals from synthetic data and renders them into the dEWSentinel console UI.
 
-**▶ Live demo:** https://6a42018e7340f4326a1d8150--dewsentinel-poc-demo.netlify.app
+**▶ Live demo:** https://jonathan-kris.github.io/dEWSentinel/
 **📄 One-page insight memo:** [INSIGHT_MEMO.md](./INSIGHT_MEMO.md) — the thesis, the problem, and why it's defensible.
 
 > **Simulated data.** The *engine and visuals are real*; the data is synthetic. In production, leading
@@ -97,17 +97,22 @@ at the engine level (Node) and in headless Chrome against the live deployment:
 
 ---
 
-## Deployment note
+## Deployment
 
-The site is deployed on Netlify. The current account has production publishing (`--prod` to the apex domain)
-gated, so the link above is a **permanent Netlify deploy permalink** (fully functional). To promote it to the
-clean apex URL `https://dewsentinel-poc-demo.netlify.app` once the account is verified:
+The live demo is hosted on **GitHub Pages** (free, no build, serves the repo's static files from `main`):
+
+- Source: `main` branch, path `/` — `.nojekyll` makes GitHub serve the files verbatim.
+- URL: https://jonathan-kris.github.io/dEWSentinel/
+- Re-deploy = just push to `main`; Pages rebuilds automatically.
 
 ```bash
-netlify deploy --prod --dir=dist
+# update the live site
+git add -A && git commit -m "update" && git push origin main
 ```
 
-To re-deploy from scratch via **Netlify Drop** (no CLI, ~2 min):
-1. Go to https://app.netlify.com/drop
-2. Drag the project folder (or the `dist/` folder containing `index.html`, `engine.js`, `render.js`, `fonts.css`).
-3. Netlify returns a live URL instantly.
+### Other free static hosts (this is a pure static site, so any will do)
+
+- **Vercel (Hobby, free):** `vercel --prod --yes` from the repo root (`.vercelignore` ships only runtime files).
+- **Cloudflare Pages (free):** `wrangler pages deploy dist`.
+- **Netlify:** `netlify deploy --prod --dir=dist` — note Netlify's free tier meters production deploys
+  against monthly **credits**; if the team is out of credits, production publishing is disabled until reset.
