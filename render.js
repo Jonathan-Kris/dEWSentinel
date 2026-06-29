@@ -67,10 +67,14 @@
       svgEl.appendChild(r);
     });
 
-    // zone labels (optional text anchored inside bands)
+    // zone labels (optional text anchored inside bands / centered annotations)
     (opts.zoneLabels || []).forEach(function (z) {
-      svgEl.appendChild(textNode(px(z.x != null ? z.x : x0) + 8, py(z.y), z.label, {
-        'font-size': 10.5, 'font-weight': 600, fill: z.color, 'font-family': "'IBM Plex Sans'"
+      var anchor = z.anchor || 'start';
+      var xpx = px(z.x != null ? z.x : x0) + (anchor === 'start' ? 8 : 0);
+      svgEl.appendChild(textNode(xpx, py(z.y), z.label, {
+        'font-size': z.size || 10.5, 'font-weight': 600, fill: z.color,
+        'font-family': "'IBM Plex Sans'", 'text-anchor': anchor,
+        'letter-spacing': z.spacing != null ? z.spacing : 0
       }));
     });
 
@@ -139,12 +143,13 @@
       svgEl.appendChild(svg('path', { d: d, fill: opts.ciBand.color, opacity: opts.ciBand.opacity || 0.13 }));
     }
 
-    // markers (circle + optional label)
+    // markers (circle + optional label). m.fill solid (filled dot) vs default open ring.
     (opts.markers || []).forEach(function (m) {
       svgEl.appendChild(svg('circle', { cx: px(m.x), cy: py(m.y), r: m.r || 5.5,
-        fill: '#0c0e14', stroke: m.color || '#818cf8', 'stroke-width': 2.5 }));
-      if (m.label) svgEl.appendChild(textNode(px(m.x), pad.t + plotH + 32, m.label,
-        { 'font-size': 10, 'font-weight': 600, fill: m.labelColor || '#a5b4fc', 'text-anchor': 'middle', 'font-family': "'IBM Plex Sans'" }));
+        fill: m.fill || '#0c0e14', stroke: m.color || '#818cf8', 'stroke-width': m.strokeWidth || 2.5 }));
+      if (m.label) svgEl.appendChild(textNode(px(m.x), pad.t + plotH + (m.labelDy || 32), m.label,
+        { 'font-size': 10, 'font-weight': 600, fill: m.labelColor || '#a5b4fc',
+          'text-anchor': m.labelAnchor || 'middle', 'font-family': "'IBM Plex Sans'" }));
     });
     return svgEl;
   }
@@ -182,62 +187,85 @@
   }
 
   function renderLeadTime(vm) {
-    var lt = vm.leadTime, days = vm.meta.days, today = vm.meta.today;
-    var dash = lt.dashboardSeries, sent = lt.sentinelSeries;
+    var lt = vm.leadTime, today = vm.meta.today;
+    var dash = lt.dashboardSeries;
+    var health = lt.healthSeries;             // observed, days 0..today, down = danger
+    var proj = lt.healthProjSeries;           // projected, days today+1..today+projDays
+    var watch = lt.watchHealth, danger = lt.dangerHealth;
+    var xMax = today + lt.projDays;           // x axis extends past today by projDays
+    var warnedAgo = Math.max(0, today - lt.crossWatchDay);
 
-    // dashboard flat strip
+    // ----- lagging "today's dashboard" strip (flat & reassuring, separate axis) -----
     sparkline($('dash-strip-spark'), dash, '#34d399');
-    $('dash-strip-score').textContent = dash[today];
+    $('dash-strip-score').textContent = lt.dashboardScore;
     var dtag = $('dash-strip-tag');
-    if (dash[today] >= 80) { dtag.textContent = '✓ all green'; dtag.style.color = '#4ade80'; dtag.style.background = 'rgba(34,197,94,.13)'; }
+    if (lt.dashboardScore >= 80) { dtag.textContent = '✓ all green'; dtag.style.color = '#4ade80'; dtag.style.background = 'rgba(34,197,94,.13)'; }
     else { dtag.textContent = '⚠ finally dipping'; dtag.style.color = '#fca5a5'; dtag.style.background = 'rgba(239,68,68,.13)'; }
 
-    // main lead-time chart: green (dashboard) flat-high + indigo (sentinel) declining
-    var dashPts = dash.map(function (v, i) { return [i, v]; });
-    var sentPts = sent.map(function (v, i) { return [i, v]; });
-    var bandColor = 'var(--accent-soft,rgba(129,140,248,.16))';
+    // ----- hero: a single 0–100 HEALTH line that FALLS into danger -----
+    var observedPts = health.map(function (v, i) { return [i, v]; });
+    // projected segment starts at today's point so the dashed line joins the solid one
+    var projPts = [[today, health[today]]].concat(proj.map(function (v, k) { return [today + 1 + k, v]; }));
+    // the warning story only exists once Sentinel has crossed WATCH before today
+    var showWarning = lt.warningGainedDays > 0 && lt.crossWatchDay < today;
+
+    var bands = [
+      // health zones — HEALTHY on top, DANGER at the bottom (down = bad)
+      { fromY: watch, toY: 100, color: 'rgba(34,197,94,.08)' },
+      { fromY: danger, toY: watch, color: 'rgba(245,158,11,.09)' },
+      { fromY: 0, toY: danger, color: 'rgba(239,68,68,.11)' }
+    ];
+    var zoneLabels = [
+      { x: 0, y: watch + (100 - watch) / 2, label: 'HEALTHY', color: '#4ade80' },
+      { x: 0, y: danger + (watch - danger) / 2, label: 'WATCH', color: '#fbbf24' },
+      { x: 0, y: danger / 2, label: 'DANGER', color: '#f87171' }
+    ];
+    var vlines = [{ x: today, color: '#6a7080', dash: '3 3', opacity: 0.65 }];
+    var markers = [];
+    if (showWarning) {
+      // warning-gained band: Sentinel crossed WATCH → lagging tools react
+      bands.push({ fromX: lt.crossWatchDay, toX: lt.dashDropDay, color: 'rgba(129,140,248,.14)' });
+      zoneLabels.push({ x: (lt.crossWatchDay + lt.dashDropDay) / 2, y: 97, anchor: 'middle', size: 10,
+        color: '#a5b4fc', label: '≈ ' + lt.warningGainedDays + ' days of warning gained' });
+      vlines.push({ x: lt.crossWatchDay, color: '#818cf8', dash: '3 3', opacity: 0.55 });
+      // Sentinel warned — open indigo ring sitting on the watch line
+      markers.push({ x: lt.crossWatchDay, y: health[lt.crossWatchDay], color: '#818cf8', r: 6,
+        label: '▲ Sentinel warned · ' + warnedAgo + 'd ago', labelColor: '#a5b4fc' });
+      // today — filled grey dot where lagging tools finally notice
+      markers.push({ x: today, y: health[today], color: '#8a90a0', fill: '#8a90a0', r: 5, strokeWidth: 0,
+        label: '▲ reply rates now dropping', labelColor: '#8a90a0' });
+    } else {
+      // calm state: just mark today, no warning annotations
+      markers.push({ x: today, y: health[today], color: '#8a90a0', fill: '#8a90a0', r: 5, strokeWidth: 0 });
+    }
 
     renderLineChart($('leadtime-chart'), {
-      xDomain: [0, days - 1], yDomain: [0, 100],
-      pad: { l: 80, r: 40, t: 14, b: 50 },
-      bands: [
-        { fromY: 80, toY: 100, color: 'rgba(34,197,94,.08)' },
-        { fromY: 40, toY: 80, color: 'rgba(245,158,11,.09)' },
-        { fromY: 0, toY: 40, color: 'rgba(239,68,68,.10)' },
-        // warning-gained band: sentinel crossed Watch -> dashboard finally dropped
-        { fromX: lt.crossWatchDay, toX: lt.dashDropDay, color: bandColor }
-      ],
-      zoneLabels: [
-        { x: 0, y: 95, label: 'SAFE', color: '#4ade80' },
-        { x: 0, y: 70, label: 'WATCH', color: '#fbbf24' },
-        { x: 0, y: 30, label: 'DANGER', color: '#f87171' }
-      ],
+      xDomain: [0, xMax], yDomain: [0, 100],
+      pad: { l: 76, r: 30, t: 16, b: 52 },
+      bands: bands,
+      zoneLabels: zoneLabels,
       hlines: [
-        { y: 80, color: '#fbbf24', dash: '5 5', opacity: 0.35 },
-        { y: 40, color: '#f87171', dash: '5 5', opacity: 0.30 }
+        { y: danger, color: '#f87171', dash: '6 4', width: 1.2, opacity: 0.6, label: 'cliff' },
+        { y: watch, color: '#fbbf24', dash: '6 4', width: 1.2, opacity: 0.6, label: 'watch' }
       ],
-      vlines: [
-        { x: lt.crossWatchDay, color: '#818cf8', dash: '3 3', opacity: 0.7 },
-        { x: lt.dashDropDay, color: '#6a7080', dash: '3 3', opacity: 0.8 }
-      ],
+      vlines: vlines,
       yTicks: [{ y: 100, label: '100' }, { y: 50, label: '50' }, { y: 0, label: '0' }],
       yTitle: 'Health score',
       xTicks: [
         { x: 0, label: '30d ago' },
-        { x: lt.crossWatchDay, label: '▲ warned', anchor: 'middle' },
-        { x: today, label: 'today', anchor: 'end' }
+        { x: today, label: 'today', anchor: 'middle' },
+        { x: xMax, label: '+' + lt.projDays + 'd', anchor: 'end' }
       ],
       series: [
-        { points: dashPts, color: '#22c55e', width: 2.5, opacity: 0.9 },
-        { points: sentPts, color: '#818cf8', width: 3, glow: true }
+        { points: observedPts, color: '#818cf8', width: 3, glow: true },
+        { points: projPts, color: '#818cf8', width: 2, dash: '2 4', opacity: 0.55 }
       ],
-      markers: [
-        { x: lt.crossWatchDay, y: sent[lt.crossWatchDay], color: '#818cf8',
-          label: '▲ dEWSentinel warned · ' + lt.warningGainedDays + 'd before dashboard', labelColor: '#a5b4fc' }
-      ]
+      markers: markers
     });
 
-    $('warn-badge').textContent = '◀ ≈ ' + lt.warningGainedDays + ' days of warning gained ▶';
+    $('warn-badge').textContent = showWarning
+      ? '◀ ≈ ' + lt.warningGainedDays + ' days of warning gained ▶'
+      : '✓ all clear · no early warning needed';
   }
 
   function renderEspCard(prefix, card) {
@@ -299,7 +327,7 @@
     vm.domains.forEach(function (d) {
       var isFocal = d.domain === focal;
       var row = el('div', { class: 'trow' + (isFocal ? ' navrow is-interactive' : '') });
-      if (isFocal) { row.setAttribute('title', 'Open domain detail'); row.setAttribute('data-step', '4'); }
+      if (isFocal) { row.setAttribute('title', 'Open domain detail'); row.setAttribute('data-step', '3'); }
       var nameCell = el('div', { class: 'mono', style: 'color:#e7e9f0;' }, d.domain);
       if (isFocal) nameCell.appendChild(el('span', { class: 'chev' }, '›'));
       row.appendChild(nameCell);
