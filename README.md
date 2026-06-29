@@ -1,23 +1,19 @@
-# dEWSentinel — Deliverability Early-Warning Console (POC)
+# dEWSentinel — Deliverability Early-Warning Console
 
 *We see the dip before your reply rates do.*
 
-A single-page, client-side proof-of-concept that **computes** (not fakes) per-ESP deliverability risk
-signals from synthetic data and renders them into the dEWSentinel console UI.
+A client-side console that **computes** (not fakes) per-ESP email-deliverability **health** from seeded,
+synthetic data and renders the full early-warning story: silent reputation decay surfaced **early** from
+leading signals, projected to the complaint cliff, and driven through an automatic failover playbook.
 
-**▶ Live demo:** **https://dewsentinel.vercel.app**
-**↪ Backup mirror:** https://jonathan-kris.github.io/dEWSentinel/ *(use this if the Vercel link shows a "verifying your browser" checkpoint)*
-**📄 One-page insight memo:** [INSIGHT_MEMO.md](./INSIGHT_MEMO.md) — the thesis, the problem, and why it's defensible.
+**▶ Live app:** **https://dewsentinel.vercel.app/**
 
-> **⚛️ React / Next.js rebuild** — a test-driven port of this POC now lives in [`/app`](./app)
-> (Next.js 16 + TypeScript, one deep engine module behind a `runEngine → ViewModel` seam, data-driven
-> SVG charts, 78 tests). It is the build the Vercel project now deploys (Root Directory = `app`).
-> See [`app/README.md`](./app/README.md) and the plan in [`spec/REACT_BUILD_PLAN.md`](./spec/REACT_BUILD_PLAN.md).
+**🪧 Pitch deck:** **https://dewsentinel-deck.vercel.app/**
 
 > **Simulated data.** The *engine and visuals are real*; the data is synthetic. In production, leading
-> signals come from sending.ac's own MTA accounting-webhook telemetry (bounces, deferrals, 4xx/5xx
-> provider codes), confirmed by Google Postmaster + Microsoft SNDS. This is shown as a persistent label
-> in the UI footer.
+> signals come from a sending platform's own MTA accounting-webhook telemetry (bounces, deferrals,
+> 4xx/5xx provider codes), confirmed by Google Postmaster + Microsoft SNDS. This is shown as a
+> persistent label in the UI footer.
 
 ---
 
@@ -26,118 +22,132 @@ signals from synthetic data and renders them into the dEWSentinel console UI.
 A Gmail sending domain decays silently over 30 days while the "old dashboard" (a lagging warmup/placement
 proxy) stays green — until the cliff. dEWSentinel surfaces the decay **early** from leading signals,
 **per inbox provider** (Gmail vs Outlook), projects the trend to the 0.30% complaint cliff, and drives an
-automatic `Healthy → Watch → Throttle → Failover → Cooldown` failover playbook with a hot-standby pool.
+automatic `Healthy → Watch → Throttle → Failover → Cooldown` playbook with a hot-standby pool.
 
-- **Lead-time view** — flat-green lagging dashboard vs the declining dEWSentinel health line, with a shaded
-  *"≈ N days of warning gained"* band (computed from when the score crosses Watch vs when the dashboard finally dips).
+- **Hero (lead-time view)** — a single 0–100 **health** line that *falls* through HEALTHY → WATCH → DANGER
+  zones, with a flat-green "today's dashboard" strip beside it and a shaded **"≈ N days of warning gained"**
+  band spanning when Sentinel warned vs when the lagging tools would finally react.
 - **Per-ESP cards** — ring gauge, smoothed complaint rate + 90% CI, position on the 0.10%→0.30% band, and a
   projection (*"crosses 0.30% cliff in ~N days"*).
-- **Domain detail** — raw (jagged, spiking past the cliff) vs Beta-Binomial smoothed rate + confidence band,
-  the alert marker where smoothing crosses 0.10%, and the weighted signal breakdown.
+- **Failover + standby pool** — the live stage of the playbook and the hot-standby domains ready to take over.
+- **Domain detail (drill-down)** — raw (jagged, spiking past the cliff) vs Beta-Binomial smoothed rate +
+  confidence band, the alert marker where smoothing crosses 0.10%, and the weighted signal breakdown.
 
-A **Critical ⇄ Healthy** toggle and a **seed** input (with Replay) let you reshuffle the synthetic noise on
-camera and prove the render is deterministic. A **🧭 Guide** toggle (top bar) outlines every clickable /
-selectable control with numbered step badges and a walkthrough panel, so a reviewer can see exactly how to
-drive the demo.
+A **Critical ⇄ Healthy** toggle and a **seed** input let you reshuffle the synthetic noise on camera and
+prove the render is deterministic — same seed ⇒ identical render.
 
 ---
 
 ## Run it
 
-It's a static site with **no build step, no dependencies, no network calls**. The runtime files live in [`demo/`](./demo).
+The app lives in [`app/`](./app) (Next.js 16 + TypeScript).
 
 ```bash
-# just open the file
-open demo/index.html          # macOS
-# or serve the folder
-cd demo && python3 -m http.server 8000   # then visit http://localhost:8000
+cd app
+npm install
+npm run dev        # → http://localhost:3000
 ```
 
-Deployable folder = [`demo/`](./demo) = `index.html` + `engine.js` + `render.js` + `fonts.css` (IBM Plex
-self-hosted as base64, so there are zero font/CDN requests at runtime).
+Other scripts:
+
+```bash
+npm test           # Vitest + React Testing Library (101 tests)
+npm run typecheck  # tsc --noEmit
+npm run build      # next build
+```
 
 ---
 
-## Architecture (clean boundary)
+## Architecture — one deep module, one seam, shallow views
 
-The Hi-Fi design export (`product_design/`) was used **only** as a visual reference — this is a fresh
-rebuild, not an injection into the Claude Design `<x-dc>`/`support.js` runtime.
+Every displayed number is **derived by the engine**; nothing in the UI is hardcoded. The engine and the UI
+meet at exactly one place: the `ViewModel` contract.
 
-| File (in `demo/`) | Responsibility |
+```mermaid
+flowchart TD
+    controls(["Controls · scenario · seed"])
+
+    subgraph engine["DEEP MODULE — lib/engine (pure TS · zero React · zero DOM)"]
+        direction TB
+        hook["useEngine(scenario, seed)"]
+        run["runEngine()"]
+        pipe["generator → smoother → slope →<br/>scoring → state machine → alerts"]
+        hook --> run --> pipe
+    end
+
+    vm{{"ViewModel — THE SEAM<br/>the only meeting point"}}
+
+    subgraph views["SHALLOW VIEW MODULES — read ViewModel → render, no logic"]
+        direction LR
+        a["Hero (A)"]
+        b["ESP cards (B)"]
+        c["Alerts (C)"]
+        d["Failover (D)"]
+        e["Domains (E)"]
+        f["Detail (Screen 2)"]
+    end
+
+    controls --> hook
+    pipe -- ViewModel --> vm
+    vm --> a & b & c & d & e & f
+
+    classDef seam fill:#818cf8,stroke:#6366f1,color:#0c0e14,font-weight:bold;
+    classDef view fill:#10131b,stroke:#20242f,color:#e7e9f0;
+    classDef ctrl fill:#11141c,stroke:#262b37,color:#e7e9f0;
+    class vm seam;
+    class a,b,c,d,e,f view;
+    class controls ctrl;
+```
+
+| Layer | Responsibility |
 |---|---|
-| **`demo/engine.js`** | **Pure logic, zero DOM.** Seeded RNG → synthetic generator → Beta-Binomial smoothing → least-squares slope/projection → per-ESP weighted scoring → lagging "dashboard" proxy → failover state machine → alerts. Exposes one function: `runEngine({scenario, seed, days, today}) → ViewModel`. |
-| **`demo/render.js`** | **DOM only, zero logic.** Reads the `ViewModel` and writes into the `#id` hooks; includes the JS-generated SVG line-chart + sparkline helpers. |
-| **`demo/index.html`** | Static visual clone with all id hooks + a tiny bootstrap that wires the controls (read state → `runEngine` → `render`). |
+| **`lib/engine/`** | **Pure logic, zero DOM.** Seeded RNG → synthetic generator → Beta-Binomial smoothing → least-squares slope/projection → per-ESP weighted scoring → lagging "dashboard" proxy → failover state machine → alerts. Exposes one function: `runEngine({scenario, seed, days, today}) → ViewModel`. Internals are hidden; the engine is tested **only** through the ViewModel. |
+| **`components/`** | **Render only, zero business logic.** Each zone reads its `ViewModel` slice and renders it; charts are rebuilt from ViewModel arrays as data-driven SVG. |
+| **`viewmodel.ts`** | **The seam.** The single contract between logic and render. The model is **health** (0–100, down = danger) — there is no "risk" number anywhere in the UI. |
 
-The two modules meet **only** at the `ViewModel` contract — every displayed number (Gmail score, days-to-cliff,
-warning-gained, chart points) is derived by the engine; nothing is hardcoded. The scenario *shape* is fixed,
-but the numbers fall out of tuned **generator parameters** (smoothing prior `b0`, window `W`, leading-signal
-ramps), not literals.
+**Determinism is a hard requirement:** same `seed` ⇒ identical `ViewModel` ⇒ identical render. No
+`Date.now()` / `Math.random()` outside the seeded RNG; no network; no storage.
 
 ---
 
-## Acceptance criteria (§10) — verified
+## Tech stack
 
-All 16 self-check assertions pass for the default load (`scenario: "critical"`, `seed: 42`), confirmed both
-at the engine level (Node) and in headless Chrome against the live deployment:
-
-| Criterion | Result |
+| | |
 |---|---|
-| Opens as static file, **no console errors, zero network requests** | ✅ (verified headless on `file://` and live HTTPS) |
-| Deterministic by seed (same seed ⇒ identical render) | ✅ |
-| Lead-time: flat green dashboard, declining indigo line, warning band **N ≥ 7** | ✅ N = **8 days** |
-| Gmail: red, score < 40, rate ~0.17–0.25%, "~3–6 days to cliff" | ✅ score **19**, **0.23%**, **~4 days** |
-| Outlook: green, score ≥ 80, stable | ✅ score **96**, stable |
-| Detail: jagged raw spiking past 0.30%, smooth + CI band, 0.10% crossing marker, guide lines | ✅ |
-| Toggle → Healthy: both gauges green, no red alerts, failover Healthy, no cliff projection | ✅ |
-| Numbers in IBM Plex Mono; dark theme, accent `#818cf8` | ✅ |
-| Persistent "simulated data" label | ✅ |
+| **Framework** | Next.js 16 (App Router) · React 19 |
+| **Language** | TypeScript 5 (strict) |
+| **Charts** | Hand-built, data-driven inline SVG (no chart library) |
+| **Fonts** | IBM Plex Sans + Mono, self-hosted as base64 (zero CDN/font requests) |
+| **Testing** | Vitest + React Testing Library + jsdom — 101 tests |
+| **Math** | Seeded RNG · Beta-Binomial smoothing + 90% credible interval · least-squares slope/projection |
+| **Deploy** | Vercel (Root Directory = `app`); auto Preview per push, `main` → production |
+
+---
+
+## Key metrics (default load — `scenario: critical`, `seed: 42`)
+
+End-to-end acceptance is verified through the real Console in `app/app/acceptance.test.tsx`:
+
+| Signal | Value |
+|---|---|
+| Gmail card | **critical**, score **27** |
+| Outlook card | **healthy**, score **96** |
+| Lagging "dashboard" strip | flat green **96** across the whole window |
+| Warning gained (Sentinel vs lagging tools) | **≈ 10 days** |
+| Failover playbook | at the pulsing **Failover** stage |
+| Healthy toggle (seed 42) | both gauges green — Gmail **92**, Outlook **93** |
+| Determinism | two fresh renders at the default seed → byte-identical DOM |
+| Honesty label | the "Simulated data." footer shows on **both** screens |
 
 ---
 
 ## Roadmap
 
 - **v0 (this):** engine + console on synthetic, deterministic data.
-- **v1:** ingest live MTA accounting-webhook telemetry + Google Postmaster/Microsoft SNDS for one ESP; real alerting.
+- **v1:** ingest live MTA accounting-webhook telemetry + Google Postmaster / Microsoft SNDS for one ESP; real alerting.
 - **v2:** automated failover execution + standby-pool orchestration.
 
 ---
 
-## Deployment
-
-The runtime files live in [`demo/`](./demo); both hosts below are configured to serve that subfolder at the site root.
-
-### Primary — Vercel (Hobby, free)
-
-Clean production URL: **https://dewsentinel.vercel.app**. `vercel.json` sets `outputDirectory: demo`, so a plain
-deploy from the repo root serves `demo/index.html` at `/`:
-
-```bash
-vercel --prod --yes --project dewsentinel    # from the repo root
-```
-
-> **Note:** this Vercel project has **Attack Challenge Mode** on, so first-time visitors briefly see a
-> *"Vercel Security Checkpoint — verifying your browser"* page before the app loads. To remove that interstitial:
-> `vercel link --yes --project dewsentinel && vercel firewall attack-mode disable`
-> (or Project → Settings → Firewall → turn **Attack Challenge Mode** off). The backup mirror has no such gate.
-
-### Backup mirror — GitHub Pages (free)
-
-Always-on fallback, no challenge: https://jonathan-kris.github.io/dEWSentinel/
-
-Pages serves the **`gh-pages`** branch (whose root is the contents of `demo/`). To re-publish after changing the
-demo, push the `demo/` subtree:
-
-```bash
-git push origin main                                   # commit the source as usual
-git subtree push --prefix=demo origin gh-pages         # publish demo/ -> gh-pages (Pages root)
-```
-
-<sub>Want push-to-main auto-deploy instead? Grant the git credential workflow scope once
-(`gh auth refresh -h github.com -s workflow`), then a GitHub Actions Pages workflow publishing `demo/` can be added.</sub>
-
-### Other free static hosts (pure static site, so any will do)
-
-- **Cloudflare Pages (free):** `wrangler pages deploy demo`.
-- **Netlify:** `netlify deploy --prod --dir=demo` — note Netlify's free tier meters production deploys
-  against monthly **credits**; if the team is out of credits, production publishing is disabled until reset.
+<sub>The original vanilla-JS proof-of-concept (no build step, single static folder) lives in
+[`demo/`](./demo) and remains the conceptual reference for the engine ported to TypeScript in `app/`.</sub>
